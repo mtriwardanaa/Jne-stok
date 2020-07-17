@@ -48,6 +48,7 @@
                                     </a>
                                     <h1 class="h4 font-w700 mt-30 mb-10">Selamat Datang</h1>
                                 </div>
+                                @include('partial.notification')
                                 <form class="js-validation-signin" action="{{ route('login') }}" method="post">
                                 	{{ csrf_field() }}
                                     <div class="block block-themed block-rounded block-shadow">
@@ -63,13 +64,13 @@
                                             <div class="form-group row">
                                                 <div class="col-12">
                                                     <label for="login-username">Username</label>
-                                                    <input type="text" class="form-control" id="login-username" name="login-username" placeholder="masukkan username">
+                                                    <input type="text" class="form-control" id="login-username" name="username" placeholder="masukkan username">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col-12">
                                                     <label for="login-password">Password</label>
-                                                    <input type="password" class="form-control" id="login-password" name="login-password" placeholder="masukkan password">
+                                                    <input type="password" class="form-control" id="login-password" name="password" placeholder="masukkan password">
                                                 </div>
                                             </div>
                                             <div class="form-group row mb-0">

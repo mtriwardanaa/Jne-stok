@@ -20,14 +20,20 @@ class Login extends Controller
 		    return view('login');
 		}
 
-		// if (Auth::attempt($post)) {
-		// 	if (Auth::user()->level != 'admin') {
-		// 		session()->flush();
-		// 		return redirect('login')->withErrors(['Anda tidak diperbolehkan mengakses halaman admin']);
-		// 	}
+		if (Auth::attempt($post)) {
+			if (Auth::user()->level != 'admin') {
+				if (Auth::user()->level == 'general') {
+					if (Auth::user()->id_divisi == 10) {
+						return redirect('dashboard');
+					}
+				}
+
+				session()->flush();
+				return redirect('login')->withErrors(['Anda tidak diperbolehkan mengakses halaman admin']);
+			}
 
 			return redirect('dashboard');
-		// }
+		}
 
 		return redirect('login')->withErrors(['Username atau Password salah']);
     }

@@ -30,27 +30,19 @@
             <a href="#"><i class="si si-energy"></i><span class="sidebar-mini-hide">Request / Order</span></a>
         </li>
         <li class="nav-main-heading"><span class="sidebar-mini-visible">BD</span><span class="sidebar-mini-hidden">Data</span></li>
-        <li>
+        <li class="@yield('barang')">
             <a class="nav-submenu" data-toggle="nav-submenu" href="#"><i class="si si-vector"></i><span class="sidebar-mini-hide">Barang</span></a>
             <ul>
                 <li>
-                    <a href="be_layout_api.html">List</a>
+                    <a class="@yield('barang-list')" href="{{ url('barang') }}">List</a>
                 </li>
                 <li>
-                    <a href="be_layout_api.html">Tambah</a>
+                    <a class="@yield('barang-tambah')" href="{{ url('barang/create') }}">Tambah</a>
                 </li>
             </ul>
         </li>
-        <li>
-            <a class="nav-submenu" data-toggle="nav-submenu" href="#"><i class="si si-trophy"></i><span class="sidebar-mini-hide">User</span></a>
-            <ul>
-                <li>
-                    <a href="be_comp_charts.html">List</a>
-                </li>
-                <li>
-                    <a href="be_comp_nestable.html">Tambah</a>
-                </li>
-            </ul>
+        <li class="@yield('user')">
+            <a class="@yield('user-menu')" href="{{ url('user') }}"><i class="si si-trophy"></i><span class="sidebar-mini-hide">User</span></a>
         </li>
     </ul>
 </div>

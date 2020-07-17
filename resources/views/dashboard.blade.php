@@ -4,7 +4,11 @@
 @section('dashboard', 'open')
 @section('dashboard-menu', 'active')
 
+@section('head-title', 'Dashboard')
+@section('head-sub-title', 'Application')
+
 @section('content')
+	@include('partial.notification')
 	<div class="row invisible" data-toggle="appear">
         <div class="col-6 col-xl-3">
             <a class="block block-link-pop text-right bg-primary" href="javascript:void(0)">
