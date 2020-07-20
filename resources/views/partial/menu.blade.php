@@ -4,14 +4,14 @@
             <a class="@yield('dashboard-menu')" href="{{ url('dashboard') }}"><i class="si si-cup"></i><span class="sidebar-mini-hide">Dashboard</span></a>
         </li>
         <li class="nav-main-heading"><span class="sidebar-mini-visible">UI</span><span class="sidebar-mini-hidden">Management</span></li>
-        <li>
+        <li class="@yield('barang-masuk')">
             <a class="nav-submenu" data-toggle="nav-submenu" href="#"><i class="si si-puzzle"></i><span class="sidebar-mini-hide">Barang Masuk</span></a>
             <ul>
                 <li>
-                    <a href="be_blocks.html">List</a>
+                    <a class="@yield('barang-masuk-list')" href="{{ url('barangmasuk') }}">List</a>
                 </li>
                 <li>
-                    <a href="be_blocks_draggable.html">Tambah</a>
+                    <a class="@yield('barang-masuk-tambah')" href="{{ url('barangmasuk/create') }}">Tambah</a>
                 </li>
             </ul>
         </li>
@@ -40,6 +40,9 @@
                     <a class="@yield('barang-tambah')" href="{{ url('barang/create') }}">Tambah</a>
                 </li>
             </ul>
+        </li>
+        <li class="@yield('supplier')">
+            <a class="@yield('supplier-menu')" href="{{ url('supplier') }}"><i class="si si-calculator"></i><span class="sidebar-mini-hide">Supplier</span></a>
         </li>
         <li class="@yield('user')">
             <a class="@yield('user-menu')" href="{{ url('user') }}"><i class="si si-trophy"></i><span class="sidebar-mini-hide">User</span></a>

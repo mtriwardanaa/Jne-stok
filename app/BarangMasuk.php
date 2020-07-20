@@ -31,7 +31,7 @@ class BarangMasuk extends Model
     /**
      * @var array
      */
-    protected $fillable = ['created_by', 'tanggal', 'created_at', 'updated_at'];
+    protected $fillable = ['created_by', 'updated_by', 'tanggal', 'created_at', 'updated_at', 'deleted_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -39,5 +39,15 @@ class BarangMasuk extends Model
     public function user()
     {
         return $this->belongsTo('App\User', 'created_by');
+    }
+
+    public function userUpdate()
+    {
+        return $this->belongsTo('App\User', 'updated_by');
+    }
+
+    public function details()
+    {
+        return $this->hasMany('App\BarangMasukDetail', 'id_barang_masuk');
     }
 }

@@ -1,4 +1,6 @@
 {
     "Barang": true,
-    "User": true
+    "User": true,
+    "Supplier": true,
+    "BarangMasuk": true
 }

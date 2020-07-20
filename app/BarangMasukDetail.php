@@ -42,7 +42,7 @@ class BarangMasukDetail extends Model
      */
     public function stokBarang()
     {
-        return $this->belongsTo('App\StokBarang', 'id_barang');
+        return $this->belongsTo('App\Barang', 'id_barang');
     }
 
     /**
@@ -50,7 +50,7 @@ class BarangMasukDetail extends Model
      */
     public function stokBarangMasuk()
     {
-        return $this->belongsTo('App\StokBarangMasuk', 'id_barang_masuk');
+        return $this->belongsTo('App\BarangMasuk', 'id_barang_masuk');
     }
 
     /**
@@ -58,6 +58,6 @@ class BarangMasukDetail extends Model
      */
     public function stokSupplier()
     {
-        return $this->belongsTo('App\StokSupplier', 'id_supplier');
+        return $this->belongsTo('App\Supplier', 'id_supplier');
     }
 }

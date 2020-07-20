@@ -1,0 +1,13 @@
+{
+    "name": "BarangMasuk",
+    "alias": "barangmasuk",
+    "description": "",
+    "keywords": [],
+    "order": 0,
+    "providers": [
+        "Modules\\BarangMasuk\\Providers\\BarangMasukServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
