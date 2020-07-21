@@ -15,14 +15,14 @@
                 </li>
             </ul>
         </li>
-        <li>
+        <li class="@yield('barang-keluar')">
             <a class="nav-submenu" data-toggle="nav-submenu" href="#"><i class="si si-moustache"></i><span class="sidebar-mini-hide">Barang Keluar</span></a>
             <ul>
                 <li>
-                    <a href="be_widgets_tiles.html">List</a>
+                    <a class="@yield('barang-keluar-list')" href="{{ url('barangkeluar') }}">List</a>
                 </li>
                 <li>
-                    <a href="be_widgets_users.html">Tambah</a>
+                    <a class="@yield('barang-keluar-tambah')" href="{{ url('barangkeluar/create') }}">Tambah</a>
                 </li>
             </ul>
         </li>

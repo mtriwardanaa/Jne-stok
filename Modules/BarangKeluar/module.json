@@ -1,0 +1,13 @@
+{
+    "name": "BarangKeluar",
+    "alias": "barangkeluar",
+    "description": "",
+    "keywords": [],
+    "order": 0,
+    "providers": [
+        "Modules\\BarangKeluar\\Providers\\BarangKeluarServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

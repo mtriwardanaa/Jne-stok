@@ -19,7 +19,6 @@ class BarangMasukController extends Controller
     public function list()
     {
     	$list = BarangMasuk::with('user', 'userUpdate', 'details.stokBarang.stokBarangSatuan', 'details.stokSupplier')->whereNull('deleted_at')->orderBy('tanggal', 'DESC')->get()->toArray();
-    	// return $list;
         return view('barangmasuk::list_barang_masuk', ['list' => $list]);
     }
 
