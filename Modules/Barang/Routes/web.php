@@ -1,6 +1,6 @@
 <?php
 
-Route::middleware('auth_user')->prefix('barang')->group(function() {
+Route::middleware(['auth_user', 'stokga'])->prefix('barang')->group(function() {
     Route::get('/', 'BarangController@list');
     Route::get('/create', 'BarangController@create');
     Route::post('/store', 'BarangController@store');

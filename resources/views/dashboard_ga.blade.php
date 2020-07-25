@@ -16,8 +16,8 @@
                     <div class="float-left mt-10 d-none d-sm-block">
                         <i class="si si-bar-chart fa-3x text-primary-light"></i>
                     </div>
-                    <div class="font-size-h3 font-w600 text-white" data-toggle="countTo" data-speed="1000" data-to="8900">0</div>
-                    <div class="font-size-sm font-w600 text-uppercase text-white-op">Sales</div>
+                    <div class="font-size-h3 font-w600 text-white" data-toggle="countTo" data-speed="1000" data-to="{{ $order_pending }}"></div>
+                    <div class="font-size-sm font-w600 text-uppercase text-white-op">Order Pending</div>
                 </div>
             </a>
         </div>
@@ -27,8 +27,8 @@
                     <div class="float-left mt-10 d-none d-sm-block">
                         <i class="si si-trophy fa-3x text-earth-light"></i>
                     </div>
-                    <div class="font-size-h3 font-w600 text-white">$<span data-toggle="countTo" data-speed="1000" data-to="2600">0</span></div>
-                    <div class="font-size-sm font-w600 text-uppercase text-white-op">Earnings</div>
+                    <div class="font-size-h3 font-w600 text-white"><span data-toggle="countTo" data-speed="1000" data-to="{{ $total_barang_masuk }}"></span></div>
+                    <div class="font-size-sm font-w600 text-uppercase text-white-op">Barang Masuk</div>
                 </div>
             </a>
         </div>
@@ -38,8 +38,8 @@
                     <div class="float-left mt-10 d-none d-sm-block">
                         <i class="si si-envelope-letter fa-3x text-elegance-light"></i>
                     </div>
-                    <div class="font-size-h3 font-w600 text-white" data-toggle="countTo" data-speed="1000" data-to="260">0</div>
-                    <div class="font-size-sm font-w600 text-uppercase text-white-op">Messages</div>
+                    <div class="font-size-h3 font-w600 text-white" data-toggle="countTo" data-speed="1000" data-to="{{ $total_barang_keluar }}"></div>
+                    <div class="font-size-sm font-w600 text-uppercase text-white-op">Barang Keluar</div>
                 </div>
             </a>
         </div>
@@ -49,8 +49,8 @@
                     <div class="float-left mt-10 d-none d-sm-block">
                         <i class="si si-fire fa-3x text-corporate-light"></i>
                     </div>
-                    <div class="font-size-h3 font-w600 text-white" data-toggle="countTo" data-speed="1000" data-to="4252">0</div>
-                    <div class="font-size-sm font-w600 text-uppercase text-white-op">Online</div>
+                    <div class="font-size-h3 font-w600 text-white" data-toggle="countTo" data-speed="1000" data-to="{{ $barang }}"></div>
+                    <div class="font-size-sm font-w600 text-uppercase text-white-op">Stok Warning</div>
                 </div>
             </a>
         </div>

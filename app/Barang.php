@@ -36,7 +36,7 @@ class Barang extends Model implements Auditable
     /**
      * @var array
      */
-    protected $fillable = ['id_barang_satuan', 'kode_barang', 'nama_barang', 'qty_barang', 'created_at', 'updated_at', 'deleted_at'];
+    protected $fillable = ['id_barang_satuan', 'warning_stok', 'kode_barang', 'nama_barang', 'qty_barang', 'created_at', 'updated_at', 'deleted_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

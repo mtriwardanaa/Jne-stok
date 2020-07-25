@@ -44,8 +44,8 @@
                 <div class="form-group row">
                     <div class="col-6">
                         <div class="form-material">
-                            <input type="text" class="form-control number price" maxlength="20" id="material-gridf" value="{{ old('jumlah_barang') }}" name="jumlah_barang" placeholder="Masukkan jumlah barang" required>
-                            <label for="material-gridf">Jumlah Barang</label>
+                            <input type="text" class="form-control number price" maxlength="20" id="material-gridf" value="{{ old('warning_stok') }}" name="warning_stok" placeholder="Masukkan jumlah minimal barang digudang" required>
+                            <label for="material-gridf">Minimal Stok</label>
                         </div>
                     </div>
                     <div class="col-6">

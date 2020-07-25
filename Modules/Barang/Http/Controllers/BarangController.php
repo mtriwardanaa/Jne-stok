@@ -39,14 +39,12 @@ class BarangController extends Controller
     	$check_satuan = strpos($post['id_satuan_barang'], 'ThIsiSNeW#');
     	if ($check_satuan !== false) {
           	$satuan = explode("#", $post['id_satuan_barang']); 
-
+            $idb = 0;
           	$check_all_satuan = BarangSatuan::all()->toArray();
           	foreach ($check_all_satuan as $key => $value) {
               	if (strcasecmp($value['nama_satuan'], $satuan['1']) == 0) {
                     $idb = $value['id'];
                     break;
-                } else {
-                    $idb = 0;
                 }
           	}
 
@@ -67,7 +65,7 @@ class BarangController extends Controller
     	if (!empty($check_delete)) {
 			$check_delete->kode_barang      = $post['kode_barang'];
 			$check_delete->nama_barang      = $post['nama_barang'];
-			$check_delete->qty_barang       = $post['jumlah_barang'];
+            $check_delete->warning_stok      = $post['warning_stok'];
 			$check_delete->id_barang_satuan = $post['id_satuan_barang'];
 			$check_delete->deleted_at       = null;
     		$check_delete->update();
@@ -79,7 +77,7 @@ class BarangController extends Controller
     		$data_create = [
 				'kode_barang'      => $post['kode_barang'],
 				'nama_barang'      => $post['nama_barang'],
-				'qty_barang'       => $post['jumlah_barang'],
+                'warning_stok'      => $post['warning_stok'],
 				'id_barang_satuan' => $post['id_satuan_barang'],
     		];
 
@@ -174,7 +172,7 @@ class BarangController extends Controller
 
         $check_barang->kode_barang      = $post['kode_barang'];
 		$check_barang->nama_barang      = $post['nama_barang'];
-		$check_barang->qty_barang       = $post['jumlah_barang'];
+        $check_barang->warning_stok      = $post['warning_stok'];
 		$check_barang->id_barang_satuan = $post['id_satuan_barang'];
 		$check_barang->deleted_at       = null;
 		$check_barang->update();
