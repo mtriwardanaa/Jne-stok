@@ -11,6 +11,6 @@
 |
 */
 
-Route::prefix('supplier')->group(function() {
+Route::middleware('auth_user')->prefix('supplier')->group(function() {
     Route::get('/', 'SupplierController@list');
 });

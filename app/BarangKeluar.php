@@ -34,7 +34,7 @@ class BarangKeluar extends Model
     /**
      * @var array
      */
-    protected $fillable = ['id_divisi', 'id_kategori', 'created_by', 'updated_by', 'tanggal', 'created_at', 'updated_at', 'deleted_at'];
+    protected $fillable = ['id_divisi', 'id_order', 'id_kategori', 'created_by', 'updated_by', 'tanggal', 'created_at', 'updated_at', 'deleted_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
