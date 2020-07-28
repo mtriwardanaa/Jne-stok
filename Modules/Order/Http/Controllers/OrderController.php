@@ -60,6 +60,16 @@ class OrderController extends Controller
     	return view('order::approve_order', ['barang' => $barang, 'data' => $data]);
     }
 
+    public function detail(Request $request, $id)
+    {
+    	$data = Order::with('approved_user', 'created_user', 'details.stokBarang.stokBarangSatuan', 'divisi', 'kategori')->where('id', $id)->first();
+    	if (empty($data)) {
+    		return back()->withErrors(['Data tidak ditemukan']);	
+    	}
+
+    	return view('order::detail_order', ['data' => $data]);
+    }
+
     public function updateApprove(Request $request, $id)
     {
     	DB::beginTransaction();

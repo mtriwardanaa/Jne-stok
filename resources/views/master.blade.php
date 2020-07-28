@@ -2,7 +2,7 @@
 <html lang="en" class="no-focus">
     @include('partial.head')
     <body>
-        <div id="page-container" class="sidebar-o sidebar-inverse enable-page-overlay side-scroll page-header-fixed">
+        <div id="page-container" class="@if (Auth::user()->id_divisi == 10) sidebar-o @endif sidebar-inverse enable-page-overlay side-scroll page-header-fixed">
             @include('partial.nav')
 
             <!-- Header -->

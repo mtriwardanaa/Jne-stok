@@ -4,9 +4,11 @@
         <!-- Left Section -->
         <div class="content-header-section">
             <!-- Toggle Sidebar -->
-            <button type="button" class="btn btn-circle btn-dual-secondary" data-toggle="layout" data-action="sidebar_toggle">
-                <i class="fa fa-navicon"></i>
-            </button>
+            @if (Auth::user()->id_divisi == 10)
+	            <button type="button" class="btn btn-circle btn-dual-secondary" data-toggle="layout" data-action="sidebar_toggle">
+	                <i class="fa fa-navicon"></i>
+	            </button>
+	        @endif
             <div class="btn-group" role="group">
                 <button type="button" class="btn btn-circle btn-dual-secondary" id="page-header-options-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="fa fa-wrench"></i>

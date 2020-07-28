@@ -2,7 +2,6 @@
 <script src="{{ url('assets/js/codebase.app.min.js') }}"></script>
 <script src="{{ url('assets/js/plugins/chartjs/Chart.bundle.min.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
-<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 
 <script type="text/javascript">
 	$('.number').keypress(function(event) {
