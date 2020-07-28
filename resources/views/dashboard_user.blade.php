@@ -15,7 +15,7 @@
 	@include('partial.notification')
 	<div class="row invisible" data-toggle="appear">
         <div class="col-6 col-xl-3">
-            <a class="block text-center" href="javascript:void(0)">
+            <a class="block text-center" href="{{ url('order') }}">
                 <div class="block-content ribbon" style="background-color: #26c6da">
                     <div class="ribbon-box">{{ $total_order }}</div>
                     <p class="mt-5">
@@ -26,7 +26,7 @@
             </a>
         </div>
         <div class="col-6 col-xl-3">
-            <a class="block text-center" href="javascript:void(0)">
+            <a class="block text-center" href="{{ url('order') }}?status=pending">
                 <div class="block-content ribbon" style="background-color: #ffca28">
                     <div class="ribbon-box">{{ $total_pending }}</div>
                     <p class="mt-5">
@@ -69,6 +69,7 @@
                     <tr>
                         <th class="text-center">No</th>
                         <th>No Order</th>
+                        <th>Tanggal</th>
                         <th>Divisi</th>
                         <th>Sub Agen</th>
                         <th class="d-none d-sm-table-cell">Tanggal</th>
@@ -81,6 +82,7 @@
 	                    <tr>
 	                        <td class="text-center">{{ $key+1 }}</td>
 	                        <td class="font-w600">{{ $value['no_order'] }}</td>
+	                        <td class="font-w600">{{ date('d F Y H:i', strtotime($value['tanggal'])) }}</td>
 	                        <td class="font-w600">{{ $value['divisi']['nama'] }}</td>
 	                        <td class="font-w600">{{ $value['kategori']['nama'] ?? "-" }}</td>
 	                        <td class="d-none d-sm-table-cell">{{ date('d F Y', strtotime($value['tanggal'])) }}</td>

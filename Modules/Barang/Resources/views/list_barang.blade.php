@@ -26,9 +26,10 @@
                         <th>Kode Barang</th>
                         <th>Nama Barang</th>
                         <th>Jumlah Barang</th>
+                        <th>Harga Barang</th>
                         <th>Minimal Stok</th>
-                        <th style="width: 10%;">Satuan</th>
-                        <th style="width: 10%;">Status</th>
+                        <th>Satuan</th>
+                        <th>Status</th>
                         <th class="text-center">Action</th>
                     </tr>
                 </thead>
@@ -40,6 +41,7 @@
 	                    		<td><a href="{{ url('barang/history', $value['id']) }}" data-toggle="click-ripple" title="History"> {{ $value['kode_barang'] }}</a></td>
 	                    		<td>{{ $value['nama_barang'] }}</td>
 	                    		<td>{{ $value['qty_barang'] }}</td>
+	                    		<td>Rp. {{ number_format($value['harga_barang']) ?? "0" }}</td>
                                 <td>{{ $value['warning_stok'] }}</td>
 	                    		<td>{{ $value['stok_barang_satuan']['nama_satuan'] }}</td>
                                 @if ($value['qty_barang'] < $value['warning_stok'])

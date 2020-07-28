@@ -42,13 +42,19 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <div class="col-6">
+                	<div class="col-4">
+                        <div class="form-material">
+                            <input type="text" class="form-control number price" maxlength="20" id="material-gridff" value="{{ $barang['harga_barang'] }}" name="harga_barang" placeholder="Masukkan harga barang saat ini" required>
+                            <label for="material-gridf">Minimal Stok</label>
+                        </div>
+                    </div>
+                    <div class="col-4">
                         <div class="form-material">
                             <input type="text" class="form-control number price" maxlength="20" id="material-gridf" value="{{ $barang['warning_stok'] }}" name="warning_stok" placeholder="Masukkan jumlah minimal barang digudang" required>
                             <label for="material-gridf">Minimal Stok</label>
                         </div>
                     </div>
-                    <div class="col-6">
+                    <div class="col-4">
                         <div class="form-material">
                             <select class="form-control select_satuan_barang" name="id_satuan_barang" required>
                             	@if (!empty($satuan))
@@ -75,6 +81,18 @@
 
 @section('script')
 	<script type="text/javascript">
+		window.onload = function() {
+			$(".price").each(function() {
+		        var input = $(this).val();
+		        var input = input.replace(/[\D\s\._\-]+/g, "");
+		        input = input ? parseInt( input, 10 ) : null;
+
+		        $(this).val( function() {
+		            return ( input === null ) ? "" : input.toLocaleString( "id" );
+		        });
+		     });
+		}
+		
 		$(document).on('change', '.select_satuan_barang', function() {
 	        if ($(this).val() == '#') {
 	          	var newThing = prompt('Tambah satuan baru:');

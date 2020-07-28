@@ -10,7 +10,10 @@ use App\Barang;
 use App\BarangSatuan;
 use App\User;
 
+use App\Imports\DataImport;
+
 use DB;
+use Excel;
 
 class BarangController extends Controller
 {
@@ -65,7 +68,8 @@ class BarangController extends Controller
     	if (!empty($check_delete)) {
 			$check_delete->kode_barang      = $post['kode_barang'];
 			$check_delete->nama_barang      = $post['nama_barang'];
-            $check_delete->warning_stok      = $post['warning_stok'];
+			$check_delete->harga_barang     = $post['harga_barang'];
+			$check_delete->warning_stok     = $post['warning_stok'];
 			$check_delete->id_barang_satuan = $post['id_satuan_barang'];
 			$check_delete->deleted_at       = null;
     		$check_delete->update();
@@ -77,6 +81,7 @@ class BarangController extends Controller
     		$data_create = [
 				'kode_barang'      => $post['kode_barang'],
 				'nama_barang'      => $post['nama_barang'],
+				'harga_barang'      => $post['harga_barang'],
                 'warning_stok'      => $post['warning_stok'],
 				'id_barang_satuan' => $post['id_satuan_barang'],
     		];
@@ -172,6 +177,7 @@ class BarangController extends Controller
 
         $check_barang->kode_barang      = $post['kode_barang'];
 		$check_barang->nama_barang      = $post['nama_barang'];
+		$check_barang->harga_barang      = $post['harga_barang'];
         $check_barang->warning_stok      = $post['warning_stok'];
 		$check_barang->id_barang_satuan = $post['id_satuan_barang'];
 		$check_barang->deleted_at       = null;
@@ -199,5 +205,39 @@ class BarangController extends Controller
     	}
 
     	return redirect('barang')->with(['success' => ['Hapus barang berhasil']]);
+    }
+
+    public function import(Request $request)
+    {
+    	return view('barang::import_barang');
+    }
+
+    public function save(Request $request)
+    {
+    	DB::beginTransaction();
+        $file = $request->import;
+
+        $data = Excel::toArray(new DataImport, $file);
+        foreach ($data[0] as $key => $value) {
+        	if ($key > 0) {
+        		$data_all = [
+					'kode_barang'      => $value[0],
+					'nama_barang'      => $value[1],
+					'id_barang_satuan' => 1,
+					'warning_stok'     => 3,
+					'harga_barang'     => 10000,
+					'qty_barang'       => 0,
+        		];
+
+        		$update = Barang::UpdateOrCreate(['kode_barang' => $value[0]], $data_all);
+        		if (!$update) {
+        			DB::rollback();
+        			return back()->withErrors(['Import data barang gagal']);
+        		}
+        	}
+        }
+
+        Db::commit();
+        return redirect('barang')->with(['success' => ['Import data barang berhasil']]);
     }
 }

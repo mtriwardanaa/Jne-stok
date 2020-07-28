@@ -42,13 +42,19 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <div class="col-6">
+                	<div class="col-4">
+                        <div class="form-material">
+                            <input type="text" class="form-control number price" maxlength="20" id="material-gridff" value="{{ old('harga_barang') }}" name="harga_barang" placeholder="Masukkan harga barang saat ini" required>
+                            <label for="material-gridf">Harga Barang</label>
+                        </div>
+                    </div>
+                    <div class="col-4">
                         <div class="form-material">
                             <input type="text" class="form-control number price" maxlength="20" id="material-gridf" value="{{ old('warning_stok') }}" name="warning_stok" placeholder="Masukkan jumlah minimal barang digudang" required>
                             <label for="material-gridf">Minimal Stok</label>
                         </div>
                     </div>
-                    <div class="col-6">
+                    <div class="col-4">
                         <div class="form-material">
                             <select class="form-control select_satuan_barang" name="id_satuan_barang" required>
                             	@if (!empty($satuan))

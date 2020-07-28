@@ -42,6 +42,9 @@
 	                <li>
 	                    <a class="@yield('barang-tambah')" href="{{ url('barang/create') }}">Tambah</a>
 	                </li>
+	                <li>
+	                    <a class="@yield('barang-import')" href="{{ url('barang/import') }}">Import</a>
+	                </li>
 	            </ul>
 	        </li>
 	        <li class="@yield('supplier')">

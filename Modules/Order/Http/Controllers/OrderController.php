@@ -16,7 +16,7 @@ use Auth;
 
 class OrderController extends Controller
 {
-    public function list()
+    public function list(Request $request)
     {
     	$user = Auth::user();
 
@@ -30,9 +30,23 @@ class OrderController extends Controller
 	    	}
     	}
 
+    	$req = '';
+
+    	if ($request->has('status')) {
+    		if ($request->get('status') == 'approve') {
+    			$list = $list->whereNotNull('approved_by');
+    		}
+
+    		if ($request->get('status') == 'pending') {
+    			$list = $list->whereNull('approved_by');
+    		}
+
+    		$req = $request->get('status');
+    	}
+
     	$list = $list->get()->toArray();
 
-        return view('order::list_order', ['list' => $list]);
+        return view('order::list_order', ['list' => $list, 'req' => $req]);
     }
 
     public function create(Request $request)
@@ -62,12 +76,17 @@ class OrderController extends Controller
 
     public function detail(Request $request, $id)
     {
-    	$data = Order::with('approved_user', 'created_user', 'details.stokBarang.stokBarangSatuan', 'divisi', 'kategori')->where('id', $id)->first();
+    	$data = Order::with('approved_user.divisi', 'created_user', 'details.stokBarang.stokBarangSatuan', 'divisi', 'kategori')->where('id', $id)->first();
     	if (empty($data)) {
     		return back()->withErrors(['Data tidak ditemukan']);	
     	}
+    	// return $data;
+    	$req = null;
+    	if ($request->has('status')) {
+    		$req = $request->get('status');
+    	}
 
-    	return view('order::detail_order', ['data' => $data]);
+    	return view('order::detail_order', ['data' => $data, 'req' => $req]);
     }
 
     public function updateApprove(Request $request, $id)
