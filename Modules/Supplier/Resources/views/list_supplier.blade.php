@@ -2,7 +2,7 @@
 
 @section('title', 'Supplier')
 @section('supplier', 'open')
-@section('supplier-menu', 'active')
+@section('supplier-list', 'active')
 
 @section('head-title', 'Supplier')
 @section('head-sub-title', 'List')
@@ -57,4 +57,24 @@
     <script src="{{ url('assets/js/plugins/datatables/dataTables.bootstrap4.min.js') }}"></script>
 
     <script src="{{ url('assets/js/pages/be_tables_datatables.min.js') }}"></script>
+    <script type="text/javascript">
+        $(document).on('click', '.btn-delete', function() {
+            var id = $(this).data('id');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Supplier akan dihapus",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya',
+                cancelButtonText: 'Tidak'
+            }).then((result) => {
+                if (result.value) {
+                    var url = "{{ url('supplier/delete') }}/"+id;
+                    window.location.href = url;
+                }
+            })
+        });
+    </script>
 @endsection

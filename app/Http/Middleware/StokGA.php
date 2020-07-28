@@ -3,8 +3,9 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Auth;
 
-class HttpsProtocol
+class StokGA
 {
     /**
      * Handle an incoming request.
@@ -15,12 +16,10 @@ class HttpsProtocol
      */
     public function handle($request, Closure $next)
     {
-        if (env('APP_ENV') != 'local') {
-            if (!$request->secure()) {
-                return redirect()->secure($request->getRequestUri());
-            }
+        if (Auth::user()->id_divisi != 10) {
+            return back()->withErrors(['Anda tidak memiliki izin untuk mengakses fitur ini, silahkan kontak admin']);
         }
-            
+        
         return $next($request);
     }
 }

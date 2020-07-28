@@ -26,7 +26,9 @@
                         <th>Kode Barang</th>
                         <th>Nama Barang</th>
                         <th>Jumlah Barang</th>
+                        <th>Minimal Stok</th>
                         <th style="width: 10%;">Satuan</th>
+                        <th style="width: 10%;">Status</th>
                         <th class="text-center">Action</th>
                     </tr>
                 </thead>
@@ -35,10 +37,16 @@
                     	@foreach($list as $key => $value)
 	                    	</tr>
 	                    		<td>{{ $key+1 }}</td>
-	                    		<td>{{ $value['kode_barang'] }}</td>
+	                    		<td><a href="{{ url('barang/history', $value['id']) }}" data-toggle="click-ripple" title="History"> {{ $value['kode_barang'] }}</a></td>
 	                    		<td>{{ $value['nama_barang'] }}</td>
 	                    		<td>{{ $value['qty_barang'] }}</td>
+                                <td>{{ $value['warning_stok'] }}</td>
 	                    		<td>{{ $value['stok_barang_satuan']['nama_satuan'] }}</td>
+                                @if ($value['qty_barang'] < $value['warning_stok'])
+                                    <td class="font-w600"><span class="badge badge-warning">Warning</span></td>
+                                @else
+                                    <td class="font-w600"><span class="badge badge-success">Aman</span></td>
+                                @endif
 	                    		<td class="text-center">
 	                                <div class="btn-group">
 	                                	<a href="{{ url('barang/edit', $value['id']) }}" class="btn btn-sm btn-info" data-toggle="click-ripple" title="Edit"><i class="fa fa-pencil"></i> Edit</a>
@@ -47,9 +55,6 @@
                                         <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="{{ $value['id'] }}" data-toggle="click-ripple" title="Delete">
                                             <i class="fa fa-times"></i> Hapus
                                         </button>
-                                    </div>
-                                    <div class="btn-group">
-	                                	<a href="{{ url('barang/history', $value['id']) }}" class="btn btn-sm btn-warning" data-toggle="click-ripple" title="History"><i class="fa fa-pencil"></i> History</a>
                                     </div>
 	                            </td>
                             </tr>

@@ -11,7 +11,7 @@
 |
 */
 
-Route::middleware('auth_user')->prefix('barangkeluar')->group(function() {
+Route::middleware(['auth_user', 'stokga'])->prefix('barangkeluar')->group(function() {
     Route::get('/', 'BarangKeluarController@list');
     Route::get('/create', 'BarangKeluarController@create');
     Route::get('/edit/{id}', 'BarangKeluarController@edit');

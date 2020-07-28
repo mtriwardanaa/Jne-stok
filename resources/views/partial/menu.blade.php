@@ -45,7 +45,15 @@
 	            </ul>
 	        </li>
 	        <li class="@yield('supplier')">
-	            <a class="@yield('supplier-menu')" href="{{ url('supplier') }}"><i class="si si-calculator"></i><span class="sidebar-mini-hide">Supplier</span></a>
+	            <a class="nav-submenu" data-toggle="nav-submenu" href="#"><i class="si si-calculator"></i><span class="sidebar-mini-hide">Supplier</span></a>
+	            <ul>
+	                <li>
+	                    <a class="@yield('supplier-list')" href="{{ url('supplier') }}">List</a>
+	                </li>
+	                <li>
+	                    <a class="@yield('supplier-tambah')" href="{{ url('supplier/create') }}">Tambah</a>
+	                </li>
+	            </ul>
 	        </li>
 	        <li class="@yield('user')">
 	            <a class="@yield('user-menu')" href="{{ url('user') }}"><i class="si si-trophy"></i><span class="sidebar-mini-hide">User</span></a>

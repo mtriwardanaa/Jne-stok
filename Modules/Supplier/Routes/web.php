@@ -1,16 +1,10 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
-
-Route::middleware('auth_user')->prefix('supplier')->group(function() {
+Route::middleware(['auth_user', 'stokga'])->prefix('supplier')->group(function() {
     Route::get('/', 'SupplierController@list');
+    Route::get('/create', 'SupplierController@create');
+    Route::post('/store', 'SupplierController@store');
+    Route::get('/edit/{id}', 'SupplierController@edit');
+    Route::post('/update/{id}', 'SupplierController@update');
+    Route::get('/delete/{id}', 'SupplierController@delete');
 });
