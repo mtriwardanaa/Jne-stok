@@ -29,12 +29,26 @@
 	        </li>
         @endif
         <li class="@yield('request')">
-            <a class="@yield('request-list')" href="{{ url('order') }}"><i class="si si-energy"></i><span class="sidebar-mini-hide">Request / Order</span></a>
+            <a class="@yield('request-list')" href="{{ url('order') }}">
+            	<i class="si si-energy"></i><span class="sidebar-mini-hide">Request / Order</span>
+            	@if(session('get_order') != null)
+					@if (session('get_order') > 0)
+            			<span class="badge badge-pill badge-danger banitem" style="color: black">{{ session('get_order') }}</span>
+            		@endif
+        		@endif
+            </a>
         </li>
         @if (Auth::user()->id_divisi == 10)
 	        <li class="nav-main-heading"><span class="sidebar-mini-visible">BD</span><span class="sidebar-mini-hidden">Data</span></li>
 	        <li class="@yield('barang')">
-	            <a class="nav-submenu" data-toggle="nav-submenu" href="#"><i class="si si-vector"></i><span class="sidebar-mini-hide">Barang</span></a>
+	            <a class="nav-submenu" data-toggle="nav-submenu" href="#">
+	            	<i class="si si-vector"></i><span class="sidebar-mini-hide">Barang</span> 
+	            	@if(session('barang') != null)
+						@if (session('barang') > 0)
+	            			<span class="badge badge-pill badge-warning banitem" style="color: black">{{ session('barang') }}</span>
+	            		@endif
+            		@endif
+	            </a>
 	            <ul>
 	                <li>
 	                    <a class="@yield('barang-list')" href="{{ url('barang') }}">List</a>

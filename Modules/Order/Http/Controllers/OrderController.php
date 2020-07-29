@@ -192,19 +192,6 @@ class OrderController extends Controller
     			];
 
     			$data_barang_order_detail[] = $data_detail;
-
-    			$check_barang = Barang::where('id', $value)->first();
-    			if (empty($check_barang)) {
-    				DB::rollback();
-    				return back()->withErrors(['Barang tidak ditemukan'])->withInput();
-    			}
-
-    			$check_barang->qty_barang = $check_barang->qty_barang - $post['jumlah_barang'][$key];
-    			$check_barang->update();
-    			if (!$check_barang) {
-    				DB::rollback();
-    				return back()->withErrors(['Update jumlah barang gagal'])->withInput();
-    			}
     		}
 
     		if (!empty($data_barang_order_detail)) {

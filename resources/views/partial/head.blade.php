@@ -28,5 +28,17 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,400i,600,700&display=swap">
     <link rel="stylesheet" id="css-main" href="{{ url('assets/css/codebase.min.css') }}">
 
+    <style type="text/css">
+    	.banitem {
+	      -webkit-animation:bounce 1s infinite;
+	    }
+	    
+	    @-webkit-keyframes bounce {
+	      0%       { bottom:5px; }
+	      25%, 75% { bottom:15px; }
+	      50%      { bottom:20px; }
+	      100%     {bottom:0;}
+	    }
+    </style>
     @yield('css')
 </head>
