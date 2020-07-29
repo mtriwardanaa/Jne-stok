@@ -72,6 +72,6 @@ class BarangKeluar extends Model
 
     public function detailStok()
     {
-        return $this->hasMany('App\Barangharga', 'id_barang_keluar');
+        return $this->hasMany('App\BarangHarga', 'id_barang_keluar');
     }
 }
