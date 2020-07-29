@@ -34,7 +34,7 @@ class BarangKeluar extends Model
     /**
      * @var array
      */
-    protected $fillable = ['id_divisi', 'id_order', 'id_kategori', 'created_by', 'updated_by', 'tanggal', 'created_at', 'updated_at', 'deleted_at'];
+    protected $fillable = ['no_barang_keluar', 'id_divisi', 'id_order', 'id_kategori', 'created_by', 'updated_by', 'tanggal', 'created_at', 'updated_at', 'deleted_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -68,5 +68,10 @@ class BarangKeluar extends Model
     public function details()
     {
         return $this->hasMany('App\BarangKeluarDetail', 'id_barang_keluar');
+    }
+
+    public function detailStok()
+    {
+        return $this->hasMany('App\Barangharga', 'id_barang_keluar');
     }
 }

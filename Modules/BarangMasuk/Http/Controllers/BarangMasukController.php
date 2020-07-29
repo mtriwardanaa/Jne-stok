@@ -8,6 +8,7 @@ use Illuminate\Routing\Controller;
 
 use App\Barang;
 use App\BarangMasuk;
+use App\BarangHarga;
 use App\BarangMasukDetail;
 use App\Supplier;
 
@@ -73,7 +74,7 @@ class BarangMasukController extends Controller
     	$user = Auth::user();
     	$data_barang_masuk = [
 			'tanggal'         => date('Y-m-d H:i:s', strtotime($post['tanggal'].' '.$post['jam'])),
-			'no_barang_masuk' => 'NBK-'.date('md').'-'.$user->id.$user->id_divisi.date('His'),
+			'no_barang_masuk' => 'NBM-'.date('md').'-'.$user->id.$user->id_divisi.date('His'),
 			'created_by'      => $user->id
     	];
 
@@ -99,6 +100,18 @@ class BarangMasukController extends Controller
 
     			$data_barang_masuk_detail[] = $data_detail;
 
+    			$data_stok = [
+					'id_barang_masuk' => $create_barang_masuk['id'],
+					'id_barang'       => $value,
+					'qty_barang'      => $post['jumlah_barang'][$key],
+					'harga_barang'    => $post['harga'][$key],
+					'tanggal_barang'  => $create_barang_masuk['tanggal'],
+					'created_at'      => date('Y-m-d H:i:s'),
+					'updated_at'      => date('Y-m-d H:i:s'),
+    			];
+
+    			$data_barang_harga[] = $data_stok;
+
     			$check_barang = Barang::where('id', $value)->first();
     			if (empty($check_barang)) {
     				DB::rollback();
@@ -120,6 +133,14 @@ class BarangMasukController extends Controller
     			if (!$create_detail) {
     				DB::rollback();
     				return back()->withErrors(['Tambah barang masuk detail gagal'])->withInput();
+    			}
+    		}
+
+    		if (!empty($data_barang_harga)) {
+    			$create_stok = BarangHarga::insert($data_barang_harga);
+    			if (!$create_stok) {
+    				DB::rollback();
+    				return back()->withErrors(['Tambah barang masuk stok gagal'])->withInput();
     			}
     		}
     	}

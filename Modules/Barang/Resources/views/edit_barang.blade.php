@@ -45,7 +45,7 @@
                 	<div class="col-4">
                         <div class="form-material">
                             <input type="text" class="form-control number price" maxlength="20" id="material-gridff" value="{{ $barang['harga_barang'] }}" name="harga_barang" placeholder="Masukkan harga barang saat ini" required>
-                            <label for="material-gridf">Minimal Stok</label>
+                            <label for="material-gridf">Harga Barang</label>
                         </div>
                     </div>
                     <div class="col-4">

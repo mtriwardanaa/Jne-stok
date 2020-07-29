@@ -22,7 +22,7 @@
                 <thead>
                     <tr>
                         <th class="text-center">No</th>
-                        <th>No Order</th>
+                        <th>No Barang Masuk</th>
                         <th>Tanggal</th>
                         <th>Input By</th>
                         <th class="text-center">Action</th>

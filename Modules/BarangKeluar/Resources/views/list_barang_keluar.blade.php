@@ -15,63 +15,36 @@
 	@include('partial.notification')
 	<div class="block">
         <div class="block-header block-header-default">
-            <h3 class="block-title">Barang <small>Keluar</small></h3>
+            <h3 class="block-title">Barang Keluar <small>List</small></h3>
         </div>
         <div class="block-content block-content-full">
-	       	<table class="js-table-sections table table-hover">
+            <table class="table table-bordered table-striped table-vcenter js-dataTable-full">
                 <thead>
                     <tr>
-                        <th style="width: 30px;"></th>
+                        <th class="text-center">No</th>
+                        <th>No Barang Keluar</th>
                         <th>Tanggal</th>
-                        <th>Divisi</th>
-                        <th>Agen Kategori</th>
-                        <th>User Create</th>
-                        <th>User Update</th>
-                        <th>Action</th>
+                        <th>Input By</th>
+                        <th class="text-center">Action</th>
                     </tr>
                 </thead>
-                @if (!empty($list))
+                <tbody>
                 	@foreach ($list as $key => $value)
-                		<tbody class="js-table-sections-header">
-		                    <tr style="background-color: #f6f6f6;">
-		                        <td class="text-center">
-		                            <i class="fa fa-angle-right"></i>
-		                        </td>
-		                        <td class="font-w600">{{ date('d F Y H:i', strtotime($value['tanggal'])) }}</td>
-		                        <td>{{ $value['divisi']['nama'] }}</td>
-		                        <td>{{ $value['kategori']['nama'] ?? '-' }}</td>
-		                        <td class="font-w600">{{ $value['user']['nama'] }}</td>
-		                        <td class="font-w600">{{ $value['user_update']['nama'] ?? "-" }}</td>
-		                        <td>
-	                                <div class="btn-group">
-	                                	<a href="{{ url('barangkeluar/edit', $value['id']) }}" class="btn btn-sm btn-info" data-toggle="click-ripple" title="Edit"><i class="fa fa-pencil"></i> Edit</a>
-                                    </div>
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="{{ $value['id'] }}" data-toggle="click-ripple" title="Delete">
-                                            <i class="fa fa-times"></i> Hapus
-                                        </button>
-                                    </div>
-	                            </td>
-		                    </tr>
-		                </tbody>
-		                <tbody>
-		                	@if (!empty($value['details']))
-	                			<tr>
-			                        <td class="text-center"></td>
-			                        <td class="font-w600 text-success">Nama Barang</td>
-			                        <td class="font-w600 text-info">Jumlah Barang</td>
-			                    </tr>
-		                		@foreach ($value['details'] as $row => $detail)
-				                    <tr>
-				                        <td class="text-center"></td>
-				                        <td class="font-w600">{{ $detail['stok_barang']['nama_barang'] }}</td>
-				                        <td class="font-w600">{{ $detail['qty_barang'] }} {{ $detail['stok_barang']['stok_barang_satuan']['nama_satuan'] }}</td>
-				                    </tr>
-		                		@endforeach
-		                	@endif
-		                </tbody>
-                	@endforeach
-                @endif
+	                    <tr>
+	                        <td class="text-center">{{ $key+1 }}</td>
+	                        <td class="font-w600">{{ $value['no_barang_keluar'] }}</td>
+	                        <td class="font-w600">{{ date('d F Y H:i', strtotime($value['tanggal'])) }}</td>
+	                        <td class="font-w600">{{ $value['user']['nama'] }}</td>
+	                        <td class="text-center">
+	                        	<a href="{{ url('barangkeluar/detail', $value['id']) }}">
+	                        		<button type="button" class="btn btn-sm btn-primary" data-toggle="tooltip" title="Detail Barang Keluar">
+		                                Detail
+		                            </button>
+	                        	</a>
+	                        </td>
+	                    </tr>
+                    @endforeach
+                </tbody>
             </table>
         </div>
     </div>
@@ -89,7 +62,7 @@
 			var id = $(this).data('id');
 			Swal.fire({
 				title: 'Are you sure?',
-				text: "Barang keluar akan dihapus",
+				text: "Barang masuk akan dihapus",
 				icon: 'warning',
 				showCancelButton: true,
 				confirmButtonColor: '#3085d6',
@@ -98,7 +71,7 @@
 				cancelButtonText: 'Tidak'
 			}).then((result) => {
   				if (result.value) {
-  					var url = "{{ url('barangkeluar/delete') }}/"+id;
+  					var url = "{{ url('barangmasuk/delete') }}/"+id;
   					window.location.href = url;
   				}
 			})

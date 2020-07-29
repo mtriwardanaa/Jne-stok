@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property integer $id
  * @property integer $id_barang_masuk
+ * @property integer $id_barang_keluar
  * @property integer $id_barang
  * @property int $qty_barang
  * @property string $harga_barang
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $created_at
  * @property string $updated_at
  * @property StokBarang $stokBarang
+ * @property StokBarangKeluar $stokBarangKeluar
  * @property StokBarangMasuk $stokBarangMasuk
  */
 class BarangHarga extends Model
@@ -35,14 +37,22 @@ class BarangHarga extends Model
     /**
      * @var array
      */
-    protected $fillable = ['id_barang_masuk', 'id_barang', 'qty_barang', 'harga_barang', 'tanggal_barang', 'created_at', 'updated_at'];
+    protected $fillable = ['id_barang_masuk', 'id_barang_keluar', 'id_barang', 'qty_barang', 'min_barang', 'harga_barang', 'tanggal_barang', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function stokBarang()
     {
-        return $this->belongsTo('App\StokBarang', 'id_barang');
+        return $this->belongsTo('App\Barang', 'id_barang');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function stokBarangKeluar()
+    {
+        return $this->belongsTo('App\BarangKeluar', 'id_barang_keluar');
     }
 
     /**
@@ -50,6 +60,6 @@ class BarangHarga extends Model
      */
     public function stokBarangMasuk()
     {
-        return $this->belongsTo('App\StokBarangMasuk', 'id_barang_masuk');
+        return $this->belongsTo('App\BarangMasuk', 'id_barang_masuk');
     }
 }

@@ -1,10 +1,10 @@
 @extends('master')
 
-@section('title', 'Barang Masuk')
-@section('barang-masuk', 'open')
-@section('barang-masuk-tambah', 'active')
+@section('title', 'Request / Order')
+@section('request', 'open')
+@section('request-list', 'active')
 
-@section('head-title', 'Barang Masuk')
+@section('head-title', 'Request / Order')
 @section('head-sub-title', 'Tambah')
 
 @section('css')

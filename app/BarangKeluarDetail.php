@@ -35,7 +35,7 @@ class BarangKeluarDetail extends Model
     /**
      * @var array
      */
-    protected $fillable = ['id_barang_keluar', 'id_barang', 'qty_barang', 'created_at', 'updated_at'];
+    protected $fillable = ['id_barang_keluar', 'id_barang', 'qty_barang', 'harga_barang', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
