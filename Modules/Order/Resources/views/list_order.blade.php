@@ -38,7 +38,6 @@
                         <th>Tanggal</th>
                         <th>Divisi</th>
                         <th>Sub Agen</th>
-                        <th class="d-none d-sm-table-cell">Tanggal</th>
                         <th class="d-none d-sm-table-cell" style="width: 15%;">Status</th>
                         <th class="text-center" style="width: 15%;">Action</th>
                     </tr>
@@ -51,7 +50,6 @@
 	                        <td class="font-w600">{{ date('d F Y H:i', strtotime($value['tanggal'])) }}</td>
 	                        <td class="font-w600">{{ $value['divisi']['nama'] }}</td>
 	                        <td class="font-w600">{{ $value['kategori']['nama'] ?? "-" }}</td>
-	                        <td class="d-none d-sm-table-cell">{{ date('d F Y', strtotime($value['tanggal'])) }}</td>
 	                        <td class="d-none d-sm-table-cell">
 	                        	@if (isset($value['approved_by']))
 	                            	<span class="badge badge-success">DITERIMA</span>

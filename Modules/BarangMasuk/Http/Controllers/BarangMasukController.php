@@ -19,6 +19,7 @@ class BarangMasukController extends Controller
     public function list()
     {
     	$list = BarangMasuk::with('user', 'userUpdate', 'details.stokBarang.stokBarangSatuan', 'details.stokSupplier')->whereNull('deleted_at')->orderBy('tanggal', 'DESC')->get()->toArray();
+    	// return $list;
         return view('barangmasuk::list_barang_masuk', ['list' => $list]);
     }
 
@@ -37,14 +38,43 @@ class BarangMasukController extends Controller
     	return view('barangmasuk::create_barang_masuk', ['barang' => $barang, 'supplier' => $supplier]);
     }
 
+    public function detail(Request $request, $id)
+    {
+    	$list = BarangMasuk::with('user', 'userUpdate', 'details.stokBarang.stokBarangSatuan', 'details.stokSupplier')->where('id', $id)->whereNull('deleted_at')->orderBy('tanggal', 'DESC')->first();
+    	if (empty($list)) {
+    		return back()->withErrors(['Data barang masuk tidak ditemukan']);
+    	}
+    	
+    	$total_barang = 0;
+    	$total_stok = 0;
+    	$total_harga = 0;
+
+    	if (isset($list['details'])) {
+    		foreach ($list['details'] as $key => $value) {
+    			$total_barang++;
+    			$total_stok = $total_stok + $value['qty_barang'];
+    			$total_harga = $total_harga + $value['harga_barang'];
+    		}
+    	}
+
+    	$data = [
+			'total_barang' => $total_barang,
+			'total_stok'   => $total_stok,
+			'total_harga'  => $total_harga,
+    	];
+
+    	return view('barangmasuk::detail_barang_masuk', ['data' => $list, 'post' => $data]);
+    }
+
     public function store(Request $request)
     {
     	DB::beginTransaction();
     	$post = $request->except('_token');
     	$user = Auth::user();
     	$data_barang_masuk = [
-    		'tanggal' => date('Y-m-d H:i:s', strtotime($post['tanggal'].' '.$post['jam'])),
-    		'created_by' => $user->id
+			'tanggal'         => date('Y-m-d H:i:s', strtotime($post['tanggal'].' '.$post['jam'])),
+			'no_barang_masuk' => 'NBK-'.date('md').'-'.$user->id.$user->id_divisi.date('His'),
+			'created_by'      => $user->id
     	];
 
     	$create_barang_masuk = BarangMasuk::create($data_barang_masuk);
@@ -55,11 +85,13 @@ class BarangMasukController extends Controller
 
     	if (isset($post['id_barang'])) {
     		$data_barang_masuk_detail = [];
+    		$data_barang_harga = [];
     		foreach ($post['id_barang'] as $key => $value) {
     			$data_detail = [
 					'id_barang_masuk' => $create_barang_masuk['id'],
 					'id_barang'       => $value,
 					'qty_barang'      => $post['jumlah_barang'][$key],
+					'harga_barang'    => $post['harga'][$key],
 					'id_supplier'     => $post['supplier_barang'][$key],
 					'created_at'      => date('Y-m-d H:i:s'),
 					'updated_at'      => date('Y-m-d H:i:s'),
@@ -72,6 +104,8 @@ class BarangMasukController extends Controller
     				DB::rollback();
     				return back()->withErrors(['Barang tidak ditemukan'])->withInput();
     			}
+
+    			$data_stok = [];
 
     			$check_barang->qty_barang = $check_barang->qty_barang + $post['jumlah_barang'][$key];
     			$check_barang->update();
