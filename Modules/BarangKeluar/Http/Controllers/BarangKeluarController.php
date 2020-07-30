@@ -93,7 +93,6 @@ class BarangKeluarController extends Controller
     	];
 
     	$create_barang_keluar = BarangKeluar::create($data_barang_keluar);
-    	// return $create_barang_keluar;
     	if (!$create_barang_keluar) {
     		DB::rollback();
     		return back()->withErrors(['Tambah barang keluar gagal'])->withInput();

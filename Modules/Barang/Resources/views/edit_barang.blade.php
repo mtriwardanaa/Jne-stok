@@ -71,7 +71,7 @@
                 </div>
                 <div class="form-group row">
                     <div class="col-md-9">
-                        <button type="submit" class="btn btn-alt-primary">Update</button>
+                        <button type="submit" class="btn btn-alt-primary">Update Barang</button>
                     </div>
                 </div>
             </form>

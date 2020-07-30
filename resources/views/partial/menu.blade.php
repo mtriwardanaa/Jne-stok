@@ -39,6 +39,12 @@
             </a>
         </li>
         @if (Auth::user()->id_divisi == 10)
+	        <li class="nav-main-heading"><span class="sidebar-mini-visible">BD</span><span class="sidebar-mini-hidden">Summary</span></li>
+	        <li class="@yield('report')">
+	            <a class="@yield('report-list')" href="{{ url('report') }}">
+	            	<i class="si si-layers"></i><span class="sidebar-mini-hide">Report</span>
+	            </a>
+	        </li>
 	        <li class="nav-main-heading"><span class="sidebar-mini-visible">BD</span><span class="sidebar-mini-hidden">Data</span></li>
 	        <li class="@yield('barang')">
 	            <a class="nav-submenu" data-toggle="nav-submenu" href="#">

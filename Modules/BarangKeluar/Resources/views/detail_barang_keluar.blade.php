@@ -94,7 +94,7 @@
 	                        </div>
 	                        <div class="col-md-3">
 	                            <div class="form-material">
-	                                <input type="text" class="form-control" disabled value="{{ $post['total_stok'] }} Stok">
+	                                <input type="text" class="form-control" disabled value="{{ $post['total_stok'] }} Item">
 	                                <label for="material-text">Total Stok</label>
 	                            </div>
 	                        </div>
@@ -121,7 +121,6 @@
 			                        <th>Nama Barang</th>
 			                        <th>Jumlah Barang</th>
 			                        <th>Harga</th>
-			                        <th>Satuan</th>
 			                    </tr>
 			                </thead>
 			                <tbody>
@@ -130,8 +129,7 @@
 				                        <td class="text-center">{{ $key+1 }}</td>
 				                        <td class="font-w600">{{ $row['stokBarang']['kode_barang'] }}</td>
 				                        <td class="font-w600">{{ $row['stokBarang']['nama_barang'] }}</td>
-				                        <td class="font-w600">{{ $row['qty_barang'] }}</td>
-				                        <td class="font-w600">{{ $row['stokBarang']['stokBarangSatuan']['nama_satuan'] }}</td>
+				                        <td class="font-w600">{{ $row['qty_barang'] }} {{ $row['stokBarang']['stokBarangSatuan']['nama_satuan'] }}</td>
 				                        <td class="font-w600">Rp. {{ number_format($row['harga_barang']) }}</td>
 					                    </tr>
 			                    @endforeach

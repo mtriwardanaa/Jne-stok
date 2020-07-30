@@ -4,5 +4,6 @@
     "Supplier": true,
     "BarangMasuk": true,
     "BarangKeluar": true,
-    "Order": true
+    "Order": true,
+    "Report": true
 }

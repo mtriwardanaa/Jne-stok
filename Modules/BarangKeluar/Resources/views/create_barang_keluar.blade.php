@@ -129,7 +129,7 @@
 	                    <div class="form-tambah"></div>
 	                    <div class="form-group row">
 	                        <div class="col-md-9">
-	                            <button type="submit" class="btn btn-alt-primary">Submit</button>
+	                            <button type="submit" class="btn btn-alt-primary">Simpan Barang Keluar</button>
 	                        </div>
 	                    </div>
 	                </div>

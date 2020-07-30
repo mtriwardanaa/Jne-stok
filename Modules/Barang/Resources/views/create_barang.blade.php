@@ -71,7 +71,7 @@
                 </div>
                 <div class="form-group row">
                     <div class="col-md-9">
-                        <button type="submit" class="btn btn-alt-primary">Simpan</button>
+                        <button type="submit" class="btn btn-alt-primary">Simpan Barang</button>
                     </div>
                 </div>
             </form>

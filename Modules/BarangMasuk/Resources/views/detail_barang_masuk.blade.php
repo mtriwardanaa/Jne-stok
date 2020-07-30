@@ -103,7 +103,6 @@
 			                        <th>Nama Barang</th>
 			                        <th>Jumlah Barang</th>
 			                        <th>Harga</th>
-			                        <th>Satuan</th>
 			                        <th>Supplier</th>
 			                    </tr>
 			                </thead>
@@ -113,8 +112,7 @@
 				                        <td class="text-center">{{ $key+1 }}</td>
 				                        <td class="font-w600">{{ $row['stokBarang']['kode_barang'] }}</td>
 				                        <td class="font-w600">{{ $row['stokBarang']['nama_barang'] }}</td>
-				                        <td class="font-w600">{{ $row['qty_barang'] }}</td>
-				                        <td class="font-w600">{{ $row['stokBarang']['stokBarangSatuan']['nama_satuan'] }}</td>
+				                        <td class="font-w600">{{ $row['qty_barang'] }} {{ $row['stokBarang']['stokBarangSatuan']['nama_satuan'] }}</td>
 				                        <td class="font-w600">Rp. {{ number_format($row['harga_barang']) }}</td>
 				                        <td class="font-w600">{{ $row['stokSupplier']['nama_supplier'] }}</td>
 					                    </tr>
