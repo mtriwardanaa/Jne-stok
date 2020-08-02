@@ -133,4 +133,9 @@ class ReportController extends Controller
         ];
     }
 
+    public function stok()
+    {
+    	return view('report::opname');
+    }
+
 }
