@@ -9,10 +9,15 @@ use Illuminate\Routing\Controller;
 use App\Divisi;
 use App\AgenKategori;
 use App\BarangKeluar;
+use App\Barang;
+use App\BarangHarga;
 
 use Excel;
+use Auth;
+use PDF;
 
 use App\Exports\ReportExport;
+use App\Lib\MyHelper;
 
 class ReportController extends Controller
 {
@@ -28,7 +33,10 @@ class ReportController extends Controller
     		return redirect('kategori')->withErrors(['Agen Kategori masih kosong, silahkan input kategori terlebih dahulu']);
     	}
 
-        return view('report::index', ['divisi' => $divisi, 'kategori' => $kategori]);
+    	$bulan = date('m');
+    	$tahun = date('Y');
+
+        return view('report::index', ['divisi' => $divisi, 'bulan' => $bulan, 'tahun' => $tahun, 'kategori' => $kategori]);
     }
 
     public function print(Request $request)
@@ -133,9 +141,99 @@ class ReportController extends Controller
         ];
     }
 
-    public function stok()
+    public function stok(Request $request)
     {
-    	return view('report::opname');
+    	$post = $request->except('_token');
+
+    	$stock_no = $post['bulan'].'/SO/V/'.$post['tahun'];
+    	$group = 'ALL';
+    	$periode_mulai = date($post['tahun'].'-'.$post['bulan'].'-01');
+    	$periode_akhir = date($post['tahun'].'-'.$post['bulan'].'-t');
+    	$opname_no = 'F/PMD/'.date('m-d', strtotime($periode_mulai)).'/00';
+
+    	$text_periode_awal = MyHelper::indonesian_date($periode_mulai, 'd F Y');
+    	$text_periode_akhir = MyHelper::indonesian_date($periode_akhir, 'd F Y');
+
+    	$report = [];
+    	$barang = Barang::get()->toArray();
+    	if (!empty($barang)) {
+    		$sort = array_column($barang, 'nama_barang');
+
+			array_multisort($sort, SORT_ASC, $barang);
+
+    		$report = array_map(function($arr) use ($periode_mulai, $periode_akhir) {
+    			$data = [
+    				'kode_barang' => $arr['kode_barang'],
+    				'nama_barang' => $arr['nama_barang'],
+    			];
+
+    			//jumlah sebelumnya
+    			$total_masuk_awal = 0;
+    			$total_keluar_awal = 0;
+
+    			$masuk_awal = BarangHarga::where('id_barang', $arr['id'])->where('tanggal_barang', '<', date('Y-m-d 00:00:00', strtotime($periode_mulai)))->whereNotNull('id_barang_masuk')->get()->toArray();
+    			if (!empty($masuk_awal)) {
+    				$column = array_column($masuk_awal, 'qty_barang');
+    				$total_masuk_awal = array_sum($column);
+    			}
+
+    			$keluar_awal = BarangHarga::where('id_barang', $arr['id'])->where('tanggal_barang', '<', date('Y-m-d 00:00:00', strtotime($periode_mulai)))->whereNotNull('id_barang_keluar')->get()->toArray();
+    			if (!empty($keluar_awal)) {
+    				$column = array_column($keluar_awal, 'qty_barang');
+    				$total_keluar_awal = array_sum($column);
+    			}
+
+    			$data['stok'] = $total_masuk_awal - $total_keluar_awal;
+
+    			//jumlah sekarang
+    			$total_masuk_akhir = 0;
+    			$total_keluar_akhir = 0;
+
+    			$masuk_awal = BarangHarga::where('id_barang', $arr['id'])->where('tanggal_barang', '<', date('Y-m-d 00:00:00', strtotime($periode_akhir)))->whereNotNull('id_barang_masuk')->get()->toArray();
+    			if (!empty($masuk_awal)) {
+    				$column = array_column($masuk_awal, 'qty_barang');
+    				$total_masuk_akhir = array_sum($column);
+    			}
+
+    			$keluar_awal = BarangHarga::where('id_barang', $arr['id'])->where('tanggal_barang', '<', date('Y-m-d 00:00:00', strtotime($periode_akhir)))->whereNotNull('id_barang_keluar')->get()->toArray();
+    			if (!empty($keluar_awal)) {
+    				$column = array_column($keluar_awal, 'qty_barang');
+    				$total_keluar_akhir = array_sum($column);
+    			}
+
+    			$data['opname'] = $total_masuk_akhir - $total_keluar_akhir;
+    			return $data;
+			}, $barang);
+    	}
+
+    	$pelaksana = ucwords(strtolower(Auth::user()->nama));
+    	$koordinator = ucwords(strtolower($post['koordinator']));
+    	$audit = ucwords(strtolower($post['audit']));
+
+    	$data = [
+			'stock_no'           => $stock_no,
+			'group'              => $group,
+			'periode_mulai'      => $periode_mulai,
+			'periode_akhir'      => $periode_akhir,
+			'text_periode_awal'  => $text_periode_awal,
+			'text_periode_akhir' => $text_periode_akhir,
+			'opname_no'          => $opname_no,
+			'pelaksana'          => $pelaksana,
+			'koordinator'        => $koordinator,
+			'audit'              => $audit,
+			'report'             => $report,
+    	];
+
+    	return view('report::opname', $data);
+    }
+
+    public function stokCetak()
+    {
+    	$pdf = PDF::loadview('report::testing');
+		return $pdf->stream();
+
+    	$pdf = PDF::loadview('report::opname');
+    	return $pdf->download('laporan-pdf.pdf');
     }
 
 }

@@ -66,6 +66,67 @@
 	        </form>
         </div>
     </div>
+
+    <div class="block">
+        <div class="block-header block-header-default">
+            <h3 class="block-title">Stok Opname <small>Report (bulanan)</small></h3>
+        </div>
+        <div class="block-content block-content-full">
+        	<form action="{{ url('report/print/stok') }}" method="post">
+			@csrf
+	        	<div class="form-group row">
+	                <div class="col-md-3">
+	                    <div class="form-material">
+	                        <select class="js-select2 form-control select_bulan" name="bulan" data-placeholder="Pilih bulan" required>
+                            	<option ></option>
+                            	<option value="01" @if ($bulan == "01") selected @endif>Januari</option>
+                            	<option value="02" @if ($bulan == "02") selected @endif>Februari</option>
+                            	<option value="03" @if ($bulan == "03") selected @endif>Maret</option>
+                            	<option value="04" @if ($bulan == "04") selected @endif>April</option>
+                            	<option value="05" @if ($bulan == "05") selected @endif>Mei</option>
+                            	<option value="06" @if ($bulan == "06") selected @endif>Juni</option>
+                            	<option value="07" @if ($bulan == "07") selected @endif>Juli</option>
+                            	<option value="08" @if ($bulan == "08") selected @endif>Agustus</option>
+                            	<option value="09" @if ($bulan == "09") selected @endif>September</option>
+                            	<option value="10" @if ($bulan == "10") selected @endif>Oktober</option>
+                            	<option value="11" @if ($bulan == "11") selected @endif>November</option>
+                            	<option value="12" @if ($bulan == "12") selected @endif>Desember</option>
+                            </select>
+	                        <label for="material-text">Bulan</label>
+	                    </div>
+	                </div>
+	                <div class="col-md-3">
+	                    <div class="form-material">
+	                        <select class="js-select2 form-control select_tahun" name="tahun" data-placeholder="Pilih tahun" required>
+                            	<option ></option>
+                            	@for ($i=date('Y'); $i >= (date('Y')-2); $i--)
+                            		<option value="{{ $i }}" @if ($tahun == $i) selected @endif>{{ $i }}</option>
+                            	@endfor
+                            </select>
+	                        <label for="material-text">Tahun</label>
+	                    </div>
+	                </div>
+	                <div class="col-md-3">
+	                    <div class="form-material">
+	                        <input type="text" class="form-control" name="koordinator" value="Heri Setiawan" required>
+	                        <label for="material-text">Koordinator GA</label>
+	                    </div>
+	                </div>
+	                <div class="col-md-3">
+	                    <div class="form-material">
+	                        <input type="text" class="form-control" name="audit" value="M. Ramdani" required>
+	                        <label for="material-text">Autdit Internal</label>
+	                    </div>
+	                </div>
+	            </div><br>
+	            <div class="form-group row">
+                    <div class="col-md-9">
+                        <button type="submit" class="btn btn-alt-primary">Print Report</button>
+                    </div>
+                </div>
+	        </form>
+        </div>
+    </div>
 @endsection
 
 @section('script')
