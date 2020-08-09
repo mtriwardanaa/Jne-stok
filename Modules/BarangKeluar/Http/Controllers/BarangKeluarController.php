@@ -11,6 +11,7 @@ use App\BarangHarga;
 use App\BarangKeluarDetail;
 use App\Barang;
 use App\Supplier;
+use App\User;
 use App\Divisi;
 use App\AgenKategori;
 
@@ -28,7 +29,7 @@ class BarangKeluarController extends Controller
 
     public function detail(Request $request, $id)
     {
-    	$list = BarangKeluar::with('user', 'userUpdate', 'details.stokBarang.stokBarangSatuan', 'detailStok.stokBarang.stokBarangSatuan', 'divisi', 'kategori')->whereNull('deleted_at')->where('id', $id)->orderBy('tanggal', 'DESC')->first();
+    	$list = BarangKeluar::with('user', 'agen', 'userUpdate', 'details.stokBarang.stokBarangSatuan', 'detailStok.stokBarang.stokBarangSatuan', 'divisi', 'kategori')->whereNull('deleted_at')->where('id', $id)->orderBy('tanggal', 'DESC')->first();
     	// return $list;
 
     	$total_barang = 0;
@@ -45,7 +46,7 @@ class BarangKeluarController extends Controller
     			}
 
     			$total_stok = $total_stok + $value['qty_barang'];
-    			$total_harga = $total_harga + $value['harga_barang'];
+    			$total_harga = $total_harga + ($value['harga_barang'] * $value['qty_barang']);
     		}
     	}
 
@@ -75,7 +76,9 @@ class BarangKeluarController extends Controller
     		return redirect('kategori')->withErrors(['Agen Kategori masih kosong, silahkan input kategori terlebih dahulu']);
     	}
 
-    	return view('barangkeluar::create_barang_keluar', ['barang' => $barang, 'divisi' => $divisi, 'kategori' => $kategori]);
+    	$user = User::where('id_divisi', 13)->get()->toArray();
+
+    	return view('barangkeluar::create_barang_keluar', ['barang' => $barang, 'user' => $user, 'divisi' => $divisi, 'kategori' => $kategori]);
     }
 
     public function store(Request $request)
@@ -85,11 +88,13 @@ class BarangKeluarController extends Controller
     	// return $post;
     	$user = Auth::user();
     	$data_barang_keluar = [
-			'tanggal'     => date('Y-m-d H:i:s', strtotime($post['tanggal'].' '.$post['jam'])),
-			'no_barang_keluar' => 'NBK-'.date('md').'-'.$user->id.$user->id_divisi.date('His'),
-			'id_divisi'   => $post['id_divisi'],
-			'id_kategori' => $post['id_kategori'],
-			'created_by'  => $user->id
+			'tanggal'           => date('Y-m-d H:i:s', strtotime($post['tanggal'].' '.$post['jam'])),
+			'no_barang_keluar'  => 'NBK-'.date('md').'-'.$user->id.$user->id_divisi.date('His'),
+			'id_divisi'         => $post['id_divisi'],
+			'id_kategori'       => $post['id_kategori'],
+			'created_by'        => $user->id,
+			'id_agen'           => $post['id_agen'],
+			'nama_user_request' => $post['nama_user'],
     	];
 
     	$create_barang_keluar = BarangKeluar::create($data_barang_keluar);

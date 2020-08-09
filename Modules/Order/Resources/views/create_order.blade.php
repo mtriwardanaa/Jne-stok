@@ -48,6 +48,18 @@
 	                    </div>
 	                    <div class="form-group row">
 	                        <div class="col-md-9">
+	                            <div class="form-material">
+	                            	@if (Auth::user()->id_divisi == 13 || Auth::user()->id_divisi == 23)
+	                                	<input type="text" name="nama_user" class="form-control" placeholder="Nama user yang request" required>
+	                                @else
+	                                	<input type="text" name="nama_user" class="form-control" value="{{ Auth::user()->nama }}" placeholder="Nama user yang request" required>
+	                                @endif
+	                                <label for="id_divisi">Nama</label>
+	                            </div>
+	                        </div>
+	                    </div>
+	                    <div class="form-group row">
+	                        <div class="col-md-9">
 	                        </div>
 	                    </div>
 	                </div>

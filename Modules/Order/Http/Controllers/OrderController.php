@@ -73,19 +73,25 @@ class OrderController extends Controller
     	}
 
     	$data = Order::with('approved_user', 'created_user', 'details.stokBarang.stokBarangSatuan', 'divisi', 'kategori')->where('id', $post['id_order'])->first();
+    	// return $data;
     	if (empty($data)) {
     		DB::rollback();
-    		return back()->withErrors(['Data tidak ditemukan']);	
+    		return back()->withErrors(['Data tidak ditemukan']);
     	}
 
     	$data_barang_keluar = [
-			'tanggal'          => date('Y-m-d H:i:s'),
-			'no_barang_keluar' => 'NBKO-'.date('md').'-'.$user->id.$user->id_divisi.date('His'),
-			'id_divisi'        => $data['id_divisi'],
-			'id_kategori'      => $data['id_kategori'],
-			'created_by'       => $user->id,
-			'id_order'         => $data->id,
+			'tanggal'           => date('Y-m-d H:i:s'),
+			'no_barang_keluar'  => 'NBKO-'.date('md').'-'.$user->id.$user->id_divisi.date('His'),
+			'id_divisi'         => $data['id_divisi'],
+			'id_kategori'       => $data['id_kategori'],
+			'created_by'        => $user->id,
+			'id_order'          => $data->id,
+			'nama_user_request' => $data['nama_user_request'],
     	];
+
+    	if ($data['id_divisi'] == 13) {
+    		$data_barang_keluar['id_agen'] = $data['created_user']['id'];
+    	}
 
     	$create_barang_keluar = BarangKeluar::create($data_barang_keluar);
     	if (!$create_barang_keluar) {
@@ -291,11 +297,12 @@ class OrderController extends Controller
     	$post = $request->except('_token');
     	$user = Auth::user();
     	$data_barang_order = [
-			'tanggal'     => date('Y-m-d H:i:s'),
-			'no_order'    => 'TRX-'.date('md').'-'.$user->id.$user->id_divisi.date('His'),
-			'id_divisi'   => $user->id_divisi,
-			'id_kategori' => $user->id_kategori ?? null,
-			'created_by'  => $user->id
+			'tanggal'           => date('Y-m-d H:i:s'),
+			'no_order'          => 'TRX-'.date('md').'-'.$user->id.$user->id_divisi.date('His'),
+			'id_divisi'         => $user->id_divisi,
+			'id_kategori'       => $user->id_agen_kategori ?? null,
+			'created_by'        => $user->id,
+			'nama_user_request' => $post['nama_user'],
     	];
 
     	$create_barang_order = Order::create($data_barang_order);

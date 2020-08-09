@@ -11,6 +11,7 @@ use App\AgenKategori;
 use App\BarangKeluar;
 use App\Barang;
 use App\BarangHarga;
+use App\User;
 
 use Excel;
 use Auth;
@@ -33,31 +34,64 @@ class ReportController extends Controller
     		return redirect('kategori')->withErrors(['Agen Kategori masih kosong, silahkan input kategori terlebih dahulu']);
     	}
 
+    	$user = User::where('id_divisi', 13)->get()->toArray();
+
     	$bulan = date('m');
     	$tahun = date('Y');
 
-        return view('report::index', ['divisi' => $divisi, 'bulan' => $bulan, 'tahun' => $tahun, 'kategori' => $kategori]);
+        return view('report::index', ['divisi' => $divisi, 'user' => $user, 'bulan' => $bulan, 'tahun' => $tahun, 'kategori' => $kategori]);
     }
 
     public function print(Request $request)
     {
     	$post = $request->except('_token');
-
+    	// return $post;
     	$check_divisi = Divisi::where('id', $post['id_divisi'])->first();
     	if (empty($check_divisi)) {
     		return back()->withErrors(['Divisi tidak ditemukan']);
     	}
 
+    	$title = str_replace( array( '\'', '"', ',' , ';', '<', '>' , '/'), ' ', $check_divisi->nama);
+
+    	if (isset($post['id_kategori'])) {
+    		$check_kategori = AgenKategori::where('id', $post['id_kategori'])->first();
+    		if (empty($check_kategori)) {
+	    		return back()->withErrors(['Sub Agen tidak ditemukan']);
+	    	}
+
+	    	$title = str_replace( array( '\'', '"', ',' , ';', '<', '>' , '/'), ' ', $check_divisi->nama.' ('.$check_kategori->nama.')');
+    	}
+
+    	if (isset($post['id_agen'])) {
+    		$check_agen = User::where('id', $post['id_agen'])->first();
+    		if (empty($check_agen)) {
+	    		return back()->withErrors(['Sub Agen tidak ditemukan']);
+	    	}
+
+	    	$title = str_replace( array( '\'', '"', ',' , ';', '<', '>' , '/'), ' ', $check_agen->nama);
+    	}
+
     	$tanggal_mulai = date('Y-m-d 00:00:00', strtotime($post['tanggal_mulai']));
     	$tanggal_selesai = date('Y-m-d 23:59:59', strtotime($post['tanggal_selesai']));
 
-    	$barang_keluar = BarangKeluar::with('detailStok.stokBarang.stokBarangSatuan')->where('id_divisi', $post['id_divisi'])->where('tanggal', '>=', $tanggal_mulai)->where('tanggal', '<=', $tanggal_selesai);
+    	$barang_keluar = BarangKeluar::with('detailStok.stokBarang.stokBarangSatuan', 'user')->where('id_divisi', $post['id_divisi'])->where('tanggal', '>=', $tanggal_mulai)->where('tanggal', '<=', $tanggal_selesai);
+
     	if (isset($post['id_kategori'])) {
     		$barang_keluar = $barang_keluar->where('id_kategori', $post['id_kategori']);
     	}
 
-    	$barang_keluar = $barang_keluar->get()->toArray();
+    	if (isset($post['id_agen'])) {
+    		$all_id_agen = [];
+    		$get_all_agen = User::where('nama', $check_agen->nama)->get()->toArray();
+    		if (!empty($get_all_agen)) {
+    			$all_id_agen = array_column($get_all_agen, 'id');
+    		}
 
+    		$barang_keluar = $barang_keluar->whereIn('id_agen', $all_id_agen);
+    	}
+
+    	$barang_keluar = $barang_keluar->get()->toArray();
+    	// return $barang_keluar;
     	$data_print = [];
 		$harga_total  = 0;
 		$total_barang = 0;
@@ -68,6 +102,8 @@ class ReportController extends Controller
 			$data_print[] = [
 				'tanggal'       => date('d-m-Y H:i', strtotime($arr['tanggal'])),
 				'no_transaksi'  => $arr['no_barang_keluar'],
+				'request_by'    => strtoupper($arr['nama_user_request']),
+				'proses_by'     => strtoupper($arr['user']['nama']),
 				'kode_barang'   => $arr['detail_stok'][0]['stok_barang']['kode_barang'],
 				'nama_barang'   => $arr['detail_stok'][0]['stok_barang']['nama_barang'],
 				'jumlah_barang' => $arr['detail_stok'][0]['qty_barang']. " ".$arr['detail_stok'][0]['stok_barang']['stok_barang_satuan']['nama_satuan'],
@@ -90,6 +126,8 @@ class ReportController extends Controller
             				$data_print[] = [
 								'tanggal'       => '',
 								'no_transaksi'  => '',
+								'request_by'    => '',
+								'proses_by'     => '',
 								'kode_barang'   => $value['stok_barang']['kode_barang'],
 								'nama_barang'   => $value['stok_barang']['nama_barang'],
 								'jumlah_barang' => $value['qty_barang']. " ".$value['stok_barang']['stok_barang_satuan']['nama_satuan'],
@@ -114,6 +152,8 @@ class ReportController extends Controller
         $data_print[] = [
 			'tanggal'       => '',
 			'no_transaksi'  => '',
+			'request_by'    => '',
+			'proses_by'     => '',
 			'kode_barang'   => '',
 			'nama_barang'   => '',
 			'jumlah_barang' => '',
@@ -125,7 +165,7 @@ class ReportController extends Controller
     	$data = json_decode(json_encode($data_print, JSON_NUMERIC_CHECK), true);
 
     	$heading = $this->heading();
-		return Excel::download(new ReportExport($data, $heading, $check_divisi->nama, 0), $nama.'.xlsx');
+		return Excel::download(new ReportExport($data, $heading, $title, 0), $nama.'.xlsx');
     }
 
     public function heading()
@@ -133,6 +173,8 @@ class ReportController extends Controller
 		return [
 			'TANGGAL',
             'No TRX',
+            'Direquest Oleh',
+            'Diproses Oleh',
             'KODE BARANG',
             'NAMA_BARANG',
             'JUMLAH BARANG',

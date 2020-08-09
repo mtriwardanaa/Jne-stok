@@ -72,6 +72,27 @@
 	                            </div>
 	                        </div>
 	                    </div>
+	                    <div class="form-group row div_nama_agen">
+	                        <div class="col-md-9">
+	                            <div class="form-material">
+	                                <select class="js-select2 form-control" id="example2-select22" name="id_agen" style="width: 100%;" data-placeholder="Pilih agen" required>
+	                                    <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
+	                                    @foreach ($user as $value)
+	                                    	<option value="{{ $value['id'] }}">{{ $value['nama'] }}({{ $value['username'] }})</option>
+	                                    @endforeach
+	                                </select>
+	                                <label for="id_divisi">Nama Agen</label>
+	                            </div>
+	                        </div>
+	                    </div>
+	                    <div class="form-group row">
+	                        <div class="col-md-9">
+	                            <div class="form-material">
+	                                <input type="text" name="nama_user" class="form-control" placeholder="Nama user yang request" required>
+	                                <label for="id_divisi">Nama user request</label>
+	                            </div>
+	                        </div>
+	                    </div>
 	                    <div class="form-group row">
 	                        <div class="col-md-9">
 	                        </div>
@@ -178,6 +199,16 @@
 			if (val != 23) {
 				$('.div_agen_kategori').hide();
 				$('#example2-select21').attr('required', false);
+				$('#example2-select21').val('');
+
+				if (val == 13) {
+					$('.div_nama_agen').show();
+					$('#example2-select22').attr('required', true);
+				} else {
+					$('.div_nama_agen').hide();
+					$('#example2-select22').attr('required', false);
+					$('#example2-select22').val('');
+				}
 			} else {
 				$('.div_agen_kategori').show();
 				$('#example2-select21').attr('required', true);

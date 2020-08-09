@@ -24,6 +24,8 @@
                         <th class="text-center">No</th>
                         <th>No Barang Keluar</th>
                         <th>Tanggal</th>
+                        <th>Divisi</th>
+                        <th>Request By</th>
                         <th>Input By</th>
                         <th class="text-center">Action</th>
                     </tr>
@@ -34,6 +36,8 @@
 	                        <td class="text-center">{{ $key+1 }}</td>
 	                        <td class="font-w600">{{ $value['no_barang_keluar'] }}</td>
 	                        <td class="font-w600">{{ date('d F Y H:i', strtotime($value['tanggal'])) }}</td>
+	                        <td class="font-w600">{{ $value['divisi']['nama'] }}</td>
+	                        <td class="font-w600">{{ strtoupper($value['nama_user_request']) }}</td>
 	                        <td class="font-w600">{{ $value['user']['nama'] }}</td>
 	                        <td class="text-center">
 	                        	<a href="{{ url('barangkeluar/detail', $value['id']) }}">

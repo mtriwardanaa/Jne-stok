@@ -63,6 +63,24 @@
 		                        </div>
 		                    </div>
 	                    @endif
+	                    @if (isset($data['id_agen']))
+	                    	<div class="form-group row">
+		                        <div class="col-md-9">
+		                            <div class="form-material">
+		                                <input type="text" class="form-control" value="{{ $data['agen']['nama'] }}" disabled>
+		                                <label for="material-password">Agen</label>
+		                            </div>
+		                        </div>
+		                    </div>
+	                    @endif
+	                    <div class="form-group row">
+	                        <div class="col-md-9">
+	                            <div class="form-material">
+	                                <input type="text" class="form-control" value="{{ strtoupper($data['nama_user_request']) }}" disabled>
+	                                <label for="material-password">User Request</label>
+	                            </div>
+	                        </div>
+	                    </div>
 	                    <div class="form-group row">
 	                        <div class="col-md-9">
 	                            <div class="form-material">

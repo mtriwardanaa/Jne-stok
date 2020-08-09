@@ -70,8 +70,8 @@ class ReportExport extends DefaultValueBinder implements FromCollection, WithHea
     public function columnFormats(): array
     {
         return [
-            'F' => '[$Rp] * #,##0;-[$Rp] * #,##0_-;_-[$Rp] * "-"??_-;_-@_-',
-            'G' => '[$Rp] * #,##0;-[$Rp] * #,##0_-;_-[$Rp] * "-"??_-;_-@_-',
+            'H' => '[$Rp] * #,##0;-[$Rp] * #,##0_-;_-[$Rp] * "-"??_-;_-@_-',
+            'I' => '[$Rp] * #,##0;-[$Rp] * #,##0_-;_-[$Rp] * "-"??_-;_-@_-',
         ];
     }
 

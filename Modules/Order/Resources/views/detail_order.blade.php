@@ -75,11 +75,21 @@
                             </div>
                         </div>
                     </div>
+                    @if (!isset($data['kategori']))
+	                    <div class="form-group row">
+	                        <div class="col-md-9">
+	                            <div class="form-material">
+	                                <input type="text" class="form-control" value="{{ $data['created_user']['nama'] }}" disabled>
+	                                <label for="material-password">Dibuat Oleh</label>
+	                            </div>
+	                        </div>
+	                    </div>
+	                @endif
                     <div class="form-group row">
                         <div class="col-md-9">
                             <div class="form-material">
-                                <input type="text" class="form-control" value="{{ $data['created_user']['nama'] }}" disabled>
-                                <label for="material-password">Dibuat Oleh</label>
+                                <input type="text" class="form-control" value="{{ strtoupper($data['nama_user_request']) }}" disabled>
+                                <label for="material-password">Nama User Request</label>
                             </div>
                         </div>
                     </div>

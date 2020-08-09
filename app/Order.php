@@ -38,7 +38,7 @@ class Order extends Model
     /**
      * @var array
      */
-    protected $fillable = ['id_divisi', 'no_order', 'tanggal_approve', 'id_kategori', 'created_by', 'approved_by', 'tanggal', 'created_at', 'updated_at', 'deleted_at'];
+    protected $fillable = ['id_divisi', 'no_order', 'tanggal_approve', 'id_kategori', 'created_by', 'approved_by', 'nama_user_request', 'tanggal', 'created_at', 'updated_at', 'deleted_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
