@@ -29,7 +29,7 @@ class BarangKeluarController extends Controller
 
     public function detail(Request $request, $id)
     {
-    	$list = BarangKeluar::with('user', 'agen', 'userUpdate', 'details.stokBarang.stokBarangSatuan', 'detailStok.stokBarang.stokBarangSatuan', 'divisi', 'kategori')->whereNull('deleted_at')->where('id', $id)->orderBy('tanggal', 'DESC')->first();
+    	$list = BarangKeluar::with('user', 'agen', 'userUpdate', 'invoice', 'details.stokBarang.stokBarangSatuan', 'detailStok.stokBarang.stokBarangSatuan', 'divisi', 'kategori')->whereNull('deleted_at')->where('id', $id)->orderBy('tanggal', 'DESC')->first();
     	// return $list;
 
     	$total_barang = 0;

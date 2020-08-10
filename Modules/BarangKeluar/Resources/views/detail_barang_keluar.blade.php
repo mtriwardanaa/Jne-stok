@@ -101,6 +101,20 @@
 	        	<div class="block">
 			        <div class="block-header block-header-default">
 			            <h3 class="block-title">Summary Barang keluar</small></h3>
+			            <div class="block-options">
+			            	@if (isset($data['invoice']))
+		                        <a href="{{ url('invoice/detail', $data['invoice']['id']) }}" class="btn btn-sm btn-success">
+		                            View Invoice
+		                        </a>
+		                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-popin">
+		                            Generate Ulang Invoice
+		                        </button>
+	                        @else
+		                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-popin">
+		                            Generate Invoice
+		                        </button>
+	                        @endif
+	                    </div>
 			        </div>
 			        <div class="block-content block-content-full">
 			            <div class="form-group row">
@@ -158,6 +172,78 @@
 	            <!-- END Static Labels -->
 	        </div>
 	    </div>
+
+	    <div class="modal fade" id="modal-popin" tabindex="-1" role="dialog" aria-labelledby="modal-popin" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-popin modal-xl" role="document">
+            <div class="modal-content">
+            	<form action="{{ url('invoice/generate') }}" method="post" id="formWithPrice">
+				@csrf
+	                <div class="block block-themed block-transparent mb-0">
+	                    <div class="block-header bg-primary-dark">
+	                        <h3 class="block-title">Data invoice</h3>
+	                        <div class="block-options">
+	                            <button type="button" class="btn-block-option" data-dismiss="modal" aria-label="Close">
+	                                <i class="si si-close"></i>
+	                            </button>
+	                        </div>
+	                    </div>
+	                    <input type="hidden" name="id_barang_keluar" value="{{ $data['id'] }}">
+	                    <div class="block-content">
+	                    	<div class="block">
+		                        <div class="block-content">
+		                            <table class="table table-borderless table-vcenter">
+		                                <thead>
+		                                    <tr>
+		                                        <th><b>No</th>
+		                                        <th><b>Nama Barang</b></th>
+		                                        <th><b>Jumlah Order</b></th>
+		                                        <th><b>Harga Sekarang</b></th>
+		                                        <th><b>Harga Satuan</b></th>
+		                                        <th><b>Total Harga</b></th>
+		                                    </tr>
+		                                </thead><br>
+		                                <tbody>
+		                                	@foreach ($data['detailStok'] as $key => $row)
+		                                		@php
+		                                			if (($key+1) % 2 == 0) { 
+		                                				$class = 'table-warning';
+		                                			} else {
+		                                				$class = 'table-active';
+		                                			}
+		                                		@endphp
+			                                    <tr class="{{ $class }}">
+			                                        <th class="text-center" scope="row">{{ $key + 1 }}</th>
+			                                        <td>{{ $row['stokBarang']['nama_barang'] }}</td>
+			                                        <td><b>{{ $row['qty_barang'] }}</b> {{ $row['stokBarang']['stokBarangSatuan']['nama_satuan'] }}</td>
+			                                        <td><b>Rp. {{ number_format($row['harga_barang']) }}</b></td>
+			                                        <td>
+			                                        	<input type="hidden" name="id_barang_harga_detail[]" value="{{ $row['id'] }}">
+			                                        	<div class="input-group">
+		                                                    <input type="text" class="form-control number harga_barang price" data-kelas="harga_{{ $key }}" id="example-input2-group2{{ $key }}" data-qty="{{ $row['qty_barang'] }}" name="harga[]" placeholder="Harga satuan" value="0" required>
+		                                                </div>
+		                                            </td>
+		                                            <td>
+			                                        	<div class="input-group">
+		                                                    <input type="text" class="form-control number harga_total harga_{{ $key }} price" data-kelas="total_{{ $key }}" id="example-input2-group2-total{{ $key }}" data-qty="{{ $row['qty_barang'] }}" placeholder="Total Harga" value="0" readonly required>
+		                                                </div>
+		                                            </td>
+			                                    </tr>
+		                                    @endforeach
+		                                </tbody>
+		                            </table>
+		                        </div>
+		                    </div>
+	                    </div>
+	                </div>
+	                <div class="modal-footer">
+	                    <button type="submit" class="btn btn-alt-success">
+	                        <i class="fa fa-check"></i> Generate Invoice
+	                    </button>
+	                </div>
+	            </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('script')
@@ -210,6 +296,28 @@
 
 				return;
     		}
+		});
+
+		$(document).on('keyup', '.harga_barang', function() {
+			var kelas = $(this).data('kelas');
+			var qty = $(this).data('qty');
+			var value = $(this).val();
+
+			if (value != '') {
+				value = parseInt(value.replace(/[($)\s\._\-]+/g, ''));
+			} else {
+				value = 0;
+			}
+
+			var grand_total = qty * value;
+
+			console.log(qty);
+			console.log(value);
+			console.log(grand_total);
+
+			$('.'+kelas).val( function() {
+			  	return ( grand_total === 0 ) ? 0 : grand_total.toLocaleString( "id" );
+			});
 		});
 
     	$(document).on('click', '.btn-tambah', function() {

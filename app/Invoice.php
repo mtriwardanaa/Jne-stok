@@ -7,23 +7,23 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property integer $id
  * @property integer $id_barang_keluar
- * @property integer $id_barang
- * @property integer $id_supplier
- * @property int $qty_barang
+ * @property integer $created_by
+ * @property string $no_invoice
+ * @property string $tanggal_invoice
+ * @property string $status
  * @property string $created_at
  * @property string $updated_at
- * @property StokBarang $stokBarang
+ * @property User $user
  * @property StokBarangKeluar $stokBarangKeluar
- * @property StokSupplier $stokSupplier
  */
-class BarangKeluarDetail extends Model
+class Invoice extends Model
 {
     /**
      * The table associated with the model.
      * 
      * @var string
      */
-    protected $table = 'stok_barang_keluar_detail';
+    protected $table = 'stok_invoice';
 
     /**
      * The "type" of the auto-incrementing ID.
@@ -35,14 +35,14 @@ class BarangKeluarDetail extends Model
     /**
      * @var array
      */
-    protected $fillable = ['id_barang_keluar', 'id_barang', 'qty_barang', 'harga_barang_invoice', 'created_at', 'updated_at'];
+    protected $fillable = ['id_barang_keluar', 'created_by', 'no_invoice', 'tanggal_invoice', 'status', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function stokBarang()
+    public function user()
     {
-        return $this->belongsTo('App\Barang', 'id_barang');
+        return $this->belongsTo('App\User', 'created_by');
     }
 
     /**

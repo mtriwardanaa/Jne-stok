@@ -37,7 +37,7 @@ class BarangHarga extends Model
     /**
      * @var array
      */
-    protected $fillable = ['id_barang_masuk', 'id_barang_keluar', 'id_barang', 'qty_barang', 'min_barang', 'harga_barang', 'tanggal_barang', 'created_at', 'updated_at'];
+    protected $fillable = ['id_barang_masuk', 'id_barang_keluar', 'id_barang', 'qty_barang', 'min_barang', 'harga_barang', 'harga_barang_invoice', 'tanggal_barang', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

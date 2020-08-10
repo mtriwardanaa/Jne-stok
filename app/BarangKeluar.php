@@ -67,6 +67,11 @@ class BarangKeluar extends Model
         return $this->belongsTo('App\AgenKategori', 'id_kategori');
     }
 
+    public function invoice()
+    {
+        return $this->belongsTo('App\Invoice', 'id', 'id_barang_keluar');
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */

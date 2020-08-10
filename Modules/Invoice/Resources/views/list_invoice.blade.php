@@ -1,10 +1,10 @@
 @extends('master')
 
-@section('title', 'Request / Order')
-@section('request', 'open')
-@section('request-list', 'active')
+@section('title', 'List Invoice')
+@section('invoice', 'open')
+@section('invoice-list', 'active')
 
-@section('head-title', 'Request / Order')
+@section('head-title', 'Invoice')
 @section('head-sub-title', 'List')
 
 @section('css')
@@ -15,51 +15,33 @@
 	@include('partial.notification')
 	<div class="block">
         <div class="block-header block-header-default">
-            <h3 class="block-title">Request / Order <small>List</small></h3>
-            <div class="block-options">
-                <div class="block-options-item">
-                	<a href="{{ url('order/create') }}">
-                    	<button type="button" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Tambah Request / Order</button>
-                	</a>
-	                @if (Auth::user()->id_divisi != 10)
-                        <a href="{{ url('/') }}" class="btn btn-sm btn-info">
-                           <i class="fa fa-home"></i> Kembali ke Dashboard
-                        </a>
-	                @endif
-                </div>
-            </div>
+            <h3 class="block-title">Invoice <small>List</small></h3>
         </div>
         <div class="block-content block-content-full">
             <table class="table table-bordered table-striped table-vcenter js-dataTable-full">
                 <thead>
                     <tr>
                         <th class="text-center">No</th>
-                        <th>No Order</th>
+                        <th>No Invoice</th>
                         <th>Tanggal</th>
                         <th>Divisi</th>
                         <th>Sub / Nama</th>
-                        <th class="d-none d-sm-table-cell" style="width: 15%;">Status</th>
-                        <th class="text-center" style="width: 15%;">Action</th>
+                        <th>Dibuat Oleh</th>
+                        <th class="text-center">Action</th>
                     </tr>
                 </thead>
                 <tbody>
                 	@foreach ($list as $key => $value)
 	                    <tr>
 	                        <td class="text-center">{{ $key+1 }}</td>
-	                        <td class="font-w600">{{ $value['no_order'] }}</td>
-	                        <td class="font-w600">{{ date('d F Y H:i', strtotime($value['tanggal'])) }}</td>
-	                        <td class="font-w600">{{ $value['divisi']['nama'] }}</td>
-	                        <td class="font-w600">{{ $value['kategori']['nama'] ?? $value['created_user']['nama'] }}</td>
-	                        <td class="d-none d-sm-table-cell">
-	                        	@if (isset($value['approved_by']))
-	                            	<span class="badge badge-success">DITERIMA</span>
-	                            @else
-	                            	<span class="badge badge-warning">MENUNGGU</span>
-	                            @endif
-	                        </td>
+	                        <td class="font-w600">{{ $value['no_invoice'] }}</td>
+	                        <td class="font-w600">{{ date('d F Y H:i', strtotime($value['tanggal_invoice'])) }}</td>
+	                        <td class="font-w600">{{ $value['stok_barang_keluar']['divisi']['nama'] }}</td>
+	                        <td class="font-w600">{{ strtoupper($value['stok_barang_keluar']['kategori']['nama'] ?? $value['stok_barang_keluar']['agen']['nama'] ?? $value['stok_barang_keluar']['nama_user_request']) }}</td>
+	                        <td class="font-w600">{{ $value['user']['nama'] }}</td>
 	                        <td class="text-center">
-	                        	<a href="{{ url('order/detail', $value['id']) }}?status={{ $req }}">
-	                        		<button type="button" class="btn btn-sm btn-primary" data-toggle="tooltip" title="Detail Order">
+	                        	<a href="{{ url('invoice/detail', $value['id']) }}">
+	                        		<button type="button" class="btn btn-sm btn-primary" data-toggle="tooltip" title="Detail Invoice">
 		                                Detail
 		                            </button>
 	                        	</a>

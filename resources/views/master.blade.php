@@ -13,7 +13,7 @@
             <main id="main-container">
                 <!-- Page Content -->
                 <div class="content">
-                	<nav class="breadcrumb bg-white push">
+                	<nav class="breadcrumb bg-white push noPrint">
 	                	<a class="breadcrumb-item" href="javascript:void(0)" data-pjax="">@yield('head-title')</a>
 	                	<span class="breadcrumb-item active">@yield('head-sub-title')</span>
 	                </nav>

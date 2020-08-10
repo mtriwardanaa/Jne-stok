@@ -202,7 +202,7 @@
     <div class="modal fade" id="modal-popin" tabindex="-1" role="dialog" aria-labelledby="modal-popin" aria-hidden="true">
         <div class="modal-dialog modal-dialog-popin modal-xl" role="document">
             <div class="modal-content">
-            	<form action="{{ url('order/approve') }}" method="post">
+            	<form action="{{ url('order/approve') }}" method="post" id="formWithPrice">
 				@csrf
 	                <div class="block block-themed block-transparent mb-0">
 	                    <div class="block-header bg-primary-dark">

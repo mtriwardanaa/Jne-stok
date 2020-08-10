@@ -46,7 +46,7 @@ class OrderController extends Controller
     	}
 
     	$list = $list->get()->toArray();
-
+    	// return $list;
         return view('order::list_order', ['list' => $list, 'req' => $req]);
     }
 
