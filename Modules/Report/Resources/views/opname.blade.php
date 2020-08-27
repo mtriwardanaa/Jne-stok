@@ -60,7 +60,7 @@
 							<td><center>{{ $value['kode_barang'] }}</center></td>
 							<td>{{ $value['nama_barang'] }}</td>
 							<td @if ($value['stok'] == 0) style="color: red" @endif><center>{{ $value['stok'] }}</center></td>
-							<td @if ($value['stok'] == 0) style="color: red" @endif><center>{{ $value['opname'] }}</center></td>
+							<td @if ($value['opname'] == 0) style="color: red" @endif><center>{{ $value['opname'] }}</center></td>
 						</tr>
 						@endforeach
 					@endif
@@ -68,12 +68,11 @@
 			</table>
 		</div>
 	</div>
-	<div style="padding-left: 50px;padding-right: 50px;padding-top: 10px;width: 50%">
-		<div style="float: left">
-			Pelaksana <br><br><br> <b>{{ $pelaksana }}</b> <br><br><br> Audit Internal <br><br><br> <b>{{ $audit }}</b>
-		</div>
-		<div style="float: right;">
-			Koord. Hc & GA <br><br><br> <b>{{ $koordinator }}</b>
+	<div style="padding-left: 50px;padding-right: 50px;padding-top: 10px;width: 100%">
+		<div class="row">
+			<div class="col-4">Pelaksana <br><br><br> <b>{{ $pelaksana }}</b></div>
+			<div class="col-4">Koord. Hc & GA <br><br><br> <b>{{ $koordinator }}</b></div>
+			<div class="col-4">Audit Internal <br><br><br> <b>{{ $audit }}</b></div>
 		</div>
 	</div>
 </body>

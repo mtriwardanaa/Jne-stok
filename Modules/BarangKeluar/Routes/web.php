@@ -15,6 +15,7 @@ Route::middleware(['auth_user', 'stokga'])->prefix('barangkeluar')->group(functi
     Route::get('/', 'BarangKeluarController@list');
     Route::get('/create', 'BarangKeluarController@create');
     Route::get('/detail/{id}', 'BarangKeluarController@detail');
+    Route::get('/suratjalan/{id}', 'BarangKeluarController@suratJalan');
     Route::get('/edit/{id}', 'BarangKeluarController@edit');
     Route::get('/delete/{id}', 'BarangKeluarController@delete');
     Route::post('/store', 'BarangKeluarController@store');

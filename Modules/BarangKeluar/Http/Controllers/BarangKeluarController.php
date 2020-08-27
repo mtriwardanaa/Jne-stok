@@ -27,6 +27,16 @@ class BarangKeluarController extends Controller
         return view('barangkeluar::list_barang_keluar', ['list' => $list]);
     }
 
+    public function suratJalan(Request $request, $id)
+    {
+        $get = BarangKeluar::with('user', 'agen', 'userUpdate', 'invoice', 'detailStok.stokBarang.stokBarangSatuan', 'divisi', 'kategori')->where('id', $id)->first();
+        if (empty($get)) {
+            return back()->withErrors(['Data tidak ditemukan']);
+        }
+        // return $get;
+        return view('barangkeluar::surat_jalan', ['detail' => $get]);
+    }
+
     public function detail(Request $request, $id)
     {
     	$list = BarangKeluar::with('user', 'agen', 'userUpdate', 'invoice', 'details.stokBarang.stokBarangSatuan', 'detailStok.stokBarang.stokBarangSatuan', 'divisi', 'kategori')->whereNull('deleted_at')->where('id', $id)->orderBy('tanggal', 'DESC')->first();

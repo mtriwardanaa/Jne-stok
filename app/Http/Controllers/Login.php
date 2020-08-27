@@ -20,7 +20,11 @@ class Login extends Controller
 		    return view('login');
 		}
 
-		if (Auth::attempt($post)) {
+        $data_login = [
+            'username' => strtoupper($post['username']),
+            'password' => strtoupper($post['password']),
+        ];
+		if (Auth::attempt($data_login)) {
 			return redirect('dashboard');
 		}
 

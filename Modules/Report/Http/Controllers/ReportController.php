@@ -161,7 +161,7 @@ class ReportController extends Controller
 			'harga_total'   => $harga_total,
         ];
 
-    	$nama = 'REPORT';
+    	$nama = 'REPORT-'.strtoupper($title).'-'.date('d-m-Y', strtotime($tanggal_mulai)).'-'.date('d-m-Y', strtotime($tanggal_selesai));
     	$data = json_decode(json_encode($data_print, JSON_NUMERIC_CHECK), true);
 
     	$heading = $this->heading();
@@ -190,7 +190,8 @@ class ReportController extends Controller
     	$stock_no = $post['bulan'].'/SO/V/'.$post['tahun'];
     	$group = 'ALL';
     	$periode_mulai = date($post['tahun'].'-'.$post['bulan'].'-01');
-    	$periode_akhir = date($post['tahun'].'-'.$post['bulan'].'-t');
+        $periode_mulai = date('Y-m-d', strtotime($periode_mulai));
+        $periode_akhir = date('Y-m-t', strtotime($periode_mulai));
     	$opname_no = 'F/PMD/'.date('m-d', strtotime($periode_mulai)).'/00';
 
     	$text_periode_awal = MyHelper::indonesian_date($periode_mulai, 'd F Y');
