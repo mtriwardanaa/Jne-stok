@@ -183,11 +183,11 @@
 			                        <td class="text-center">{{ $key+1 }}</td>
 			                        <td class="font-w600">{{ $row['stokBarang']['kode_barang'] }}</td>
 			                        <td class="font-w600">{{ $row['stokBarang']['nama_barang'] }}</td>
-			                        <td class="font-w600">{{ $row['qty_barang'] }} {{ $row['stokBarang']['stokBarangSatuan']['nama_satuan'] }}</td>
+			                        <td class="font-w600">{{ number_format($row['qty_barang']) }} {{ $row['stokBarang']['stokBarangSatuan']['nama_satuan'] }}</td>
 			                        @if (isset($data['approved_by']))
-				                        <td class="font-w600">{{ $row['jumlah_approve'] }} {{ $row['stokBarang']['stokBarangSatuan']['nama_satuan'] }}</td>
+				                        <td class="font-w600">{{ number_format($row['jumlah_approve']) }} {{ $row['stokBarang']['stokBarangSatuan']['nama_satuan'] }}</td>
 	                                @else
-				                        <td class="font-w600">{{ $row['stokBarang']['qty_barang'] }} {{ $row['stokBarang']['stokBarangSatuan']['nama_satuan'] }}</td>
+				                        <td class="font-w600">{{ number_format($row['stokBarang']['qty_barang']) }} {{ $row['stokBarang']['stokBarangSatuan']['nama_satuan'] }}</td>
 			                        @endif
 			                    </tr>
 		                    @endforeach

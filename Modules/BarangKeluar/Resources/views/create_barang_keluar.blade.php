@@ -15,7 +15,7 @@
 
 @section('content')
 	@include('partial.notification')
-	<form action="{{ url('barangkeluar/store') }}" method="post">
+	<form action="{{ url('barangkeluar/store') }}" method="post" id="formWithPrice">
 	@csrf
 		<div class="row">
 	        <div class="col-md-4">

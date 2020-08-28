@@ -11,16 +11,67 @@ use App\BarangSatuan;
 use App\User;
 
 use App\Imports\DataImport;
+use App\Exports\BarangExport;
 
 use DB;
 use Excel;
 
 class BarangController extends Controller
 {
-    public function list()
+    public function list(Request $request)
     {
-    	$list = Barang::with('stokBarangSatuan')->whereNull('deleted_at')->get()->toArray();
-    	return view('barang::list_barang', ['list' => $list]);
+        $status = 'aaa';
+        if ($request->has('status')) {
+            $status = $request->get('status');
+        }
+
+    	$list = Barang::with('stokBarangSatuan')->whereNull('deleted_at');
+
+        if ($status == 'aman') {
+            $list = $list->whereRaw('qty_barang >= warning_stok');
+        }
+
+        if ($status == 'warning') {
+            $list = $list->whereRaw('qty_barang < warning_stok');
+        }
+
+        $list = $list->get()->toArray();
+
+    	return view('barang::list_barang', ['list' => $list, 'status' => $status]);
+    }
+
+    public function print(Request $request, $status)
+    {
+        $list = Barang::select('kode_barang', 'nama_barang', 'qty_barang', 'harga_barang')->whereNull('deleted_at');
+
+        if ($status == 'aman') {
+            $list = $list->whereRaw('qty_barang >= warning_stok');
+        }
+
+        if ($status == 'warning') {
+            $list = $list->whereRaw('qty_barang < warning_stok');
+        }
+
+        $list = $list->get()->toArray();
+        if (empty($list)) {
+            return back()->withErrors(['Data kosong']);
+        }
+
+        $nama = 'BARANG-GA';
+        $data = json_decode(json_encode($list, JSON_NUMERIC_CHECK), true);
+
+        $heading = $this->heading();
+        return Excel::download(new BarangExport($data, $heading, 'LIST BARANG GA', 0), $nama.'.xlsx');
+    }
+
+    public function heading()
+    {
+        return [
+            'KODE',
+            'NAMA',
+            'JUMLAH',
+            'HARGA',
+        ];
     }
 
     public function create()

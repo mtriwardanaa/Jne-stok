@@ -7,6 +7,7 @@ Route::middleware(['auth_user', 'stokga'])->prefix('barang')->group(function() {
     Route::post('/store', 'BarangController@store');
     Route::post('/save', 'BarangController@save');
     Route::get('/edit/{id}', 'BarangController@edit');
+    Route::get('/print/{status}', 'BarangController@print');
     Route::get('/history/{id}', 'BarangController@history');
     Route::post('/update/{id}', 'BarangController@update');
     Route::get('/delete/{id}', 'BarangController@delete');

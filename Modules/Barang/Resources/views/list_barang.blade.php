@@ -9,13 +9,43 @@
 
 @section('css')
 	<link rel="stylesheet" href="{{ url('assets/js/plugins/datatables/dataTables.bootstrap4.css') }}">
+    <link rel="stylesheet" href="{{ url('assets/js/plugins/select2/css/select2.min.css') }}">
 @endsection
 
 @section('content')
 	@include('partial.notification')
+    <div class="block">
+        <div class="block-header block-header-default">
+            <h3 class="block-title">Barang <small>Filter</small></h3>
+        </div>
+        <div class="block-content block-content-full">
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <div class="form-material">
+                            <select class="js-select2 form-control" id="example2-select20" name="id_divisi" data-placeholder="Pilih divisi" required>
+                                <option value="all" @if ($status == 'all') selected @endif>Semua</option>
+                                <option value="aman" @if ($status == 'aman') selected @endif>Aman</option>
+                                <option value="warning" @if ($status == 'warning') selected @endif>Warning</option>
+                            </select>
+                            <label for="material-text">Status</label>
+                        </div>
+                    </div>
+                </div><br>
+                <div class="form-group row">
+                    <div class="col-md-9">
+                        <button type="button" class="btn btn-alt-primary btn-filter">Submit Filter</button>
+                    </div>
+                </div>
+        </div>
+    </div>
 	<div class="block">
         <div class="block-header block-header-default">
             <h3 class="block-title">Barang <small>List</small></h3>
+            <div class="block-options">
+                <a href="{{ url('barang/print', $status) }}" class="btn btn-sm btn-info">
+                    Print Barang
+                </a>
+            </div>
         </div>
         <div class="block-content block-content-full">
             <!-- DataTables functionality is initialized with .js-dataTable-full-pagination class in js/pages/be_tables_datatables.min.js which was auto compiled from _es6/pages/be_tables_datatables.js -->
@@ -71,6 +101,8 @@
 @section('script')
 	<script src="{{ url('assets/js/plugins/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ url('assets/js/plugins/datatables/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ url('assets/js/plugins/select2/js/select2.full.min.js') }}"></script>
+    <script>jQuery(function(){ Codebase.helpers(['flatpickr', 'datepicker', 'select2']); });</script>
 
     <script src="{{ url('assets/js/pages/be_tables_datatables.min.js') }}"></script>
 
@@ -93,5 +125,13 @@
   				}
 			})
 		});
+
+        $(document).on('click', '.btn-filter', function() {
+            var status = $('#example2-select20').val();
+            console.log(status);
+
+            var url = "{{ url('barang') }}?status="+status;
+            window.location.href = url;
+        });
     </script>
 @endsection

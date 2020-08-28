@@ -16,6 +16,8 @@ Route::middleware('auth_user')->prefix('order')->group(function() {
     Route::get('/create', 'OrderController@create');
     Route::post('/approve', 'OrderController@approve');
     Route::get('/detail/{id}', 'OrderController@detail');
+    Route::get('/edit/{id}', 'OrderController@edit');
     Route::post('/approve/update/{id}', 'OrderController@updateApprove');
+    Route::post('/update/{id}', 'OrderController@update');
     Route::post('/store', 'OrderController@store');
 });

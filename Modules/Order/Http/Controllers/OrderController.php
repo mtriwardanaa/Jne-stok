@@ -219,6 +219,27 @@ class OrderController extends Controller
     	return view('order::detail_order', ['data' => $data, 'req' => $req]);
     }
 
+    public function edit(Request $request, $id)
+    {
+        $data = Order::with('approved_user.divisi', 'created_user', 'details.stokBarang.stokBarangSatuan', 'divisi', 'kategori')->where('id', $id)->first();
+        if (empty($data)) {
+            return back()->withErrors(['Data tidak ditemukan']);    
+        }
+        // return $data;
+        $req = null;
+        if ($request->has('status')) {
+            $req = $request->get('status');
+        }
+
+        $barang = Barang::with('stokBarangSatuan')->get()->toArray();
+        if (empty($barang)) {
+            return redirect('barang/create')->withErrors(['Barang masih kosong, silahkan input barang terlebih dahulu']);
+        }
+
+        // return $data;
+        return view('order::edit_order', ['data' => $data, 'req' => $req, 'barang' => $barang]);
+    }
+
     public function updateApprove(Request $request, $id)
     {
     	DB::beginTransaction();
@@ -315,11 +336,11 @@ class OrderController extends Controller
     		$data_barang_order_detail = [];
     		foreach ($post['id_barang'] as $key => $value) {
     			$data_detail = [
-					'id_order' => $create_barang_order['id'],
-					'id_barang'       => $value,
-					'qty_barang'      => $post['jumlah_barang'][$key],
-					'created_at'      => date('Y-m-d H:i:s'),
-					'updated_at'      => date('Y-m-d H:i:s'),
+                    'id_order'   => $create_barang_order['id'],
+                    'id_barang'  => $value,
+                    'qty_barang' => $post['jumlah_barang'][$key],
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s'),
     			];
 
     			$data_barang_order_detail[] = $data_detail;
@@ -336,5 +357,79 @@ class OrderController extends Controller
 
     	DB::commit();
     	return redirect('order')->with(['success' => ['Tambah request berhasil']]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        DB::beginTransaction();
+        $post = $request->except('_token');
+
+        $check_detail = Order::with('details')->where('id', $id)->first();
+
+        if (empty($check_detail)) {
+            DB::rollback();
+            return back()->withErrors(['Data tidak ditemukan']);
+        }
+
+        $user = Auth::user();
+        $check_detail->tanggal = date('Y-m-d H:i:s');
+        $check_detail->no_order = 'TRX-'.date('md').'-'.$user->id.$user->id_divisi.date('His');
+        $check_detail->nama_user_request = $post['nama_user'];
+        $check_detail->update();
+        if (!$check_detail) {
+            DB::rollback();
+            return back()->withErrors(['Data gagal diupdate']);
+        }
+
+        $data_id = [];
+        if (!empty($check_detail->details)) {
+            $data_id = array_column($check_detail->details->toArray(), 'id');
+        }
+
+        if (!empty($post['id_detail_order'])) {
+            $data_insert = [];
+            foreach ($post['id_detail_order'] as $key => $value) {
+                $data_detail = [
+                    'id_order'   => $id,
+                    'id_barang'  => $post['id_barang'][$key],
+                    'qty_barang' => $post['jumlah_barang'][$key],
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s'),
+                ];
+
+                if (in_array($value, $data_id)) {
+                    $update = OrderDetail::where('id', $value)->update($data_detail);
+                    if (!$update) {
+                        DB::rollback();
+                        return back()->withErrors(['Update detail order gagal']);
+                    }
+                } else {
+                    $data_insert[] = $data_detail;
+                }
+            }
+
+            if (!empty($data_insert)) {
+                $create_detail = OrderDetail::insert($data_insert);
+                if (!$create_detail) {
+                    DB::rollback();
+                    return back()->withErrors(['Update baru detail order gagal'])->withInput();
+                }
+            }
+
+            if (!empty($data_id)) {
+                foreach ($data_id as $key => $value) {
+                    if (!in_array($value, $post['id_detail_order'])) {
+                        $delete = OrderDetail::where('id', $value)->delete();
+                        if (!$delete) {
+                            DB::rollback();
+                            return back()->withErrors(['Update no data order gagal']);
+                        }
+                    }
+                }
+            }
+        }
+
+        DB::commit();
+        return redirect('order')->with(['success' => ['Update data order berhasil']]);
     }
 }

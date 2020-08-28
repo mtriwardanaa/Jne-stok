@@ -15,7 +15,7 @@
 
 @section('content')
 	@include('partial.notification')
-	<form action="{{ url('order/store') }}" method="post" id="formWithPrice">
+	<form action="{{ url('order/update', $data['id']) }}" method="post" id="formWithPrice">
 	@csrf
 		<div class="row">
 	        <div class="col-md-4">
@@ -33,7 +33,7 @@
 	                    <div class="form-group row">
 	                        <div class="col-md-9">
 	                            <div class="form-material">
-	                                <input type="text" class="js-flatpickr form-control" id="example-material-flatpickr-default" placeholder="Masukkan tanggal barang masuk" data-allow-input="true" @if (old('tanggal') != '') value="{{ old('value') }}" @else value="{{ date('Y-m-d') }}" @endif disabled>
+	                                <input type="text" class="js-flatpickr form-control" id="example-material-flatpickr-default" placeholder="Masukkan tanggal barang masuk" data-allow-input="true" @if ($data['tanggal'] != '') value="{{ date('Y-m-d', strtotime($data['tanggal'])) }}" @else value="{{ date('Y-m-d') }}" @endif disabled>
 	                                <label for="material-text">Tanggal</label>
 	                            </div>
 	                        </div>
@@ -41,7 +41,7 @@
 	                    <div class="form-group row">
 	                        <div class="col-md-9">
 	                            <div class="form-material">
-	                                <input type="text" class="js-flatpickr form-control" id="example-material-flatpickr-time-standalone-24"data-allow-input="true" data-enable-time="true" data-no-calendar="true" data-date-format="H:i" data-time_24hr="true"  placeholder="Masukkan jam barang masuk" @if (old('jam') != '') value="{{ old('value') }}" @else value="{{ date('H:i') }}" @endif disabled>
+	                                <input type="text" class="js-flatpickr form-control" id="example-material-flatpickr-time-standalone-24"data-allow-input="true" data-enable-time="true" data-no-calendar="true" data-date-format="H:i" data-time_24hr="true"  placeholder="Masukkan jam barang masuk" @if ($data['tanggal'] != '') value="{{ date('H:i', strtotime($data['tanggal'])) }}" @else value="{{ date('H:i') }}" @endif disabled>
 	                                <label for="material-password">Jam</label>
 	                            </div>
 	                        </div>
@@ -50,9 +50,9 @@
 	                        <div class="col-md-9">
 	                            <div class="form-material">
 	                            	@if (Auth::user()->id_divisi == 13 || Auth::user()->id_divisi == 23)
-	                                	<input type="text" name="nama_user" class="form-control" placeholder="Nama user yang request" required>
+	                                	<input type="text" name="nama_user" class="form-control" placeholder="Nama user yang request" value="{{ $data['nama_user_request'] }}" required>
 	                                @else
-	                                	<input type="text" name="nama_user" class="form-control" value="{{ Auth::user()->nama }}" placeholder="Nama user yang request" required>
+	                                	<input type="text" name="nama_user" class="form-control" value="{{ $data['nama_user_request'] }}" placeholder="Nama user yang request" required>
 	                                @endif
 	                                <label for="id_divisi">Nama</label>
 	                            </div>
@@ -82,38 +82,49 @@
 		                @endif
 	                </div>
 	                <div class="block-content">
-	                    <div class="form-group row">
-	                        <div class="col-3">
-	                            <div class="form-material">
-	                                <select class="js-select2 form-control select_barang" id="example2-select23" name="id_barang[]" style="width: 100%;" data-placeholder="Pilih barang" required>
-	                                    <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
-	                                    @foreach ($barang as $value)
-	                                    	<option value="{{ $value['id'] }}" data-satuan="{{ $value['stok_barang_satuan']['nama_satuan'] }}" data-id="example2-select23">{{ $value['nama_barang'] }}</option>
-	                                    @endforeach
-	                                </select>
-	                                <label for="id_barang[]">Nama Barang</label>
-	                            </div>
-	                        </div>
-	                        <div class="col-2">
-	                            <div class="form-material">
-	                                <input type="text" class="form-control price number" name="jumlah_barang[]" placeholder="jumlah barang" maxlength="10" required>
-	                                <label for="jumlah_barang[]">Jumlah</label>
-	                            </div>
-	                        </div>
-	                        <div class="col-2">
-	                            <div class="form-material">
-	                                <input type="text" class="form-control" id="satuan_example2-select23" placeholder="satuan barang" disabled>
-	                                <label>Satuan</label>
-	                            </div>
-	                        </div>
-	                        <div class="col-2" style="padding-top: 20px">
-	                            <button type="button" class="btn btn-alt-success btn-tambah">Tambah Barang</button>
-	                        </div>
-	                    </div>
+	                	@if (isset($data['details']))
+	                		@foreach ($data['details'] as $key => $det)
+	                			<div class="form-group row">
+			                        <div class="col-3">
+			                            <div class="form-material">
+			                                <select class="js-select2 form-control select_barang" id="example2-select2{{ $key+1 }}" name="id_barang[]" style="width: 100%;" data-placeholder="Pilih barang" required>
+			                                    <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
+			                                    @foreach ($barang as $value)
+			                                    	<option value="{{ $value['id'] }}" @if ($det['id_barang'] == $value['id']) selected @endif data-satuan="{{ $value['stok_barang_satuan']['nama_satuan'] }}" data-id="example2-select2{{ $key+1 }}">{{ $value['nama_barang'] }}</option>
+			                                    @endforeach
+			                                </select>
+			                                <label for="id_barang[]">Nama Barang</label>
+			                            </div>
+			                        </div>
+			                        <input type="hidden" name="id_detail_order[]" value="{{  $det['id']}}">
+			                        <div class="col-2">
+			                            <div class="form-material">
+			                                <input type="text" class="form-control price number" value="{{ $det['qty_barang'] }}" name="jumlah_barang[]" placeholder="jumlah barang" maxlength="10" required>
+			                                <label for="jumlah_barang[]">Jumlah</label>
+			                            </div>
+			                        </div>
+			                        <div class="col-2">
+			                            <div class="form-material">
+			                                <input type="text" class="form-control" id="satuan_example2-select2{{ $key+1 }}" placeholder="satuan barang" disabled>
+			                                <label>Satuan</label>
+			                            </div>
+			                        </div>
+			                        @if ($key == 0)
+				                        <div class="col-3" style="padding-top: 20px">
+				                            <button type="button" class="btn btn-alt-success btn-tambah">Tambah Barang</button>
+				                        </div>
+				                    @else
+				                    	<div class="col-3" style="padding-top: 20px">
+					                        <button type="button" class="btn btn-alt-danger btn-hapus">Hapus</button>
+					                    </div>
+				                    @endif
+			                    </div>
+	                		@endforeach
+	                	@endif
 	                    <div class="form-tambah"></div>
 	                    <div class="form-group row">
 	                        <div class="col-md-9">
-	                            <button type="submit" class="btn btn-alt-primary">Simpan Order</button>
+	                            <button type="submit" class="btn btn-alt-primary">Update Order</button>
 	                        </div>
 	                    </div>
 	                </div>
@@ -132,6 +143,12 @@
     <script src="{{ url('assets/js/plugins/flatpickr/flatpickr.min.js') }}"></script>
     <script src="{{ url('assets/js/plugins/select2/js/select2.full.min.js') }}"></script>
     <script>jQuery(function(){ Codebase.helpers(['flatpickr', 'datepicker', 'select2']); });</script>
+
+    <script type="text/javascript">
+    	$(document).ready(function() {
+    		$('.select_barang').trigger('change');
+		});
+    </script>
 
     <script type="text/javascript">
     	$(document).on('click', '.btn-hapus', function() {
@@ -173,6 +190,7 @@
                             <label for="id_barang[]">Nama Barang</label>\
                         </div>\
                     </div>\
+                    <input type="hidden" name="id_detail_order[]" value="0">\
                     <div class="col-2">\
                         <div class="form-material">\
                             <input type="text" class="form-control price number" name="jumlah_barang[]" placeholder="jumlah barang" maxlength="10" required>\
@@ -185,7 +203,7 @@
                             <label>Satuan</label>\
                         </div>\
                     </div>\
-                    <div class="col-2" style="padding-top: 20px">\
+                    <div class="col-3" style="padding-top: 20px">\
                         <button type="button" class="btn btn-alt-danger btn-hapus">Hapus</button>\
                     </div>\
                 </div>';
