@@ -46,35 +46,42 @@ class ReportController extends Controller
     {
     	$post = $request->except('_token');
     	// return $post;
-    	$check_divisi = Divisi::where('id', $post['id_divisi'])->first();
-    	if (empty($check_divisi)) {
-    		return back()->withErrors(['Divisi tidak ditemukan']);
-    	}
 
-    	$title = str_replace( array( '\'', '"', ',' , ';', '<', '>' , '/'), ' ', $check_divisi->nama);
+        $title = 'SEMUA DIVISI';
 
-    	if (isset($post['id_kategori'])) {
-    		$check_kategori = AgenKategori::where('id', $post['id_kategori'])->first();
-    		if (empty($check_kategori)) {
-	    		return back()->withErrors(['Sub Agen tidak ditemukan']);
-	    	}
+        $tanggal_mulai = date('Y-m-d 00:00:00', strtotime($post['tanggal_mulai']));
+        $tanggal_selesai = date('Y-m-d 23:59:59', strtotime($post['tanggal_selesai']));
 
-	    	$title = str_replace( array( '\'', '"', ',' , ';', '<', '>' , '/'), ' ', $check_divisi->nama.' ('.$check_kategori->nama.')');
-    	}
+        if ($post['id_divisi'] != 'all') {
+        	$check_divisi = Divisi::where('id', $post['id_divisi'])->first();
+        	if (empty($check_divisi)) {
+        		return back()->withErrors(['Divisi tidak ditemukan']);
+        	}
 
-    	if (isset($post['id_agen'])) {
-    		$check_agen = User::where('id', $post['id_agen'])->first();
-    		if (empty($check_agen)) {
-	    		return back()->withErrors(['Sub Agen tidak ditemukan']);
-	    	}
+        	$title = str_replace( array( '\'', '"', ',' , ';', '<', '>' , '/'), ' ', $check_divisi->nama);
 
-	    	$title = str_replace( array( '\'', '"', ',' , ';', '<', '>' , '/'), ' ', $check_agen->nama);
-    	}
+        	if (isset($post['id_kategori'])) {
+        		$check_kategori = AgenKategori::where('id', $post['id_kategori'])->first();
+        		if (empty($check_kategori)) {
+    	    		return back()->withErrors(['Sub Agen tidak ditemukan']);
+    	    	}
 
-    	$tanggal_mulai = date('Y-m-d 00:00:00', strtotime($post['tanggal_mulai']));
-    	$tanggal_selesai = date('Y-m-d 23:59:59', strtotime($post['tanggal_selesai']));
+    	    	$title = str_replace( array( '\'', '"', ',' , ';', '<', '>' , '/'), ' ', $check_divisi->nama.' ('.$check_kategori->nama.')');
+        	}
 
-    	$barang_keluar = BarangKeluar::with('detailStok.stokBarang.stokBarangSatuan', 'user', 'order')->where('id_divisi', $post['id_divisi'])->where('tanggal', '>=', $tanggal_mulai)->where('tanggal', '<=', $tanggal_selesai);
+        	if (isset($post['id_agen'])) {
+        		$check_agen = User::where('id', $post['id_agen'])->first();
+        		if (empty($check_agen)) {
+    	    		return back()->withErrors(['Sub Agen tidak ditemukan']);
+    	    	}
+
+    	    	$title = str_replace( array( '\'', '"', ',' , ';', '<', '>' , '/'), ' ', $check_agen->nama);
+        	}
+
+            $barang_keluar = BarangKeluar::with('detailStok.stokBarang.stokBarangSatuan', 'user', 'order')->where('id_divisi', $post['id_divisi'])->where('tanggal', '>=', $tanggal_mulai)->where('tanggal', '<=', $tanggal_selesai);
+        } else {
+            $barang_keluar = BarangKeluar::with('detailStok.stokBarang.stokBarangSatuan', 'user', 'order')->where('tanggal', '>=', $tanggal_mulai)->where('tanggal', '<=', $tanggal_selesai);
+        }    	
 
     	if (isset($post['id_kategori'])) {
     		$barang_keluar = $barang_keluar->where('id_kategori', $post['id_kategori']);
@@ -99,13 +106,52 @@ class ReportController extends Controller
 		$data_barang = [];
 
     	$data_report = array_map(function($arr) use (&$data_print, &$harga_total, &$total_barang, &$total_stok, &$data_barang, $title) {
+            if ($title == 'SEMUA DIVISI') {
+                $check_divisi = Divisi::where('id', $arr['id_divisi'])->first();
+                if (empty($check_divisi)) {
+                    return back()->withErrors(['Divisi tidak ditemukan']);
+                }
+
+                $title = str_replace( array( '\'', '"', ',' , ';', '<', '>' , '/'), ' ', $check_divisi->nama);
+
+                if (isset($arr['id_kategori'])) {
+                    $check_kategori = AgenKategori::where('id', $arr['id_kategori'])->first();
+                    if (empty($check_kategori)) {
+                        return back()->withErrors(['Sub Agen tidak ditemukan']);
+                    }
+
+                    $title = str_replace( array( '\'', '"', ',' , ';', '<', '>' , '/'), ' ', $check_divisi->nama.' ('.$check_kategori->nama.')');
+                }
+
+                if (isset($arr['id_agen'])) {
+                    $check_agen = User::where('id', $arr['id_agen'])->first();
+                    if (empty($check_agen)) {
+                        return back()->withErrors(['Sub Agen tidak ditemukan']);
+                    }
+
+                    $title = str_replace( array( '\'', '"', ',' , ';', '<', '>' , '/'), ' ', $check_agen->nama);
+                }
+            }
+
+            $tanggal_order    = '-';
+            $tanggal_diterima = '-';
+
+            if (isset($arr['order']['tanggal_approve'])) {
+                $tanggal_diterima = date('d-m-Y H:i', strtotime($arr['order']['tanggal_approve']));
+            }
+
+            if (isset($arr['order']['tanggal'])) {
+                $tanggal_order = date('d-m-Y H:i', strtotime($arr['order']['tanggal']));
+            }
+
+
 			$stok_data_print = [
+                'order_tanggal'  => $tanggal_order,
                 'tanggal'        => date('d-m-Y H:i', strtotime($arr['tanggal'])),
                 'no_transaksi'   => $arr['no_barang_keluar'],
                 'request_by'     => strtoupper($arr['nama_user_request']),
                 'divisi'         => $title,
                 'proses_by'      => strtoupper($arr['user']['nama']),
-                'proses_tanggal' => date('d-m-Y H:i', strtotime($arr['tanggal'])),
                 'kode_barang'    => $arr['detail_stok'][0]['stok_barang']['kode_barang'],
                 'nama_barang'    => $arr['detail_stok'][0]['stok_barang']['nama_barang'],
                 'jumlah_barang'  => $arr['detail_stok'][0]['qty_barang']. " ".$arr['detail_stok'][0]['stok_barang']['stok_barang_satuan']['nama_satuan'],
@@ -113,12 +159,12 @@ class ReportController extends Controller
                 'harga_total'    => ($arr['detail_stok'][0]['qty_barang'] * $arr['detail_stok'][0]['harga_barang']),
             ];
 
-            $stok_data_print['success'] = 'Ya';
+            $stok_data_print['success'] = 'YA';
             $stok_data_print['alasan'] = '-';
 
             if (isset($arr['order']['tanggal_approve'])) {
                 if (date('Y-m-d H:i:s', strtotime($arr['order']['tanggal_approve'])) > date('Y-m-d H:i:s', strtotime("+2 days", strtotime($arr['order']['tanggal'])))) {
-                    $stok_data_print['success'] = 'Tidak';
+                    $stok_data_print['success'] = 'TIDAK';
                     if (isset($arr['order']['alasan'])) {
                         $stok_data_print['alasan'] = $arr['order']['alasan'];
                     }
@@ -140,12 +186,12 @@ class ReportController extends Controller
             		foreach ($arr['detail_stok'] as $key => $value) {
             			if ($key > 0) {
             				$data_print[] = [
+                                'order_tanggal'  => '',
                                 'tanggal'        => '',
                                 'no_transaksi'   => '',
                                 'request_by'     => '',
                                 'divisi'         => '',
                                 'proses_by'      => '',
-                                'proses_tanggal' => '',
                                 'kode_barang'    => $value['stok_barang']['kode_barang'],
                                 'nama_barang'    => $value['stok_barang']['nama_barang'],
                                 'jumlah_barang'  => $value['qty_barang']. " ".$value['stok_barang']['stok_barang_satuan']['nama_satuan'],
@@ -167,15 +213,31 @@ class ReportController extends Controller
             	}
             }
 
+            $data_print[] = [
+                'order_tanggal'  => '',
+                'tanggal'        => '',
+                'no_transaksi'   => '',
+                'request_by'     => '',
+                'divisi'         => '',
+                'proses_by'      => '',
+                'kode_barang'    => '',
+                'nama_barang'    => '',
+                'jumlah_barang'  => '',
+                'harga_satuan'   => '',
+                'harga_total'    => '',
+                'success'        => '',
+                'alasan'         => '',
+            ];
+
         }, $barang_keluar);
 
         $data_print[] = [
+            'order_tanggal'  => '',
             'tanggal'        => '',
             'no_transaksi'   => '',
             'request_by'     => '',
             'divisi'         => '',
             'proses_by'      => '',
-            'proses_tanggal' => '',
             'kode_barang'    => '',
             'nama_barang'    => '',
             'jumlah_barang'  => '',
@@ -192,15 +254,21 @@ class ReportController extends Controller
 		return Excel::download(new ReportExport($data, $heading, $title, 0), $nama.'.xlsx');
     }
 
+    public function printAll(Request $request)
+    {
+        $post = $request->except('_token');
+        return $post;
+    }
+
     public function heading()
     {
 		return [
-			'TANGGAL',
+			'TANGGAL ORDER',
+            'TANGGAL KELUAR',
             'NO TRX',
-            'DIREQUEST OLEH',
+            'REQUEST BY',
             'DIVISI',
-            'DITERIMA OLEH',
-            'DITERIMA TANGGAL',
+            'PROSES BY',
             'KODE BARANG',
             'NAMA BARANG',
             'JUMLAH BARANG',

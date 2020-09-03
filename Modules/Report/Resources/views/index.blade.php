@@ -31,7 +31,7 @@
 	                </div>
 	                <div class="col-md-3">
 	                    <div class="form-material">
-	                        <input type="text" class="js-flatpickr form-control" id="example-material-flatpickr-default" name="tanggal_selesai" data-allow-input="true" @if (old('tanggal') != '') value="{{ old('tanggal_selesai') }}" @else value="{{ date('Y-m-d') }}" @endif>
+	                        <input type="text" class="js-flatpickr form-control" id="example-material-flatpickr-default2" name="tanggal_selesai" data-allow-input="true" @if (old('tanggal') != '') value="{{ old('tanggal_selesai') }}" @else value="{{ date('Y-m-d') }}" @endif>
 	                        <label for="material-text">Tanggal Selesai</label>
 	                    </div>
 	                </div>
@@ -39,6 +39,7 @@
 	                    <div class="form-material">
 	                        <select class="js-select2 form-control" id="example2-select20" name="id_divisi" data-placeholder="Pilih divisi" required>
 	                            <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
+	                            <option value="all">SEMUA DIVISI</option>
 	                            @foreach ($divisi as $value)
 	                            	<option value="{{ $value['id'] }}">{{ $value['nama'] }}</option>
 	                            @endforeach
