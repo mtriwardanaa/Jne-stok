@@ -16,7 +16,10 @@ use Maatwebsite\Excel\Concerns\WithCustomValueBinder;
 use PhpOffice\PhpSpreadsheet\Cell\DefaultValueBinder;
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
 
-class ReportExport extends DefaultValueBinder implements FromCollection, WithHeadings, WithStrictNullComparison, WithCustomStartCell, WithTitle, WithColumnFormatting, ShouldAutoSize, WithCustomValueBinder
+use Maatwebsite\Excel\Events\AfterSheet;
+use Maatwebsite\Excel\Concerns\WithEvents;
+
+class ReportExport extends DefaultValueBinder implements FromCollection, WithHeadings, WithStrictNullComparison, WithCustomStartCell, WithTitle, WithColumnFormatting, ShouldAutoSize, WithCustomValueBinder, WithEvents
 {
     /**
     * @return \Illuminate\Support\Collection
@@ -70,8 +73,8 @@ class ReportExport extends DefaultValueBinder implements FromCollection, WithHea
     public function columnFormats(): array
     {
         return [
-            'H' => '[$Rp] * #,##0;-[$Rp] * #,##0_-;_-[$Rp] * "-"??_-;_-@_-',
-            'I' => '[$Rp] * #,##0;-[$Rp] * #,##0_-;_-[$Rp] * "-"??_-;_-@_-',
+            'J' => '[$Rp] * #,##0;-[$Rp] * #,##0_-;_-[$Rp] * "-"??_-;_-@_-',
+            'K' => '[$Rp] * #,##0;-[$Rp] * #,##0_-;_-[$Rp] * "-"??_-;_-@_-',
         ];
     }
 
@@ -85,5 +88,16 @@ class ReportExport extends DefaultValueBinder implements FromCollection, WithHea
 
         // else return default behavior
         return parent::bindValue($cell, $value);
+    }
+
+    public function registerEvents(): array
+    {
+        return [
+            AfterSheet::class => function(AfterSheet $event) {
+                $cellRange = 'A1:W1';
+                $event->sheet->getDelegate()->getStyle($cellRange)->getFont()->setSize(12);
+                $event->sheet->getDelegate()->getStyle($cellRange)->getFont()->setBold(true);
+            },
+        ];
     }
 }

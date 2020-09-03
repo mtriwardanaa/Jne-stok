@@ -160,7 +160,7 @@ class BarangKeluarController extends Controller
 						'updated_at'       => date('Y-m-d H:i:s'),
     				];
 
-    				$update_stok = BarangHarga::where('id', $stok['id'])->update(['min_barang' => $total_minta]);
+    				$update_stok = BarangHarga::where('id', $stok['id'])->update(['min_barang' => ($total_minta + $stok['min_barang'])]);
     				if (!$update_stok) {
     					DB::rollback();
     					return back()->withErrors(['Update jumlah barang stok gagal'])->withInput();

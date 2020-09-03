@@ -120,45 +120,41 @@ class OrderController extends Controller
     			}
 
     			$check_stok = BarangHarga::where('id_barang', $check_detail_order->id_barang)->where('qty_barang', '>', DB::raw('min_barang'))->whereNotNull('id_barang_masuk')->orderBy('tanggal_barang', 'asc')->get()->toArray();
-    			if (empty($check_stok)) {
-    				DB::rollback();
-    				return back()->withErrors(['Stok barang tidak ada'])->withInput();
-    			}
+    			if (!empty($check_stok)) {
+    				$total_pesan = $post['jumlah'][$key];
+                
+                    foreach ($check_stok as $row => $stok) {
+                        if ($total_pesan < 1) {
+                            break;
+                        }
 
-    			$total_pesan = $post['jumlah'][$key];
-    			
-    			foreach ($check_stok as $row => $stok) {
-    				if ($total_pesan < 1) {
-    					break;
-    				}
+                        $total_minta = $total_pesan;
+                        $stok_sekarang = ($stok['qty_barang'] - $stok['min_barang']);
+                        if ($total_minta > $stok_sekarang) {
+                            $total_minta = $stok_sekarang;
+                        }
 
-    				$total_minta = $total_pesan;
-    				$stok_sekarang = ($stok['qty_barang'] - $stok['min_barang']);
-    				if ($total_minta > $stok_sekarang) {
-    					$total_minta = $stok_sekarang;
-    				}
+                        $data_stok[] = [
+                            'id_barang_keluar' => $create_barang_keluar['id'],
+                            'id_barang'        => $check_detail_order->id_barang,
+                            'qty_barang'       => $total_minta,
+                            'harga_barang'     => $stok['harga_barang'],
+                            'tanggal_barang'   => date('Y-m-d H:i:s'),
+                            'created_at'       => date('Y-m-d H:i:s'),
+                            'updated_at'       => date('Y-m-d H:i:s'),
+                        ];
 
-    				$data_stok[] = [
-						'id_barang_keluar' => $create_barang_keluar['id'],
-						'id_barang'        => $check_detail_order->id_barang,
-						'qty_barang'       => $total_minta,
-						'harga_barang'     => $stok['harga_barang'],
-						'tanggal_barang'   => date('Y-m-d H:i:s'),
-						'created_at'       => date('Y-m-d H:i:s'),
-						'updated_at'       => date('Y-m-d H:i:s'),
-    				];
+                        $update_stok = BarangHarga::where('id', $stok['id'])->update(['min_barang' => $total_minta + $stok['min_barang']]);
+                        if (!$update_stok) {
+                            DB::rollback();
+                            return back()->withErrors(['Update jumlah barang stok gagal'])->withInput();
+                        }
 
-    				$update_stok = BarangHarga::where('id', $stok['id'])->update(['min_barang' => $total_minta]);
-    				if (!$update_stok) {
-    					DB::rollback();
-    					return back()->withErrors(['Update jumlah barang stok gagal'])->withInput();
-    				}
-
-    				$total_pesan = $total_pesan - $total_minta;
+                        $total_pesan = $total_pesan - $total_minta;
+                    }
     			}
 
     			$data_barang_keluar_detail[] = $data_detail;
-
 
     			$check_barang->qty_barang = $check_barang->qty_barang - $post['jumlah'][$key];
     			$check_barang->update();

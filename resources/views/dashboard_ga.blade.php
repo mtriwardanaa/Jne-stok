@@ -11,7 +11,7 @@
 	@include('partial.notification')
 	<div class="row invisible" data-toggle="appear">
         <div class="col-6 col-xl-3">
-            <a class="block block-link-pop text-right bg-primary" href="javascript:void(0)">
+            <a class="block block-link-pop text-right bg-primary" href="{{ url('order') }}">
                 <div class="block-content block-content-full clearfix border-black-op-b border-3x">
                     <div class="float-left mt-10 d-none d-sm-block">
                         <i class="si si-bar-chart fa-3x text-primary-light"></i>
@@ -22,7 +22,7 @@
             </a>
         </div>
         <div class="col-6 col-xl-3">
-            <a class="block block-link-pop text-right bg-earth" href="javascript:void(0)">
+            <a class="block block-link-pop text-right bg-earth" href="{{ url('barangmasuk') }}">
                 <div class="block-content block-content-full clearfix border-black-op-b border-3x">
                     <div class="float-left mt-10 d-none d-sm-block">
                         <i class="si si-trophy fa-3x text-earth-light"></i>
@@ -33,7 +33,7 @@
             </a>
         </div>
         <div class="col-6 col-xl-3">
-            <a class="block block-link-pop text-right bg-elegance" href="javascript:void(0)">
+            <a class="block block-link-pop text-right bg-elegance" href="{{ url('barangkeluar') }}">
                 <div class="block-content block-content-full clearfix border-black-op-b border-3x">
                     <div class="float-left mt-10 d-none d-sm-block">
                         <i class="si si-envelope-letter fa-3x text-elegance-light"></i>
@@ -44,7 +44,7 @@
             </a>
         </div>
         <div class="col-6 col-xl-3">
-            <a class="block block-link-pop text-right bg-corporate" href="javascript:void(0)">
+            <a class="block block-link-pop text-right bg-corporate" href="{{ url('barang') }}?status=warning">
                 <div class="block-content block-content-full clearfix border-black-op-b border-3x">
                     <div class="float-left mt-10 d-none d-sm-block">
                         <i class="si si-fire fa-3x text-corporate-light"></i>
@@ -62,7 +62,7 @@
             <!-- Lines Chart -->
             <div class="block">
                 <div class="block-header block-header-default">
-                    <h3 class="block-title">Lines</h3>
+                    <h3 class="block-title">Total Rupiah Barang Masuk dan Barang Keluar</h3>
                     <div class="block-options">
                         <button type="button" class="btn-block-option" data-toggle="block-option" data-action="state_toggle" data-action-mode="demo">
                             <i class="si si-refresh"></i>
@@ -71,6 +71,7 @@
                 </div>
                 <div class="block-content block-content-full text-center">
                     <!-- Lines Chart Container -->
+                    <br>
                     <div id="chartContainer" style="height: 230px; width: 100%;"></div>
                 </div>
             </div>
@@ -95,41 +96,57 @@
             <!-- END Bars Chart -->
         </div>
     </div>
+
+    <input type="hidden" class="chart_masuk" value="{{ json_encode($masuk) }}">
+	<input type="hidden" class="chart_keluar" value="{{ json_encode($keluar) }}">
 @endsection
 
 @section('script')
 	<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 	<script type="text/javascript">
 		$(document).ready( function () {
-			var chart = new CanvasJS.Chart("chartContainer", {
+			var masuk = JSON.parse($('.chart_masuk').val());
+			var keluar = JSON.parse($('.chart_keluar').val());
+
+			var chart2 = new CanvasJS.Chart("chartContainer", {
+				theme:"light2",
 				animationEnabled: true,
-				theme: "light2",
-				title:{
-					text: "Simple Line Chart"
-				},
 				axisY:{
-					includeZero: false
+					title: "Jumlah Rupiah"
 				},
-				data: [{        
-					type: "line",
-			      	indexLabelFontSize: 16,
-					dataPoints: [
-						{ y: 450 },
-						{ y: 414},
-						{ y: 520, indexLabel: "\u2191 highest",markerColor: "red", markerType: "triangle" },
-						{ y: 460 },
-						{ y: 450 },
-						{ y: 500 },
-						{ y: 480 },
-						{ y: 480 },
-						{ y: 410 , indexLabel: "\u2193 lowest",markerColor: "DarkSlateGrey", markerType: "cross" },
-						{ y: 500 },
-						{ y: 480 },
-						{ y: 510 }
-					]
+				legend:{
+					cursor:"pointer",
+					itemclick : toggleDataSeries
+				},
+				toolTip: {
+					shared: "true"
+				},
+				data: [{
+					type: "spline",
+					showInLegend: true,
+					yValueFormatString: "Rp #,##0.##",
+					name: "Barang Masuk",
+					dataPoints: masuk
+				},
+				{
+					type: "spline",
+					showInLegend: true,
+					yValueFormatString: "Rp #,##0.##",
+					name: "Barang Keluar",
+					dataPoints: keluar
 				}]
 			});
-			chart.render();
+
+			chart2.render();
+
+			function toggleDataSeries(e) {
+				if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible ){
+					e.dataSeries.visible = false;
+				} else {
+					e.dataSeries.visible = true;
+				}
+				chart.render();
+			}
 
 			//////////////////////////////////////
 

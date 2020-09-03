@@ -74,7 +74,7 @@ class ReportController extends Controller
     	$tanggal_mulai = date('Y-m-d 00:00:00', strtotime($post['tanggal_mulai']));
     	$tanggal_selesai = date('Y-m-d 23:59:59', strtotime($post['tanggal_selesai']));
 
-    	$barang_keluar = BarangKeluar::with('detailStok.stokBarang.stokBarangSatuan', 'user')->where('id_divisi', $post['id_divisi'])->where('tanggal', '>=', $tanggal_mulai)->where('tanggal', '<=', $tanggal_selesai);
+    	$barang_keluar = BarangKeluar::with('detailStok.stokBarang.stokBarangSatuan', 'user', 'order')->where('id_divisi', $post['id_divisi'])->where('tanggal', '>=', $tanggal_mulai)->where('tanggal', '<=', $tanggal_selesai);
 
     	if (isset($post['id_kategori'])) {
     		$barang_keluar = $barang_keluar->where('id_kategori', $post['id_kategori']);
@@ -98,18 +98,34 @@ class ReportController extends Controller
 		$total_stok   = 0;
 		$data_barang = [];
 
-    	$data_report = array_map(function($arr) use (&$data_print, &$harga_total, &$total_barang, &$total_stok, &$data_barang) {
-			$data_print[] = [
-				'tanggal'       => date('d-m-Y H:i', strtotime($arr['tanggal'])),
-				'no_transaksi'  => $arr['no_barang_keluar'],
-				'request_by'    => strtoupper($arr['nama_user_request']),
-				'proses_by'     => strtoupper($arr['user']['nama']),
-				'kode_barang'   => $arr['detail_stok'][0]['stok_barang']['kode_barang'],
-				'nama_barang'   => $arr['detail_stok'][0]['stok_barang']['nama_barang'],
-				'jumlah_barang' => $arr['detail_stok'][0]['qty_barang']. " ".$arr['detail_stok'][0]['stok_barang']['stok_barang_satuan']['nama_satuan'],
-				'harga_satuan'  => $arr['detail_stok'][0]['harga_barang'],
-				'harga_total'   => ($arr['detail_stok'][0]['qty_barang'] * $arr['detail_stok'][0]['harga_barang']),
+    	$data_report = array_map(function($arr) use (&$data_print, &$harga_total, &$total_barang, &$total_stok, &$data_barang, $title) {
+			$stok_data_print = [
+                'tanggal'        => date('d-m-Y H:i', strtotime($arr['tanggal'])),
+                'no_transaksi'   => $arr['no_barang_keluar'],
+                'request_by'     => strtoupper($arr['nama_user_request']),
+                'divisi'         => $title,
+                'proses_by'      => strtoupper($arr['user']['nama']),
+                'proses_tanggal' => date('d-m-Y H:i', strtotime($arr['tanggal'])),
+                'kode_barang'    => $arr['detail_stok'][0]['stok_barang']['kode_barang'],
+                'nama_barang'    => $arr['detail_stok'][0]['stok_barang']['nama_barang'],
+                'jumlah_barang'  => $arr['detail_stok'][0]['qty_barang']. " ".$arr['detail_stok'][0]['stok_barang']['stok_barang_satuan']['nama_satuan'],
+                'harga_satuan'   => $arr['detail_stok'][0]['harga_barang'],
+                'harga_total'    => ($arr['detail_stok'][0]['qty_barang'] * $arr['detail_stok'][0]['harga_barang']),
             ];
+
+            $stok_data_print['success'] = 'Ya';
+            $stok_data_print['alasan'] = '-';
+
+            if (isset($arr['order']['tanggal_approve'])) {
+                if (date('Y-m-d H:i:s', strtotime($arr['order']['tanggal_approve'])) > date('Y-m-d H:i:s', strtotime("+2 days", strtotime($arr['order']['tanggal'])))) {
+                    $stok_data_print['success'] = 'Tidak';
+                    if (isset($arr['order']['alasan'])) {
+                        $stok_data_print['alasan'] = $arr['order']['alasan'];
+                    }
+                }
+            }
+
+            $data_print[] = $stok_data_print;
 
             $harga_total  = $harga_total + ($arr['detail_stok'][0]['qty_barang'] * $arr['detail_stok'][0]['harga_barang']);
 			$total_stok   = $total_stok + $arr['detail_stok'][0]['qty_barang'];
@@ -124,15 +140,19 @@ class ReportController extends Controller
             		foreach ($arr['detail_stok'] as $key => $value) {
             			if ($key > 0) {
             				$data_print[] = [
-								'tanggal'       => '',
-								'no_transaksi'  => '',
-								'request_by'    => '',
-								'proses_by'     => '',
-								'kode_barang'   => $value['stok_barang']['kode_barang'],
-								'nama_barang'   => $value['stok_barang']['nama_barang'],
-								'jumlah_barang' => $value['qty_barang']. " ".$value['stok_barang']['stok_barang_satuan']['nama_satuan'],
-								'harga_satuan'  => $value['harga_barang'],
-								'harga_total'   => ($value['qty_barang'] * $value['harga_barang']),
+                                'tanggal'        => '',
+                                'no_transaksi'   => '',
+                                'request_by'     => '',
+                                'divisi'         => '',
+                                'proses_by'      => '',
+                                'proses_tanggal' => '',
+                                'kode_barang'    => $value['stok_barang']['kode_barang'],
+                                'nama_barang'    => $value['stok_barang']['nama_barang'],
+                                'jumlah_barang'  => $value['qty_barang']. " ".$value['stok_barang']['stok_barang_satuan']['nama_satuan'],
+                                'harga_satuan'   => $value['harga_barang'],
+                                'harga_total'    => ($value['qty_barang'] * $value['harga_barang']),
+                                'success'        => '',
+                                'alasan'         => '',
 				            ];
 
 				            $harga_total  = $harga_total + ($value['qty_barang'] * $value['harga_barang']);
@@ -150,15 +170,19 @@ class ReportController extends Controller
         }, $barang_keluar);
 
         $data_print[] = [
-			'tanggal'       => '',
-			'no_transaksi'  => '',
-			'request_by'    => '',
-			'proses_by'     => '',
-			'kode_barang'   => '',
-			'nama_barang'   => '',
-			'jumlah_barang' => '',
-			'harga_satuan'  => 'Total Harga',
-			'harga_total'   => $harga_total,
+            'tanggal'        => '',
+            'no_transaksi'   => '',
+            'request_by'     => '',
+            'divisi'         => '',
+            'proses_by'      => '',
+            'proses_tanggal' => '',
+            'kode_barang'    => '',
+            'nama_barang'    => '',
+            'jumlah_barang'  => '',
+            'harga_satuan'   => 'Total Harga',
+            'harga_total'    => $harga_total,
+            'success'        => '',
+            'alasan'         => '',
         ];
 
     	$nama = 'REPORT-'.strtoupper($title).'-'.date('d-m-Y', strtotime($tanggal_mulai)).'-'.date('d-m-Y', strtotime($tanggal_selesai));
@@ -172,14 +196,18 @@ class ReportController extends Controller
     {
 		return [
 			'TANGGAL',
-            'No TRX',
-            'Direquest Oleh',
-            'Diproses Oleh',
+            'NO TRX',
+            'DIREQUEST OLEH',
+            'DIVISI',
+            'DITERIMA OLEH',
+            'DITERIMA TANGGAL',
             'KODE BARANG',
-            'NAMA_BARANG',
+            'NAMA BARANG',
             'JUMLAH BARANG',
             'HARGA SATUAN',
             'HARGA TOTAL',
+            'SUKSES',
+            'ALASAN',
         ];
     }
 

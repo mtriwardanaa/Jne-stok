@@ -72,6 +72,11 @@ class BarangKeluar extends Model
         return $this->belongsTo('App\Invoice', 'id', 'id_barang_keluar');
     }
 
+    public function order()
+    {
+        return $this->belongsTo('App\Order', 'id_order', 'id');
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
