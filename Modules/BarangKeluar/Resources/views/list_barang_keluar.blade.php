@@ -18,7 +18,7 @@
             <h3 class="block-title">Barang Keluar <small>List</small></h3>
         </div>
         <div class="block-content block-content-full">
-            <table class="table table-bordered table-striped table-vcenter js-dataTable-full">
+            <table class="table table-bordered table-striped table-vcenter datatable-bgsd">
                 <thead>
                     <tr>
                         <th class="text-center">No</th>
@@ -58,7 +58,7 @@
 	<script src="{{ url('assets/js/plugins/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ url('assets/js/plugins/datatables/dataTables.bootstrap4.min.js') }}"></script>
 
-    <script src="{{ url('assets/js/pages/be_tables_datatables.min.js') }}"></script>
+    <script src="{{ url('assets/js/custom.js?') }}"></script>
     <script>jQuery(function(){ Codebase.helpers('table-tools'); });</script>
 
     <script type="text/javascript">

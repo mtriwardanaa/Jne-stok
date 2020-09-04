@@ -30,7 +30,7 @@
             </div>
         </div>
         <div class="block-content block-content-full">
-            <table class="table table-bordered table-striped table-vcenter js-dataTable-full">
+            <table class="table table-bordered table-striped table-vcenter datatable-bgsd">
                 <thead>
                     <tr>
                         <th class="text-center">No</th>
@@ -70,6 +70,10 @@
                                             </button>
                                         </a>
                                     @endif
+                                @else
+                                    <button type="button" class="btn btn-sm btn-secondary" data-toggle="tooltip" title="Order telah di terima oleh admin, tidak dapat diedit kembali">
+                                            Edit
+                                    </button>
                                 @endif
 	                        	<a href="{{ url('order/detail', $value['id']) }}?status={{ $req }}">
 	                        		<button type="button" class="btn btn-sm btn-primary" data-toggle="tooltip" title="Detail Order">
@@ -89,7 +93,7 @@
 	<script src="{{ url('assets/js/plugins/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ url('assets/js/plugins/datatables/dataTables.bootstrap4.min.js') }}"></script>
 
-    <script src="{{ url('assets/js/pages/be_tables_datatables.min.js') }}"></script>
+    <script src="{{ url('assets/js/custom.js?') }}"></script>
     <script>jQuery(function(){ Codebase.helpers('table-tools'); });</script>
 
     <script type="text/javascript">

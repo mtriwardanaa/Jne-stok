@@ -18,7 +18,7 @@
             <h3 class="block-title">Barang Masuk <small>List</small></h3>
         </div>
         <div class="block-content block-content-full">
-            <table class="table table-bordered table-striped table-vcenter js-dataTable-full">
+            <table class="table table-bordered table-striped table-vcenter datatable-bgsd">
                 <thead>
                     <tr>
                         <th class="text-center">No</th>
@@ -36,11 +36,21 @@
 	                        <td class="font-w600">{{ date('d F Y H:i', strtotime($value['tanggal'])) }}</td>
 	                        <td class="font-w600">{{ $value['user']['nama'] }}</td>
 	                        <td class="text-center">
-	                        	<a href="{{ url('barangmasuk/detail', $value['id']) }}">
-	                        		<button type="button" class="btn btn-sm btn-primary" data-toggle="tooltip" title="Detail Barang Masuk">
-		                                Detail
-		                            </button>
-	                        	</a>
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-primary dropdown-toggle btn-sm" id="btnGroupDrop1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
+                                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                        <a class="dropdown-item" href="{{ url('barangmasuk/detail', $value['id']) }}">
+                                            <i class="fa fa-fw fa-bell mr-5"></i>Detail
+                                        </a> 
+                                        <a class="dropdown-item" href="javascript:void(0)">
+                                            <i class="fa fa-fw fa-pencil mr-5"></i>Edit
+                                        </a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="javascript:void(0)">
+                                            <i class="fa fa-fw fa-trash mr-5"></i>Hapus
+                                        </a>
+                                    </div>
+                                </div>
 	                        </td>
 	                    </tr>
                     @endforeach
@@ -54,7 +64,7 @@
 	<script src="{{ url('assets/js/plugins/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ url('assets/js/plugins/datatables/dataTables.bootstrap4.min.js') }}"></script>
 
-    <script src="{{ url('assets/js/pages/be_tables_datatables.min.js') }}"></script>
+    <script src="{{ url('assets/js/custom.js?') }}"></script>
     <script>jQuery(function(){ Codebase.helpers('table-tools'); });</script>
 
     <script type="text/javascript">

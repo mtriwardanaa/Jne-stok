@@ -163,7 +163,7 @@
 		        </div>
 		        <div class="block-content block-content-full">
 		            <!-- DataTables functionality is initialized with .js-dataTable-full class in js/pages/be_tables_datatables.min.js which was auto compiled from _es6/pages/be_tables_datatables.js -->
-		            <table class="table table-bordered table-striped table-vcenter js-dataTable-full">
+		            <table class="table table-bordered table-striped table-vcenter datatable-bgsd">
 		                <thead>
 		                    <tr>
 		                        <th class="text-center">No</th>
@@ -217,7 +217,7 @@
 	                    <div class="block-content">
 	                    	<div class="block">
 		                        <div class="block-content">
-		                            <table class="table table-borderless table-vcenter">
+		                            <table class="table table-borderless datatable-bgsd">
 		                                <thead>
 		                                    <tr>
 		                                        <th><b>No</th>
@@ -275,11 +275,10 @@
     <script src="{{ url('assets/js/plugins/flatpickr/flatpickr.min.js') }}"></script>
     <script src="{{ url('assets/js/plugins/select2/js/select2.full.min.js') }}"></script>
     <script>jQuery(function(){ Codebase.helpers(['datepicker', 'select2']); });</script>
-    <script src="{{ url('assets/js/custom.js') }}"></script>
 	<script src="{{ url('assets/js/plugins/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ url('assets/js/plugins/datatables/dataTables.bootstrap4.min.js') }}"></script>
 
-    <script src="{{ url('assets/js/pages/be_tables_datatables.min.js') }}"></script>
+    <script src="{{ url('assets/js/custom.js?') }}"></script>
 
     <script type="text/javascript">
     	$(document).on('keyup', '.jumlah_barang', function() {

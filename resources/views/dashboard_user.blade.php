@@ -93,13 +93,30 @@
 	                            	<span class="badge badge-warning">MENUNGGU</span>
 	                            @endif
 	                        </td>
-	                        <td class="text-center">
-	                        	<a href="{{ url('order/detail', $value['id']) }}">
-	                        		<button type="button" class="btn btn-sm btn-primary" data-toggle="tooltip" title="Detail Order">
-		                                Detail
-		                            </button>
-	                        	</a>
-	                        </td>
+                            <td class="text-center">
+                                @if (!isset($value['approved_by']))
+                                    @if (Auth::user()->id != $value['created_by'])
+                                        <button type="button" class="btn btn-sm btn-secondary" data-toggle="tooltip" title="Anda tidak diperbolehkan meng-edit data order ini, silahkan hubungi {{ ucwords(strtolower($value['created_user']['nama'])) }}">
+                                            Edit
+                                        </button>
+                                    @else
+                                        <a href="{{ url('order/edit', $value['id']) }}">
+                                            <button type="button" class="btn btn-sm btn-info" data-toggle="tooltip" title="Edit Order">
+                                                Edit
+                                            </button>
+                                        </a>
+                                    @endif
+                                @else
+                                    <button type="button" class="btn btn-sm btn-secondary" data-toggle="tooltip" title="Order telah di terima oleh admin, tidak dapat diedit kembali">
+                                            Edit
+                                    </button>
+                                @endif
+                                <a href="{{ url('order/detail', $value['id']) }}">
+                                    <button type="button" class="btn btn-sm btn-primary" data-toggle="tooltip" title="Detail Order">
+                                        Detail
+                                    </button>
+                                </a>
+                            </td>
 	                    </tr>
                     @endforeach
                 </tbody>
