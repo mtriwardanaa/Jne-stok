@@ -21,7 +21,7 @@ class Dashboard extends Controller
     public function dashboard(Request $request)
     {
     	$id_divisi = Auth::user()->id_divisi;
-    	$id_kategori = Auth::user()->id_kategori;
+    	$id_kategori = Auth::user()->id_agen_kategori;
 
         $year = date('Y');
         if ($request->has('tahun')) {
@@ -117,10 +117,31 @@ class Dashboard extends Controller
 	    	return view('dashboard_ga', $data);
     	}
 
-    	$total_order = Order::where('id_divisi', $id_divisi)->where('id_kategori', $id_kategori)->count();
-    	$total_pending = Order::where('id_divisi', $id_divisi)->where('id_kategori', $id_kategori)->whereNull('approved_by')->count();
+        $user = Auth::user();
+    	$total_order = Order::where('id_divisi', $id_divisi)->where('id_kategori', $id_kategori);
+    	$total_pending = Order::where('id_divisi', $id_divisi)->where('id_kategori', $id_kategori)->whereNull('approved_by');
 
-    	$order = Order::with('divisi', 'kategori')->where('id_divisi', $id_divisi)->where('id_kategori', $id_kategori)->orderBy('tanggal', 'DESC')->limit(10)->get();
+    	$order = Order::with('divisi', 'kategori', 'created_user')->where('id_divisi', $id_divisi)->where('id_kategori', $id_kategori)->orderBy('tanggal', 'DESC')->limit(10);
+
+        if ($user->level == 'general') {
+            if ($user->id_divisi == 13 || $user->id_divisi == 23) {
+                $order = $order->whereHas('created_user', function ($query) use ($user) {
+                    return $query->whereRaw("lower(REPLACE(nama, ' ', '')) = ?", [strtolower(str_replace(' ', '', $user->nama))]);
+                });
+
+                $total_order = $total_order->whereHas('created_user', function ($query) use ($user) {
+                    return $query->whereRaw("lower(REPLACE(nama, ' ', '')) = ?", [strtolower(str_replace(' ', '', $user->nama))]);
+                });
+
+                $total_pending = $total_pending->whereHas('created_user', function ($query) use ($user) {
+                    return $query->whereRaw("lower(REPLACE(nama, ' ', '')) = ?", [strtolower(str_replace(' ', '', $user->nama))]);
+                });
+            }
+        }
+
+        $order = $order->get();
+        $total_order = $total_order->count();
+        $total_pending = $total_pending->count();
 
     	$data = [
     		'total_pending' => $total_pending,

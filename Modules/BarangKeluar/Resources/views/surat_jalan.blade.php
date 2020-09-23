@@ -64,7 +64,7 @@
                             	{{ $detail['agen']['nama'] }}<br>
                             @endif
                             a/n {{ strtoupper($detail['nama_user_request']) }}<br>
-                            {{ date('Y-m-d H:i', strtotime($detail['tanggal'])) }}<br>
+                            {{ date('d-m-Y H:i', strtotime($detail['tanggal'])) }}<br>
                             #{{ $detail['no_barang_keluar'] }}
                         </address>
                     </div>

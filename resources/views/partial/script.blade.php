@@ -4,6 +4,17 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 
 <script type="text/javascript">
+	window.onload = function() {
+		$(".price").each(function() {
+			var input = $(this).val();
+			var input = input.replace(/[\D\s\._\-]+/g, "");
+			input = input ? parseInt( input, 10 ) : 0;
+			$(this).val( function() {
+				return ( input === 0 ) ? "" : input.toLocaleString( "id" );
+			} );
+		});
+	}
+
 	$('.number').keypress(function(event) {
 		if ((event.which != 46 || $(this).val().indexOf('.') == -1) && (event.which < 48 || event.which > 57)) {
 			event.preventDefault();
@@ -69,21 +80,21 @@
 	$( ".price" ).on( "blur", checkFormat);
 
 	function checkFormat(event){
-	  var data = $( this ).val().replace(/[($)\s\._\-]+/g, '');
-	  if(!$.isNumeric(data)){
-	    $( this ).val("");
-	  }
+		var data = $( this ).val().replace(/[($)\s\._\-]+/g, '');
+		if(!$.isNumeric(data)){
+			$( this ).val("");
+		}
 	}
 
 	function numberFormat(event){
 	  // When user select text in the document, also abort.
 	  var selection = window.getSelection().toString();
 	  if ( selection !== '' ) {
-	      return;
+	  	return;
 	  }
 	  // When the arrow keys are pressed, abort.
 	  if ( $.inArray( event.keyCode, [38,40,37,39] ) !== -1 ) {
-	      return;
+	  	return;
 	  }
 	  var $this = $( this );
 	  // Get the value.
@@ -92,17 +103,17 @@
 	  input = input ? parseInt( input, 10 ) : 0;
 
 	  $this.val( function() {
-	      return ( input === 0 ) ? "" : input.toLocaleString( "id" );
+	  	return ( input === 0 ) ? "" : input.toLocaleString( "id" );
 	  } );
 	}
 
 	$('#formWithPrice').submit(function() {
-  		$("#submit").attr("disabled", true);
+		$("#submit").attr("disabled", true);
 
-  		$( ".price" ).each(function() {
-    		var number = $( this ).val().replace(/[($)\s\._\-]+/g, '');
-    		$(this).val(number);
-  		});
+		$( ".price" ).each(function() {
+			var number = $( this ).val().replace(/[($)\s\._\-]+/g, '');
+			$(this).val(number);
+		});
 	});
 </script>
 

@@ -23,8 +23,29 @@ class BarangKeluarController extends Controller
     public function list()
     {
     	$list = BarangKeluar::with('user', 'userUpdate', 'details.stokBarang.stokBarangSatuan', 'detailStok.stokBarang.stokBarangSatuan', 'divisi', 'kategori')->whereNull('deleted_at')->orderBy('tanggal', 'DESC')->get()->toArray();
-    	// return $list;
-        return view('barangkeluar::list_barang_keluar', ['list' => $list]);
+    	
+        $data_list = array_map(function($arr) {
+            $input = [];
+            $ringkasan = '-';
+
+            if (isset($arr['details'])) {
+                $barang = [];
+                foreach ($arr['details'] as $key => $value) {
+                    $barang[] = $value['stok_barang']['nama_barang'];
+                }
+            }
+
+            if (!empty($barang)) {
+                $ringkasan = implode(', ', $barang);
+            }
+
+            $input['ringkasan'] = $ringkasan;
+            return $arr + $input;
+        }, $list);
+
+        // return $data_list;
+
+        return view('barangkeluar::list_barang_keluar', ['list' => $data_list]);
     }
 
     public function suratJalan(Request $request, $id)
@@ -71,7 +92,7 @@ class BarangKeluarController extends Controller
 
     public function create(Request $request)
     {
-    	$barang = Barang::with('stokBarangSatuan')->get()->toArray();
+    	$barang = Barang::whereNull('deleted_at')->with('stokBarangSatuan')->get()->toArray();
     	if (empty($barang)) {
     		return redirect('barang/create')->withErrors(['Barang masih kosong, silahkan input barang terlebih dahulu']);
     	}
@@ -203,7 +224,7 @@ class BarangKeluarController extends Controller
 
     public function edit(Request $request, $id)
     {
-    	$barang = Barang::with('stokBarangSatuan')->get()->toArray();
+    	$barang = Barang::whereNull('deleted_at')->with('stokBarangSatuan')->get()->toArray();
     	if (empty($barang)) {
     		return redirect('barang/create')->withErrors(['Barang masih kosong, silahkan input barang terlebih dahulu']);
     	}

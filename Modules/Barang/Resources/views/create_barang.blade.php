@@ -71,6 +71,39 @@
                 </div>
                 <div class="form-group row">
                     <div class="col-md-9">
+                        <div class="form-material">
+                            <label for="material-password">Status Barang</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-2">
+                        <div class="form-material">
+                            <label class="css-control css-control-primary css-switch">
+                                <input type="checkbox" class="css-control-input" name="internal" checked>
+                                <span class="css-control-indicator"></span> INTERNAL
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-material">
+                            <label class="css-control css-control-warning css-switch">
+                                <input type="checkbox" class="css-control-input" name="agen" checked>
+                                <span class="css-control-indicator"></span> AGEN
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-material">
+                            <label class="css-control css-control-success css-switch">
+                                <input type="checkbox" class="css-control-input" name="subagen" checked>
+                                <span class="css-control-indicator"></span> SUBAGEN
+                            </label>
+                        </div>
+                    </div>
+                </div><hr>
+                <div class="form-group row">
+                    <div class="col-md-9">
                         <button type="submit" class="btn btn-alt-primary">Simpan Barang</button>
                     </div>
                 </div>

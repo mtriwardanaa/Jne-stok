@@ -35,6 +35,8 @@
 	                        <label for="material-text">Tanggal Selesai</label>
 	                    </div>
 	                </div>
+	            </div>
+	            <div class="form-group row">
 	                <div class="col-md-3">
 	                    <div class="form-material">
 	                        <select class="js-select2 form-control" id="example2-select20" name="id_divisi" data-placeholder="Pilih divisi" required>
@@ -69,6 +71,18 @@
                             <label for="id_divisi">Nama Agen</label>
                         </div>
                     </div>
+                    <div class="col-md-3">
+	                    <div class="form-material">
+	                        <select class="js-select2 form-control" id="example2-select222" name="id_barang" data-placeholder="Pilih barang" required>
+	                            <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
+	                            <option value="all">SEMUA BARANG</option>
+	                            @foreach ($barang as $value)
+	                            	<option value="{{ $value['id'] }}">{{ $value['nama_barang'] }}</option>
+	                            @endforeach
+	                        </select>
+	                        <label for="id_divisi">Barang</label>
+	                    </div>
+	                </div>
 	            </div><br>
 	            <div class="form-group row">
                     <div class="col-md-9">

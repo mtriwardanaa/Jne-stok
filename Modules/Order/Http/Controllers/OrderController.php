@@ -45,6 +45,16 @@ class OrderController extends Controller
     		$req = $request->get('status');
     	}
 
+        $user = Auth::user();
+        // return $user;
+        if ($user->level == 'general') {
+            if ($user->id_divisi == 13 || $user->id_divisi == 23) {
+                $list = $list->whereHas('created_user', function ($query) use ($user) {
+                    return $query->whereRaw("lower(REPLACE(nama, ' ', '')) = ?", [strtolower(str_replace(' ', '', $user->nama))]);
+                });
+            }
+        }
+
     	$list = $list->get()->toArray();
     	// return $list;
         return view('order::list_order', ['list' => $list, 'req' => $req]);
@@ -52,7 +62,19 @@ class OrderController extends Controller
 
     public function create(Request $request)
     {
-    	$barang = Barang::with('stokBarangSatuan')->get()->toArray();
+        $user = Auth::user();
+    	$barang = Barang::with('stokBarangSatuan')->whereNull('deleted_at');
+        
+
+        if ($user->id_divisi == 13) {
+            $barang = $barang->where('agen', 1);
+        }
+
+        if ($user->id_divisi == 23) {
+            $barang = $barang->where('subagen', 1);
+        }
+
+        $barang = $barang->get()->toArray();
     	if (empty($barang)) {
     		return redirect('barang/create')->withErrors(['Barang masih kosong, silahkan input barang terlebih dahulu']);
     	}
@@ -227,7 +249,19 @@ class OrderController extends Controller
             $req = $request->get('status');
         }
 
-        $barang = Barang::with('stokBarangSatuan')->get()->toArray();
+        $barang = Barang::with('stokBarangSatuan')->whereNull('deleted_at');
+        
+        $user = Auth::user();
+        if ($user->id_divisi == 13) {
+            $barang = $barang->where('agen', 1);
+        }
+
+        if ($user->id_divisi == 23) {
+            $barang = $barang->where('subagen', 1);
+        }
+
+        $barang = $barang->get()->toArray();
+
         if (empty($barang)) {
             return redirect('barang/create')->withErrors(['Barang masih kosong, silahkan input barang terlebih dahulu']);
         }

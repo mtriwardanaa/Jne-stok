@@ -143,7 +143,32 @@
     	$(document).on('change', '.select_barang', function() {
     		var id = $(this).children('option:selected').data('id');
     		var harga = $(this).children('option:selected').data('harga');
-    		
+
+    		var value_sekarang = $(this).val();
+
+    		var barang = $('.select_barang');
+
+			var total_sekarang = 0;
+    		if (barang.length != 0) {
+				$.each( barang, function( key, value ) {
+					if (barang[key].value == value_sekarang) {
+						total_sekarang = total_sekarang + 1;
+					}
+				});
+			}
+
+			if (total_sekarang > 1) {
+				Swal.fire({
+					title: 'Error',
+					text: "Barang sudah dipilih, silahkan update yang sudah ada",
+					icon: 'error',
+				}).then((result) => {
+	  				$('#'+$(this).attr('id')).val('').trigger('change');
+				});
+				
+				return false;
+			}
+
     		$('#harga_'+id).val(harga);
     		$('#harga_'+id).trigger('keyup');
     	});

@@ -84,6 +84,7 @@ class BarangController extends Controller
     {
     	DB::beginTransaction();
     	$post = $request->except('_token');
+
     	$check_code = Barang::where('kode_barang', $post['kode_barang'])->whereNull('deleted_at')->first();
     	if (!empty($check_code)) {
     		DB::rollback();
@@ -123,6 +124,22 @@ class BarangController extends Controller
 			$check_delete->warning_stok     = $post['warning_stok'];
 			$check_delete->id_barang_satuan = $post['id_satuan_barang'];
 			$check_delete->deleted_at       = null;
+            $check_delete->internal = 0;
+            $check_delete->agen = 0;
+            $check_delete->subagen = 0;
+
+            if (isset($post['internal'])) {
+                $check_delete->internal = 1;
+            }
+
+            if (isset($post['agen'])) {
+                $check_delete->agen = 1;
+            }
+
+            if (isset($post['subagen'])) {
+                $check_delete->subagen = 1;
+            }
+
     		$check_delete->update();
     		if (!$check_delete) {
     			DB::rollback();
@@ -130,12 +147,27 @@ class BarangController extends Controller
     		}
     	} else {
     		$data_create = [
-				'kode_barang'      => $post['kode_barang'],
-				'nama_barang'      => $post['nama_barang'],
-				'harga_barang'      => $post['harga_barang'],
-                'warning_stok'      => $post['warning_stok'],
-				'id_barang_satuan' => $post['id_satuan_barang'],
+                'kode_barang'      => $post['kode_barang'],
+                'nama_barang'      => $post['nama_barang'],
+                'harga_barang'     => $post['harga_barang'],
+                'warning_stok'     => $post['warning_stok'],
+                'id_barang_satuan' => $post['id_satuan_barang'],
+                'internal'         => 0,
+                'agen'             => 0,
+                'subagen'          => 0,
     		];
+
+            if (isset($post['internal'])) {
+                $data_create['internal'] = 1;
+            }
+
+            if (isset($post['agen'])) {
+                $data_create['agen'] = 1;
+            }
+
+            if (isset($post['subagen'])) {
+                $data_create['subagen'] = 1;
+            }
 
     		$create_barang = Barang::create($data_create);
     		if (!$create_barang) {
@@ -227,11 +259,26 @@ class BarangController extends Controller
         }
 
         $check_barang->kode_barang      = $post['kode_barang'];
-		$check_barang->nama_barang      = $post['nama_barang'];
-		$check_barang->harga_barang      = $post['harga_barang'];
-        $check_barang->warning_stok      = $post['warning_stok'];
-		$check_barang->id_barang_satuan = $post['id_satuan_barang'];
-		$check_barang->deleted_at       = null;
+        $check_barang->nama_barang      = $post['nama_barang'];
+        $check_barang->harga_barang     = $post['harga_barang'];
+        $check_barang->warning_stok     = $post['warning_stok'];
+        $check_barang->id_barang_satuan = $post['id_satuan_barang'];
+        $check_barang->deleted_at       = null;
+        $check_barang->internal         = 0;
+        $check_barang->agen             = 0;
+        $check_barang->subagen          = 0;
+
+        if (isset($post['internal'])) {
+            $check_barang->internal = 1;
+        }
+
+        if (isset($post['agen'])) {
+            $check_barang->agen = 1;
+        }
+
+        if (isset($post['subagen'])) {
+            $check_barang->subagen = 1;
+        }
 		$check_barang->update();
 		if (!$check_barang) {
 			DB::rollback();

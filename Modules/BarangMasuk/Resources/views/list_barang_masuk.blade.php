@@ -25,6 +25,7 @@
                         <th>No Barang Masuk</th>
                         <th>Tanggal</th>
                         <th>Input By</th>
+                        <th style="width: 25%;">Barang</th>
                         <th class="text-center">Action</th>
                     </tr>
                 </thead>
@@ -35,14 +36,15 @@
 	                        <td class="font-w600">{{ $value['no_barang_masuk'] }}</td>
 	                        <td class="font-w600">{{ date('d F Y H:i', strtotime($value['tanggal'])) }}</td>
 	                        <td class="font-w600">{{ $value['user']['nama'] }}</td>
+                            <td class="font-w600">{{ $value['ringkasan'] }}</td>
 	                        <td class="text-center">
                                 <div class="btn-group" role="group">
                                     <button type="button" class="btn btn-primary dropdown-toggle btn-sm" id="btnGroupDrop1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
                                     <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                                         <a class="dropdown-item" href="{{ url('barangmasuk/detail', $value['id']) }}">
                                             <i class="fa fa-fw fa-bell mr-5"></i>Detail
-                                        </a> 
-                                        <a class="dropdown-item" href="javascript:void(0)">
+                                        </a>
+                                        <a class="dropdown-item" href="{{ url('barangmasuk/edit', $value['id']) }}">
                                             <i class="fa fa-fw fa-pencil mr-5"></i>Edit
                                         </a>
                                         <div class="dropdown-divider"></div>

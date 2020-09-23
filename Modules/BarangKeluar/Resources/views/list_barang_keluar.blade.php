@@ -27,6 +27,7 @@
                         <th>Divisi</th>
                         <th>Request By</th>
                         <th>Input By</th>
+                        <th style="width: 25%;">Barang</th>
                         <th class="text-center">Action</th>
                     </tr>
                 </thead>
@@ -39,6 +40,7 @@
 	                        <td class="font-w600">{{ $value['divisi']['nama'] }}</td>
 	                        <td class="font-w600">{{ strtoupper($value['nama_user_request']) }}</td>
 	                        <td class="font-w600">{{ $value['user']['nama'] }}</td>
+                            <td class="font-w600">{{ $value['ringkasan'] }}</td>
 	                        <td class="text-center">
 	                        	<a href="{{ url('barangkeluar/detail', $value['id']) }}">
 	                        		<button type="button" class="btn btn-sm btn-primary" data-toggle="tooltip" title="Detail Barang Keluar">
