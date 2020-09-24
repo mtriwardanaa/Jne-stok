@@ -11,6 +11,6 @@
 |
 */
 
-Route::middleware(['auth_user', 'stokga'])->prefix('user')->group(function() {
-    Route::get('/', 'UserController@list');
+Route::middleware(['auth_user'])->prefix('user')->group(function() {
+    Route::get('/', 'UserController@list')->middleware('feature:30');
 });

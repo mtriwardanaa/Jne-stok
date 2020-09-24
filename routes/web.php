@@ -6,7 +6,7 @@ Route::get('/', function () {
 
 Route::any('/login', 'Login@login')->name('login');
 
-Route::middleware('auth_user')->get('dashboard', 'Dashboard@dashboard');
+Route::middleware(['auth_user', 'feature:1'])->get('dashboard', 'Dashboard@dashboard');
 
 Route::get('logout', function(){
     session()->flush();

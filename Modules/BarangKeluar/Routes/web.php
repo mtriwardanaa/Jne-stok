@@ -11,12 +11,12 @@
 |
 */
 
-Route::middleware(['auth_user', 'stokga'])->prefix('barangkeluar')->group(function() {
-    Route::get('/', 'BarangKeluarController@list');
-    Route::get('/create', 'BarangKeluarController@create');
-    Route::get('/detail/{id}', 'BarangKeluarController@detail');
-    Route::get('/suratjalan/{id}', 'BarangKeluarController@suratJalan');
-    Route::get('/edit/{id}', 'BarangKeluarController@edit');
-    Route::get('/delete/{id}', 'BarangKeluarController@delete');
-    Route::post('/store', 'BarangKeluarController@store');
+Route::middleware(['auth_user'])->prefix('barangkeluar')->group(function() {
+    Route::get('/', 'BarangKeluarController@list')->middleware('feature:7');
+    Route::get('/create', 'BarangKeluarController@create')->middleware('feature:8');
+    Route::get('/detail/{id}', 'BarangKeluarController@detail')->middleware('feature:11');
+    Route::get('/suratjalan/{id}', 'BarangKeluarController@suratJalan')->middleware('feature:12');
+    Route::get('/edit/{id}', 'BarangKeluarController@edit')->middleware('feature:9');
+    Route::get('/delete/{id}', 'BarangKeluarController@delete')->middleware('feature:10');
+    Route::post('/store', 'BarangKeluarController@store')->middleware('feature:8');
 });

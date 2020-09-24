@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Auth;
 use DB;
+use Session;
 
 use App\Order;
 use App\BarangMasuk;
@@ -24,12 +25,14 @@ class Dashboard extends Controller
     	$id_kategori = Auth::user()->id_agen_kategori;
 
         $year = date('Y');
+
         if ($request->has('tahun')) {
             $year = $request->get('tahun');
         }
 
+        $fitur = session()->get('fitur');
 
-    	if ($id_divisi == 10) {
+        if (in_array(31, $fitur)) {
             $order_pending       = Order::whereNull('approved_by')->count();
             $total_barang_masuk  = BarangMasuk::count();
             $total_barang_keluar = BarangKeluar::count();

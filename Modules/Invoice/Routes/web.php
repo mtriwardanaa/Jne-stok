@@ -12,7 +12,7 @@
 */
 
 Route::prefix('invoice')->group(function() {
-    Route::get('/', 'InvoiceController@list');
-    Route::get('/detail/{id}', 'InvoiceController@detail');
-    Route::post('/generate', 'InvoiceController@generate');
+    Route::get('/', 'InvoiceController@list')->middleware('feature:16');
+    Route::get('/detail/{id}', 'InvoiceController@detail')->middleware('feature:16');
+    Route::post('/generate', 'InvoiceController@generate')->middleware('feature:17');
 });

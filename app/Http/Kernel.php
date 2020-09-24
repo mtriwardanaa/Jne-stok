@@ -65,6 +65,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'stokga' => \App\Http\Middleware\StokGA::class,
+        'feature' => \App\Http\Middleware\FeatureControl::class,
     ];
 
     /**

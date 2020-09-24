@@ -1,8 +1,11 @@
 <!doctype html>
 <html lang="en" class="no-focus">
+    @php
+        $fitur = session()->get('fitur');
+    @endphp
     @include('partial.head')
     <body>
-        <div id="page-container" class="@if (Auth::user()->id_divisi == 10) sidebar-o @endif sidebar-inverse enable-page-overlay side-scroll page-header-fixed">
+        <div id="page-container" class="@if (in_array(31, $fitur)) sidebar-o @endif sidebar-inverse enable-page-overlay side-scroll page-header-fixed">
             @include('partial.nav')
 
             <!-- Header -->
