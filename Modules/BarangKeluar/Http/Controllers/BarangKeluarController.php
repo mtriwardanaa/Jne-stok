@@ -20,9 +20,21 @@ use Auth;
 
 class BarangKeluarController extends Controller
 {
-    public function list()
+    public function list(Request $request)
     {
-    	$list = BarangKeluar::with('user', 'userUpdate', 'details.stokBarang.stokBarangSatuan', 'detailStok.stokBarang.stokBarangSatuan', 'divisi', 'kategori')->whereNull('deleted_at')->orderBy('tanggal', 'DESC')->get()->toArray();
+        $bulan = date('m');
+        $tahun = date('Y');
+
+
+        if ($request->has('bulan')) {
+            $bulan = $request->get('bulan');
+        }
+
+        if ($request->has('tahun')) {
+            $tahun = $request->get('tahun');
+        }
+
+    	$list = BarangKeluar::with('user', 'userUpdate', 'details.stokBarang.stokBarangSatuan', 'detailStok.stokBarang.stokBarangSatuan', 'divisi', 'kategori')->whereNull('deleted_at')->orderBy('tanggal', 'DESC')->whereMonth('tanggal', $bulan)->whereYear('tanggal', $tahun)->get()->toArray();
     	
         $data_list = array_map(function($arr) {
             $input = [];
@@ -45,7 +57,7 @@ class BarangKeluarController extends Controller
 
         // return $data_list;
 
-        return view('barangkeluar::list_barang_keluar', ['list' => $data_list]);
+        return view('barangkeluar::list_barang_keluar', ['list' => $data_list, 'bulan' => $bulan, 'tahun' => $tahun]);
     }
 
     public function suratJalan(Request $request, $id)
@@ -116,7 +128,6 @@ class BarangKeluarController extends Controller
     {
     	DB::beginTransaction();
     	$post = $request->except('_token');
-    	// return $post;
     	$user = Auth::user();
     	$data_barang_keluar = [
 			'tanggal'           => date('Y-m-d H:i:s', strtotime($post['tanggal'].' '.$post['jam'])),
@@ -126,6 +137,7 @@ class BarangKeluarController extends Controller
 			'created_by'        => $user->id,
 			'id_agen'           => $post['id_agen'],
 			'nama_user_request' => $post['nama_user'],
+            'distribusi_sales'  => $post['distribusi_sales'],
     	];
 
     	$create_barang_keluar = BarangKeluar::create($data_barang_keluar);

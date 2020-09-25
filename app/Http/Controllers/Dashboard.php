@@ -122,34 +122,55 @@ class Dashboard extends Controller
 
         $user = Auth::user();
     	$total_order = Order::where('id_divisi', $id_divisi)->where('id_kategori', $id_kategori);
-    	$total_pending = Order::where('id_divisi', $id_divisi)->where('id_kategori', $id_kategori)->whereNull('approved_by');
+    	// $total_pending = Order::where('id_divisi', $id_divisi)->where('id_kategori', $id_kategori)->whereNull('approved_by');
 
-    	$order = Order::with('divisi', 'kategori', 'created_user')->where('id_divisi', $id_divisi)->where('id_kategori', $id_kategori)->orderBy('tanggal', 'DESC')->limit(10);
+    	// $order = Order::with('divisi', 'kategori', 'created_user')->where('id_divisi', $id_divisi)->where('id_kategori', $id_kategori)->orderBy('tanggal', 'DESC')->limit(10);
 
         if ($user->level == 'general') {
             if ($user->id_divisi == 13 || $user->id_divisi == 23) {
-                $order = $order->whereHas('created_user', function ($query) use ($user) {
-                    return $query->whereRaw("lower(REPLACE(nama, ' ', '')) = ?", [strtolower(str_replace(' ', '', $user->nama))]);
-                });
+                // $order = $order->whereHas('created_user', function ($query) use ($user) {
+                //     return $query->whereRaw("lower(REPLACE(nama, ' ', '')) = ?", [strtolower(str_replace(' ', '', $user->nama))]);
+                // });
 
                 $total_order = $total_order->whereHas('created_user', function ($query) use ($user) {
                     return $query->whereRaw("lower(REPLACE(nama, ' ', '')) = ?", [strtolower(str_replace(' ', '', $user->nama))]);
                 });
 
-                $total_pending = $total_pending->whereHas('created_user', function ($query) use ($user) {
+                // $total_pending = $total_pending->whereHas('created_user', function ($query) use ($user) {
+                //     return $query->whereRaw("lower(REPLACE(nama, ' ', '')) = ?", [strtolower(str_replace(' ', '', $user->nama))]);
+                // });
+            }
+        }
+
+        $list = BarangKeluar::with('user', 'agen', 'userUpdate', 'details.stokBarang.stokBarangSatuan', 'detailStok.stokBarang.stokBarangSatuan', 'divisi', 'kategori')->whereNull('deleted_at')->where('distribusi_sales', 1)->orderBy('tanggal', 'DESC');
+
+        if (!in_array(31, $fitur)) {
+            $list = $list->where('id_divisi', $user->id_divisi);
+
+            if (isset($user->id_agen_kategori)) {
+                $list = $list->where('id_kategori', $user->id_agen_kategori);
+            }
+        }
+
+        if ($user->level == 'general') {
+            if ($user->id_divisi == 13) {
+                $list = $list->whereHas('agen', function ($query) use ($user) {
                     return $query->whereRaw("lower(REPLACE(nama, ' ', '')) = ?", [strtolower(str_replace(' ', '', $user->nama))]);
                 });
             }
         }
 
-        $order = $order->get();
+        $list = $list->count();
+
+        // $order = $order->get();
         $total_order = $total_order->count();
-        $total_pending = $total_pending->count();
+        // $total_pending = $total_pending->count();
 
     	$data = [
-    		'total_pending' => $total_pending,
-    		'total_order' => $total_order,
-    		'order' => $order,
+    		// 'total_pending' => $total_pending,
+            'total_order' => $total_order,
+            // 'order'    => $order,
+            'total_dis'   => $list,
     	];
 
     	return view('dashboard_user', $data);

@@ -15,6 +15,9 @@
 @endsection
 
 @section('content')
+	@php
+        $fitur = session()->get('fitur');
+    @endphp
 	@include('partial.notification')
 		<div class="row">
 	        <div class="col-md-3">
@@ -32,7 +35,7 @@
 	                    <div class="form-group row">
 	                        <div class="col-md-9">
 	                            <div class="form-material">
-	                                <input type="text" class="js-flatpickr form-control" id="example-material-flatpickr-default" placeholder="Masukkan tanggal barang masuk" data-allow-input="true" value="{{ date('Y-m-d', strtotime($data['tanggal'])) }}" disabled>
+	                                <input type="text" class="js-flatpickr form-control" id="example-material-flatpickr-default" placeholder="Masukkan tanggal barang masuk" data-allow-input="true" value="{{ date('d-m-Y', strtotime($data['tanggal'])) }}" disabled>
 	                                <label for="material-text">Tanggal</label>
 	                            </div>
 	                        </div>
@@ -103,16 +106,23 @@
 			            <h3 class="block-title">Summary Barang keluar</small></h3>
 			            <div class="block-options">
 			            	@if (isset($data['invoice']))
+			            		@if (in_array(16, $fitur))
 		                        <a href="{{ url('invoice/detail', $data['invoice']['id']) }}" class="btn btn-sm btn-success">
 		                            View Invoice
 		                        </a>
+		                        @endif
+
+		                        @if (in_array(17, $fitur))
 		                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-popin">
 		                            Generate Ulang Invoice
 		                        </button>
+		                        @endif
 	                        @else
+	                        	@if (in_array(17, $fitur))
 		                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-popin">
 		                            Generate Invoice
 		                        </button>
+		                        @endif
 	                        @endif
 	                    </div>
 			        </div>
@@ -143,9 +153,11 @@
 			        <div class="block-header block-header-default">
 			            <h3 class="block-title">Detail Barang Keluar <small>({{ $data['no_barang_keluar'] }})</small></h3>
 			            <div class="block-options">
+			            	@if (in_array(17, $fitur))
 	                        <a href="{{ url('barangkeluar/suratjalan', $data['id']) }}" class="btn btn-sm btn-info">
 	                            Print Surat Jalan
 	                        </a>
+	                        @endif
 	                    </div>
 			        </div>
 			        <div class="block-content block-content-full">

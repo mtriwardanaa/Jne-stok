@@ -67,6 +67,15 @@
 	            <!-- END Static Labels -->
 	        </div>
 	        <div class="col-md-8">
+	        	<div class="block mb-20">
+                    <div class="block-content text-center">
+                        <b>Pemesanan yang dilakukan diluar jam 08:00 - 15:00 WIB akan diproses dihari berikutnya oleh TIM GA
+                        <br>
+                        Terimakasih</b>
+                        <br>
+                        <br>
+                    </div>
+                </div>
 	            <!-- Static Labels -->
 	            <div class="block">
 	                <div class="block-header block-header-default">

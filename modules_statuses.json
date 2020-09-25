@@ -6,5 +6,6 @@
     "BarangKeluar": true,
     "Order": true,
     "Report": true,
-    "Invoice": true
+    "Invoice": true,
+    "Distribusi": true
 }

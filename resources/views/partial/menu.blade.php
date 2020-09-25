@@ -56,6 +56,19 @@
         </li>
         @endif
 
+        @if (in_array(33, $fitur))
+        <li class="@yield('distribusi')">
+            <a class="@yield('distribusi-list')" href="{{ url('distribusi') }}">
+                <i class="si si-briefcase"></i><span class="sidebar-mini-hide">Distribusi Sales</span>
+                @if(session('get_distribusi') != null)
+                    @if (session('get_distribusi') > 0)
+                        <span class="badge badge-pill badge-info banitem" style="color: black">{{ session('get_distribusi') }}</span>
+                    @endif
+                @endif
+            </a>
+        </li>
+        @endif
+
         @if (in_array(16, $fitur))
     	<li class="@yield('invoice')">
             <a class="@yield('invoice-list')" href="{{ url('invoice') }}">
@@ -64,9 +77,9 @@
         </li>
         @endif
 
+        @if (in_array(18, $fitur))
         <li class="nav-main-heading"><span class="sidebar-mini-visible">BD</span><span class="sidebar-mini-hidden">Summary</span></li>
 
-        @if (in_array(18, $fitur))
         <li class="@yield('report')">
             <a class="@yield('report-list')" href="{{ url('report') }}">
             	<i class="si si-layers"></i><span class="sidebar-mini-hide">Report</span>
@@ -74,8 +87,10 @@
         </li>
         @endif
 
+        @if (in_array(21, $fitur) || in_array(22, $fitur) || in_array(25, $fitur) || in_array(26, $fitur) || in_array(27, $fitur) || in_array(30, $fitur))
         <li class="nav-main-heading"><span class="sidebar-mini-visible">BD</span><span class="sidebar-mini-hidden">Data</span></li>
-
+        @endif
+        
         @if (in_array(21, $fitur) || in_array(22, $fitur) || in_array(25, $fitur))
         <li class="@yield('barang')">
             <a class="nav-submenu" data-toggle="nav-submenu" href="#">

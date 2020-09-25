@@ -19,11 +19,25 @@ class OrderController extends Controller
 {
     public function list(Request $request)
     {
+        $bulan = date('m');
+        $tahun = date('Y');
+
+
+        if ($request->has('bulan')) {
+            $bulan = $request->get('bulan');
+        }
+
+        if ($request->has('tahun')) {
+            $tahun = $request->get('tahun');
+        }
+        
     	$user = Auth::user();
 
-    	$list = Order::with('approved_user', 'created_user', 'details.stokBarang.stokBarangSatuan', 'divisi', 'kategori')->whereNull('deleted_at')->orderBy('tanggal', 'DESC');
+    	$list = Order::with('approved_user', 'created_user', 'details.stokBarang.stokBarangSatuan', 'divisi', 'kategori')->whereNull('deleted_at')->orderBy('tanggal', 'DESC')->whereMonth('tanggal', $bulan)->whereYear('tanggal', $tahun);
 
-    	if ($user->id_divisi != 10) {
+    	$fitur = session()->get('fitur');
+
+        if (!in_array(31, $fitur)) {
 	    	$list = $list->where('id_divisi', $user->id_divisi);
 
 	    	if (isset($user->id_agen_kategori)) {
@@ -56,8 +70,27 @@ class OrderController extends Controller
         }
 
     	$list = $list->get()->toArray();
-    	// return $list;
-        return view('order::list_order', ['list' => $list, 'req' => $req]);
+
+        $data_list = array_map(function($arr) {
+            $input = [];
+            $ringkasan = '-';
+
+            if (isset($arr['details'])) {
+                $barang = [];
+                foreach ($arr['details'] as $key => $value) {
+                    $barang[] = $value['stok_barang']['nama_barang'];
+                }
+            }
+
+            if (!empty($barang)) {
+                $ringkasan = implode(', ', $barang);
+            }
+
+            $input['ringkasan'] = $ringkasan;
+            return $arr + $input;
+        }, $list);
+
+        return view('order::list_order', ['list' => $data_list, 'req' => $req, 'bulan' => $bulan, 'tahun' => $tahun]);
     }
 
     public function create(Request $request)
@@ -109,6 +142,7 @@ class OrderController extends Controller
 			'created_by'        => $user->id,
 			'id_order'          => $data->id,
 			'nama_user_request' => $data['nama_user_request'],
+            'distribusi_sales'  => $post['distribusi_sales'],
     	];
 
     	if ($data['id_divisi'] == 13) {

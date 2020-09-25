@@ -95,6 +95,25 @@
 	                    </div>
 	                    <div class="form-group row">
 	                        <div class="col-md-9">
+	                            <div class="form-material">
+	                                <div class="row no-gutters items-push">
+                                        <div class="col-6">
+                                            <label class="css-control css-control-primary css-radio">
+                                                <input type="radio" class="css-control-input distribusi_ya" name="distribusi_sales" value="1">
+                                                <span class="css-control-indicator"></span> Ya
+                                            </label>
+                                            <label class="css-control css-control-danger css-radio">
+                                                <input type="radio" class="css-control-input distribusi_tidak" name="distribusi_sales" value="0" checked>
+                                                <span class="css-control-indicator"></span> Tidak
+                                            </label>
+                                        </div>
+                                    </div>
+	                                <label for="id_divisi">Distribusi Sales</label>
+	                            </div>
+	                        </div>
+	                    </div>
+	                    <div class="form-group row">
+	                        <div class="col-md-9">
 	                        </div>
 	                    </div>
 	                </div>
@@ -197,6 +216,7 @@
     	$(document).on('change', '#example2-select20', function() {
 			var val = $(this).val();
 			if (val != 23) {
+				console.log('tidak 23');
 				$('.div_agen_kategori').hide();
 				$('#example2-select21').attr('required', false);
 				$('#example2-select21').val('');
@@ -204,14 +224,21 @@
 				if (val == 13) {
 					$('.div_nama_agen').show();
 					$('#example2-select22').attr('required', true);
+					$('.distribusi_ya').attr('checked', true);
+					$('.distribusi_tidak').attr('checked', false);
 				} else {
 					$('.div_nama_agen').hide();
 					$('#example2-select22').attr('required', false);
 					$('#example2-select22').val('');
+					$('.distribusi_ya').attr('checked', false);
+					$('.distribusi_tidak').attr('checked', true);
 				}
 			} else {
+				console.log('23');
 				$('.div_agen_kategori').show();
 				$('#example2-select21').attr('required', true);
+				$('.distribusi_ya').attr('checked', false);
+				$('.distribusi_tidak').attr('checked', true);
 			}
 		});
 

@@ -17,9 +17,21 @@ use DB;
 
 class BarangMasukController extends Controller
 {
-    public function list()
+    public function list(Request $request)
     {
-    	$list = BarangMasuk::with('user', 'userUpdate', 'details.stokBarang.stokBarangSatuan', 'details.stokSupplier')->whereNull('deleted_at')->orderBy('tanggal', 'DESC')->get()->toArray();
+        $bulan = date('m');
+        $tahun = date('Y');
+
+
+        if ($request->has('bulan')) {
+            $bulan = $request->get('bulan');
+        }
+
+        if ($request->has('tahun')) {
+            $tahun = $request->get('tahun');
+        }
+
+    	$list = BarangMasuk::with('user', 'userUpdate', 'details.stokBarang.stokBarangSatuan', 'details.stokSupplier')->whereNull('deleted_at')->orderBy('tanggal', 'DESC')->whereMonth('tanggal', $bulan)->whereYear('tanggal', $tahun)->get()->toArray();
 
         $data_list = array_map(function($arr) {
             $input = [];
@@ -40,7 +52,7 @@ class BarangMasukController extends Controller
             return $arr + $input;
         }, $list);
         
-        return view('barangmasuk::list_barang_masuk', ['list' => $data_list]);
+        return view('barangmasuk::list_barang_masuk', ['list' => $data_list, 'bulan' => $bulan, 'tahun' => $tahun]);
     }
 
     public function create(Request $request)

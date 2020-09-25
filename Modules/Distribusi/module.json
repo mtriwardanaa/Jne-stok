@@ -1,0 +1,13 @@
+{
+    "name": "Distribusi",
+    "alias": "distribusi",
+    "description": "",
+    "keywords": [],
+    "order": 0,
+    "providers": [
+        "Modules\\Distribusi\\Providers\\DistribusiServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

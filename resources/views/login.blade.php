@@ -98,6 +98,61 @@
             </main>
             <!-- END Main Container -->
         </div>
+
+        <div class="modal fade" id="modal-onboarding" tabindex="-1" role="dialog" aria-labelledby="modal-onboarding" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-popout" role="document">
+                <div class="modal-content rounded">
+                    <div class="block block-rounded block-transparent mb-0 bg-pattern">
+                        <div class="block-header justify-content-end">
+                            <div class="block-options">
+                                <a class="font-w600 text-danger" href="#" data-dismiss="modal" aria-label="Close">
+                                    MASUK AKUN
+                                </a>
+                            </div>
+                        </div>
+                        <div class="block-content block-content-full">
+                            <div class="js-slider slick-dotted-inner" data-dots="true" data-arrows="false" data-infinite="false">
+                                <div class="pb-5">
+                                    <div class="row justify-content-center text-center">
+                                        <div class="col-md-10 col-lg-8">
+                                            <h3 class="font-size-h2 font-w300 mt-20">Selamat datang di <br> <b>Belanja GA</b></h3>
+                                            <p class="text-muted">
+                                                Anda mengakses belanja-ga.id melalui HP, silahkan <b>AKTIFKAN MODE DESKTOP</b> terlebih dahulu untuk halaman yang lebih estetik
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="slick-slide pb-50">
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-10 col-lg-8">
+                                            <h3 class="font-size-h2 font-w300 mb-5">CARA MENGAKTIFKAN MODE DEKSTOP (CHROME)</h3>
+                                            <p class="text-muted"><br>
+                                                1. Klik titik 3 di pojok kanan atas (seperti digambar)
+                                                <div style="border:1px solid black;">
+                                                    <img src="{{ url('assets/login/desktop1.jpeg') }}" width="300">
+                                                </div>
+                                            </p>
+                                            <p class="text-muted">
+                                                2. Centang bagian situs desktop (seperti digambar)
+                                                <div style="border:1px solid black;">
+                                                    <img src="{{ url('assets/login/desktop2.jpeg') }}" width="300">
+                                                </div>
+                                            </p>
+                                            <div class="text-center">
+                                                <button type="button" class="btn btn-sm btn-hero btn-noborder btn-primary mb-10 mx-5" data-dismiss="modal" aria-label="Close">
+                                                    Kembali ke halaman login <i class="fa fa-arrow-right ml-5"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- END Page Container -->
 
         <!--
@@ -132,5 +187,14 @@
 
         <!-- Page JS Code -->
         <script src="assets/js/pages/op_auth_signin.min.js"></script>
+
+        <script type="text/javascript">
+            $(function() {
+                var mobile = '{{ $mobile }}';
+                if (mobile == 1) {
+                    $('#modal-onboarding').modal('show');
+                }
+            });
+        </script>
     </body>
 </html>

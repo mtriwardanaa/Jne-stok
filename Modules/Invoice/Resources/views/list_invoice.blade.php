@@ -12,6 +12,9 @@
 @endsection
 
 @section('content')
+    @php
+        $fitur = session()->get('fitur');
+    @endphp
 	@include('partial.notification')
 	<div class="block">
         <div class="block-header block-header-default">
@@ -40,11 +43,13 @@
 	                        <td class="font-w600">{{ strtoupper($value['stok_barang_keluar']['kategori']['nama'] ?? $value['stok_barang_keluar']['agen']['nama'] ?? $value['stok_barang_keluar']['nama_user_request']) }}</td>
 	                        <td class="font-w600">{{ $value['user']['nama'] }}</td>
 	                        <td class="text-center">
+                                @if (in_array(9, $fitur))
 	                        	<a href="{{ url('invoice/detail', $value['id']) }}">
 	                        		<button type="button" class="btn btn-sm btn-primary" data-toggle="tooltip" title="Detail Invoice">
 		                                Detail
 		                            </button>
 	                        	</a>
+                                @endif
 	                        </td>
 	                    </tr>
                     @endforeach

@@ -21,18 +21,7 @@
                     <p class="mt-5">
                         <i class="si si-bar-chart fa-3x text-white-op"></i>
                     </p>
-                    <p class="font-w600 text-white" style="font-size: 22px;">Data Order / Request</p>
-                </div>
-            </a>
-        </div>
-        <div class="col-6 col-xl-3">
-            <a class="block text-center" href="{{ url('order') }}?status=pending">
-                <div class="block-content ribbon" style="background-color: #ffca28">
-                    <div class="ribbon-box">{{ $total_pending }}</div>
-                    <p class="mt-5">
-                        <i class="si si-book-open fa-3x text-white-op"></i>
-                    </p>
-                    <p class="font-w600 text-white" style="font-size: 22px;">Order Pending</p>
+                    <p class="font-w600 text-white" style="font-size: 22px;">Lists Order</p>
                 </div>
             </a>
         </div>
@@ -42,7 +31,18 @@
                     <p class="mt-5">
                         <i class="si si-basket-loaded fa-3x text-white-op"></i>
                     </p>
-                    <p class="font-w600 text-white" style="font-size: 22px;">Request / Order</p>
+                    <p class="font-w600 text-white" style="font-size: 22px;">Buat Order</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-xl-3">
+            <a class="block text-center" href="{{ url('distribusi') }}">
+                <div class="block-content ribbon" style="background-color: #ffca28">
+                    <div class="ribbon-box">{{ $total_dis }}</div>
+                    <p class="mt-5">
+                        <i class="si si-book-open fa-3x text-white-op"></i>
+                    </p>
+                    <p class="font-w600 text-white" style="font-size: 22px;">Distribusi</p>
                 </div>
             </a>
         </div>
@@ -52,13 +52,13 @@
                     <p class="mt-5">
                         <i class="si si-settings fa-3x text-white-op"></i>
                     </p>
-                    <p class="font-w600 text-white" style="font-size: 22px;">Logout</p>
+                    <p class="font-w600 text-white" style="font-size: 22px;">Keluar</p>
                 </div>
             </a>
         </div>
         <!-- END Row #1 -->
     </div>
-    <div class="block">
+   {{--  <div class="block">
         <div class="block-header block-header-default">
             <h3 class="block-title">List Order<small>(10 Data Terakhir)</small></h3>
         </div>
@@ -122,7 +122,7 @@
                 </tbody>
             </table>
         </div>
-    </div>
+    </div> --}}
 @endsection
 
 @section('script')

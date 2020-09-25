@@ -15,6 +15,9 @@
 @endsection
 
 @section('content')
+	@php
+        $fitur = session()->get('fitur');
+    @endphp
 	@include('partial.notification')
 	<div class="row">
         <div class="col-md-3">
@@ -134,7 +137,7 @@
             <div class="block">
 		        <div class="block-header block-header-default">
 		            <h3 class="block-title">Detail Barang <small>({{ $data['no_order'] }})</small></h3>
-		            @if (Auth::user()->id_divisi == 10)
+	            	@if (in_array(32, $fitur))
 		            	@if (!isset($data['approved_by']))
 				            <div class="block-options">
 		                        <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modal-popin">
@@ -142,23 +145,25 @@
 		                        </button>
 		                    </div>
 	                    @endif
-	                @else
-	                    <div class="block-options">
-	                        <a href="{{ url('/') }}" class="btn btn-sm btn-info">
-	                           <i class="fa fa-home"></i> Kembali ke Dashboard
+                    @endif
+
+                    @if (!in_array(31, $fitur))
+                    <div class="block-options">
+                        <a href="{{ url('/') }}" class="btn btn-sm btn-info">
+                           <i class="fa fa-home"></i> Kembali ke Dashboard
+                        </a>
+                    </div>
+                    <div class="block-options">
+                    	@if (isset($req))
+	                        <a href="{{ url('order') }}?status={{ $req }}" class="btn btn-sm btn-danger">
+	                           <i class="fa fa-arrow-left"></i> Kembali ke List Order
 	                        </a>
-	                    </div>
-	                    <div class="block-options">
-	                    	@if (isset($req))
-		                        <a href="{{ url('order') }}?status={{ $req }}" class="btn btn-sm btn-danger">
-		                           <i class="fa fa-arrow-left"></i> Kembali ke List Order
-		                        </a>
-		                    @else
-		                    	<a href="{{ url('order') }}" class="btn btn-sm btn-danger">
-		                           <i class="fa fa-arrow-left"></i> Kembali ke List Order
-		                        </a>
-		                    @endif
-	                    </div>
+	                    @else
+	                    	<a href="{{ url('order') }}" class="btn btn-sm btn-danger">
+	                           <i class="fa fa-arrow-left"></i> Kembali ke List Order
+	                        </a>
+	                    @endif
+                    </div>
                     @endif
 		        </div>
 		        <div class="block-content block-content-full">
@@ -254,7 +259,26 @@
 			                                    </tr>
 		                                    @endforeach
 		                                </tbody>
-		                            </table>
+		                            </table><br>
+		                            <div class="form-group row">
+				                        <div class="col-md-9">
+				                            <div class="form-material">
+				                                <div class="row no-gutters items-push">
+			                                        <div class="col-6">
+			                                            <label class="css-control css-control-primary css-radio">
+			                                                <input type="radio" class="css-control-input distribusi_ya" name="distribusi_sales" value="1"  @if ($data['id_divisi'] == 13) checked @endif>
+			                                                <span class="css-control-indicator"></span> Ya
+			                                            </label>
+			                                            <label class="css-control css-control-danger css-radio">
+			                                                <input type="radio" class="css-control-input distribusi_tidak" name="distribusi_sales" value="0" @if ($data['id_divisi'] != 13) checked @endif>
+			                                                <span class="css-control-indicator"></span> Tidak
+			                                            </label>
+			                                        </div>
+			                                    </div>
+				                                <label for="id_divisi">Distribusi Sales</label>
+				                            </div>
+				                        </div>
+				                    </div>
 		                        </div>
 		                    </div>
 	                    </div>

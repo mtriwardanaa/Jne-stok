@@ -14,7 +14,11 @@
 @endsection
 
 @section('content')
+	@php
+        $fitur = session()->get('fitur');
+    @endphp
 	@include('partial.notification')
+	@if (in_array(19, $fitur))
 	<div class="block">
         <div class="block-header block-header-default">
             <h3 class="block-title">Summary <small>Report (pengeluaran divisi)</small></h3>
@@ -92,7 +96,9 @@
 	        </form>
         </div>
     </div>
+    @endif
 
+    @if (in_array(20, $fitur))
     <div class="block">
         <div class="block-header block-header-default">
             <h3 class="block-title">Stok Opname <small>Report (bulanan)</small></h3>
@@ -153,6 +159,7 @@
 	        </form>
         </div>
     </div>
+    @endif
 @endsection
 
 @section('script')

@@ -12,6 +12,9 @@
 @endsection
 
 @section('content')
+    @php
+        $fitur = session()->get('fitur');
+    @endphp
 	@include('partial.notification')
 	<div class="block">
         <div class="block-header block-header-default">
@@ -34,13 +37,19 @@
 	                    		<td>{{ $key+1 }}</td>
 	                    		<td>{{ $value['nama_supplier'] }}</td>
 	                    		<td class="text-center">
+                                    @if (in_array(28, $fitur))
 	                                <div class="btn-group">
 	                                	<a href="{{ url('supplier/edit', $value['id']) }}" class="btn btn-sm btn-info" data-toggle="click-ripple" title="Edit"><i class="fa fa-pencil"></i> Edit</a>
                                     </div>
+                                    @endif
+
+                                    @if (in_array(29, $fitur))
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="{{ $value['id'] }}" data-toggle="click-ripple" title="Delete">
                                             <i class="fa fa-times"></i> Hapus
                                         </button>
+                                    </div>
+                                    @endif
 	                            </td>
                             </tr>
                     	@endforeach

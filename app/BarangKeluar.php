@@ -34,7 +34,7 @@ class BarangKeluar extends Model
     /**
      * @var array
      */
-    protected $fillable = ['no_barang_keluar', 'id_divisi', 'id_order', 'id_kategori', 'created_by', 'updated_by', 'id_agen', 'nama_user_request', 'tanggal', 'created_at', 'updated_at', 'deleted_at'];
+    protected $fillable = ['no_barang_keluar', 'id_divisi', 'id_order', 'id_kategori', 'created_by', 'updated_by', 'id_agen', 'nama_user_request', 'tanggal', 'distribusi_sales', 'tanggal_distribusi', 'user_distribusi', 'created_at', 'updated_at', 'deleted_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -42,6 +42,11 @@ class BarangKeluar extends Model
     public function user()
     {
         return $this->belongsTo('App\User', 'created_by');
+    }
+
+    public function userDis()
+    {
+        return $this->belongsTo('App\User', 'user_distribusi');
     }
 
     public function agen()

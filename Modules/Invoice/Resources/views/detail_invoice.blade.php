@@ -66,7 +66,7 @@
                             	{{ $detail['stokBarangKeluar']['agen']['nama'] }}<br>
                             @endif
                             a/n {{ strtoupper($detail['stokBarangKeluar']['nama_user_request']) }}<br>
-                            {{ date('Y-m-d H:i', strtotime($detail['stokBarangKeluar']['tanggal'])) }}<br>
+                            {{ date('d-m-Y H:i', strtotime($detail['stokBarangKeluar']['tanggal'])) }}<br>
                             #{{ $detail['no_invoice'] }}
                         </address>
                     </div>

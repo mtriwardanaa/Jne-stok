@@ -7,6 +7,7 @@ use Auth;
 use Session;
 
 use App\UserControl;
+use Jenssegers\Agent\Agent;
 
 class Login extends Controller
 {
@@ -20,7 +21,15 @@ class Login extends Controller
 		$post = $request->except('_token');
 
 		if ($method == 'GET') {
-		    return view('login');
+            $mobile = 0;
+
+            $agent = new Agent();
+            
+            if ($agent->isMobile()) {
+                $mobile = 1;
+            }
+
+		    return view('login', ['mobile' => $mobile]);
 		}
 
         $data_login = [
