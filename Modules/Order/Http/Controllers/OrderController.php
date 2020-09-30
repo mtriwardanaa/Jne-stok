@@ -496,4 +496,23 @@ class OrderController extends Controller
         DB::commit();
         return redirect('order')->with(['success' => ['Update data order berhasil']]);
     }
+
+    public function delete(Request $request, $id)
+    {
+        DB::beginTransaction();
+        $data = Order::where('id', $id)->first();
+        if (isset($data['tanggal_approve'])) {
+            DB::rollback();
+            return back()->withErrors(['Order sudah diterima, tidak bisa dihapus']);
+        }
+
+        $delete = $data->delete();
+        if (!$delete) {
+            DB::rollback();
+            return back()->withErrors(['Order gagal dihapus']);
+        }
+
+        DB::commit();
+        return back()->with(['success' => ['Order berhasil dihapus']]);
+    }
 }

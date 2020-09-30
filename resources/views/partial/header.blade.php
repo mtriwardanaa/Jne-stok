@@ -4,7 +4,7 @@
         <!-- Left Section -->
         <div class="content-header-section">
             <!-- Toggle Sidebar -->
-            @if (Auth::user()->id_divisi == 10)
+            @if (in_array(31, $fitur))
 	            <button type="button" class="btn btn-circle btn-dual-secondary" data-toggle="layout" data-action="sidebar_toggle">
 	                <i class="fa fa-navicon"></i>
 	            </button>

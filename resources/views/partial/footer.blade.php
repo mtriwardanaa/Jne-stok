@@ -3,7 +3,7 @@
         <div class="float-right">
         </div>
         <div class="float-left">
-            <a class="font-w600" href="#" target="_blank">BitStudio</a> &copy; <span class="js-year-copy"></span>
+            <a class="font-w600" href="#" target="_blank">IT Support Pontianak</a> &copy; <span class="js-year-copy"></span>
         </div>
     </div>
 </footer>

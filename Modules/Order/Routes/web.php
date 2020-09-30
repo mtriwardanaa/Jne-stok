@@ -20,4 +20,5 @@ Route::middleware('auth_user')->prefix('order')->group(function() {
     Route::post('/approve', 'OrderController@approve')->middleware('feature:32');
     Route::post('/approve/update/{id}', 'OrderController@updateApprove')->middleware('feature:32');
     Route::get('/detail/{id}', 'OrderController@detail')->middleware('feature:13');
+    Route::get('/delete/{id}', 'OrderController@delete')->middleware('feature:13');
 });

@@ -10,6 +10,10 @@
 @section('css')
 	<link rel="stylesheet" href="{{ url('assets/js/plugins/datatables/dataTables.bootstrap4.css') }}">
     <link rel="stylesheet" href="{{ url('assets/js/plugins/select2/css/select2.min.css') }}">
+
+    <style type="text/css">
+        .btn-delete { cursor: pointer; }
+    </style>
 @endsection
 
 @section('content')
@@ -138,6 +142,14 @@
                                                 </a>
                                             @endif
                                         @endif
+
+                                        @if (in_array(15, $fitur))
+                                            @if (Auth::user()->id == $value['created_by'] || Auth::user()->id_divisi == 10)
+                                                <a class="dropdown-item btn-delete" data-id="{{ $value['id'] }}">
+                                                    <i class="fa fa-fw fa-trash mr-5"></i>Delete
+                                                </a>
+                                            @endif
+                                        @endif
                                     </div>
                                 </div>
                             </td>
@@ -164,7 +176,7 @@
 			var id = $(this).data('id');
 			Swal.fire({
 				title: 'Are you sure?',
-				text: "Barang masuk akan dihapus",
+				text: "Order akan dihapus",
 				icon: 'warning',
 				showCancelButton: true,
 				confirmButtonColor: '#3085d6',
@@ -173,7 +185,7 @@
 				cancelButtonText: 'Tidak'
 			}).then((result) => {
   				if (result.value) {
-  					var url = "{{ url('barangmasuk/delete') }}/"+id;
+  					var url = "{{ url('order/delete') }}/"+id;
   					window.location.href = url;
   				}
 			})

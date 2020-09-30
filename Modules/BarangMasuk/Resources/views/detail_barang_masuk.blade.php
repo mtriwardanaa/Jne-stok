@@ -1,8 +1,8 @@
 @extends('master')
 
 @section('title', 'Detail Barang Masuk')
-@section('barang_masuk', 'open')
-@section('barang_masuk-list', 'active')
+@section('barang-masuk', 'open')
+@section('barang-masuk-list', 'active')
 
 @section('head-title', 'Barang Masuk')
 @section('head-sub-title', 'Detail')
