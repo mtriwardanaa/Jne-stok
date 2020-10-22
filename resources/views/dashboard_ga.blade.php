@@ -72,7 +72,7 @@
                 <div class="block-content block-content-full text-center">
                     <!-- Lines Chart Container -->
                     <br>
-                    <div id="chartContainer" style="height: 230px; width: 100%;"></div>
+                    <div id="chartContainer" style="height: 250px; width: 100%;"></div>
                 </div>
             </div>
             <!-- END Lines Chart -->
@@ -81,7 +81,7 @@
             <!-- Bars Chart -->
             <div class="block">
                 <div class="block-header block-header-default">
-                    <h3 class="block-title">Bars</h3>
+                    <h3 class="block-title">Summary Barang Keluar Divisi</h3>
                     <div class="block-options">
                         <button type="button" class="btn-block-option" data-toggle="block-option" data-action="state_toggle" data-action-mode="demo">
                             <i class="si si-refresh"></i>
@@ -90,7 +90,46 @@
                 </div>
                 <div class="block-content block-content-full text-center">
                     <!-- Bars Chart Container -->
-                    <div id="chartContainer1" style="height: 230px; width: 100%;"></div>
+                    <br>
+                    <div id="chartContainer1" style="height: 250px; width: 100%;"></div>
+                </div>
+            </div>
+            <!-- END Bars Chart -->
+        </div>
+        <div class="col-xl-6">
+            <!-- Bars Chart -->
+            <div class="block">
+                <div class="block-header block-header-default">
+                    <h3 class="block-title">Summary Barang Keluar Sub Agen / Cabang</h3>
+                    <div class="block-options">
+                        <button type="button" class="btn-block-option" data-toggle="block-option" data-action="state_toggle" data-action-mode="demo">
+                            <i class="si si-refresh"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="block-content block-content-full text-center">
+                    <!-- Bars Chart Container -->
+                    <br>
+                    <div id="chartContainer3" style="height: 250px; width: 100%;"></div>
+                </div>
+            </div>
+            <!-- END Bars Chart -->
+        </div>
+        <div class="col-xl-6">
+            <!-- Bars Chart -->
+            <div class="block">
+                <div class="block-header block-header-default">
+                    <h3 class="block-title">Summary Barang Keluar Agen Hybrid</h3>
+                    <div class="block-options">
+                        <button type="button" class="btn-block-option" data-toggle="block-option" data-action="state_toggle" data-action-mode="demo">
+                            <i class="si si-refresh"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="block-content block-content-full text-center">
+                    <!-- Bars Chart Container -->
+                    <br>
+                    <div id="chartContainer2" style="height: 250px; width: 100%;"></div>
                 </div>
             </div>
             <!-- END Bars Chart -->
@@ -99,6 +138,9 @@
 
     <input type="hidden" class="chart_masuk" value="{{ json_encode($masuk) }}">
 	<input type="hidden" class="chart_keluar" value="{{ json_encode($keluar) }}">
+	<input type="hidden" class="chart_laporan_divisi" value="{{ json_encode($laporan_divisi) }}">
+	<input type="hidden" class="chart_laporan_hybrid" value="{{ json_encode($laporan_hybrid) }}">
+	<input type="hidden" class="chart_laporan_sub" value="{{ json_encode($laporan_sub) }}">
 @endsection
 
 @section('script')
@@ -150,113 +192,54 @@
 
 			//////////////////////////////////////
 
+			var laporan_divisi = JSON.parse($('.chart_laporan_divisi').val());
+			console.log(laporan_divisi);
 			var chart = new CanvasJS.Chart("chartContainer1", {
+				theme: "light1", // "light1", "light2", "dark1", "dark2"
 				animationEnabled: true,
-				exportEnabled: true,
-				title:{
-					text: "Gold Medals Won in Olympics"             
-				}, 
-				axisY:{
-					title: "Number of Medals"
-				},
-				toolTip: {
-					shared: true
-				},
-				legend:{
-					cursor:"pointer",
-					itemclick: toggleDataSeries
-				},
-				data: [{        
-					type: "spline",  
-					name: "US",        
-					showInLegend: true,
-					dataPoints: [
-						{ label: "Atlanta 1996" , y: 44 },     
-						{ label:"Sydney 2000", y: 37 },     
-						{ label: "Athens 2004", y: 36 },     
-						{ label: "Beijing 2008", y: 36 },     
-						{ label: "London 2012", y: 46 },
-						{ label: "Rio 2016", y: 46 }
-					]
-				}, 
-				{        
-					type: "spline",
-					name: "China",        
-					showInLegend: true,
-					dataPoints: [
-						{ label: "Atlanta 1996" , y: 16 },     
-						{ label:"Sydney 2000", y: 28 },     
-						{ label: "Athens 2004", y: 32 },     
-						{ label: "Beijing 2008", y: 48 },     
-						{ label: "London 2012", y: 38 },
-						{ label: "Rio 2016", y: 26 }
-					]
-				},
-				{        
-					type: "spline",  
-					name: "Britain",        
-					showInLegend: true,
-					dataPoints: [
-						{ label: "Atlanta 1996" , y: 1 },     
-						{ label:"Sydney 2000", y: 11 },     
-						{ label: "Athens 2004", y: 9 },     
-						{ label: "Beijing 2008", y: 19 },     
-						{ label: "London 2012", y: 29 },
-						{ label: "Rio 2016", y: 27 }
-					]
-				},
-				{        
-					type: "spline",  
-					name: "Russia",        
-					showInLegend: true,
-					dataPoints: [
-						{ label: "Atlanta 1996" , y: 26 },     
-						{ label:"Sydney 2000", y: 32 },     
-						{ label: "Athens 2004", y: 28 },     
-						{ label: "Beijing 2008", y: 22 },     
-						{ label: "London 2012", y: 20 },
-						{ label: "Rio 2016", y: 19 }
-					]
-				},
-				{        
-					type: "spline",  
-					name: "S Korea",        
-					showInLegend: true,
-					dataPoints: [
-						{ label: "Atlanta 1996" , y: 7 },     
-						{ label:"Sydney 2000", y: 8 },     
-						{ label: "Athens 2004", y: 9 },     
-						{ label: "Beijing 2008", y: 13 },     
-						{ label: "London 2012", y: 13 },
-						{ label: "Rio 2016", y: 9 }
-					]
-				},  
-				{        
-					type: "spline",  
-					name: "Germany",        
-					showInLegend: true,
-					dataPoints: [
-						{ label: "Atlanta 1996" , y: 20 },     
-						{ label:"Sydney 2000", y: 13 },     
-						{ label: "Athens 2004", y: 13 },     
-						{ label: "Beijing 2008", y: 16 },     
-						{ label: "London 2012", y: 11 },
-						{ label: "Rio 2016", y: 17 }
-					]
+				data: [{
+					type: "pie",
+					startAngle: 240,
+					yValueFormatString: "##0.00\"%\"",
+					indexLabel: "{label} {y}%",
+					dataPoints: laporan_divisi
 				}]
 			});
-
 			chart.render();
 
-			function toggleDataSeries(e) {
-				if(typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-					e.dataSeries.visible = false;
-				}
-				else {
-					e.dataSeries.visible = true;            
-				}
-				chart.render();
-			}
+			//////////////////////////////////////
+
+			var laporan_hybrid = JSON.parse($('.chart_laporan_hybrid').val());
+			console.log(laporan_hybrid);
+			var chart = new CanvasJS.Chart("chartContainer2", {
+				theme: "light1", // "light1", "light2", "dark1", "dark2"
+				animationEnabled: true,
+				data: [{
+					type: "pie",
+					startAngle: 240,
+					yValueFormatString: "##0.00\"%\"",
+					indexLabel: "{label} {y}%",
+					dataPoints: laporan_hybrid
+				}]
+			});
+			chart.render();
+
+			//////////////////////////////////////
+
+			var chart_laporan_sub = JSON.parse($('.chart_laporan_sub').val());
+			console.log(chart_laporan_sub);
+			var chart = new CanvasJS.Chart("chartContainer3", {
+				theme: "light1", // "light1", "light2", "dark1", "dark2"
+				animationEnabled: true,
+				data: [{
+					type: "pie",
+					startAngle: 240,
+					yValueFormatString: "##0.00\"%\"",
+					indexLabel: "{label} {y}%",
+					dataPoints: chart_laporan_sub
+				}]
+			});
+			chart.render();
 		});
 	</script>
 @endsection

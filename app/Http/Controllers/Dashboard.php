@@ -108,6 +108,17 @@ class Dashboard extends Controller
                 }
             }
 
+            $year = date('Y');
+            $month = date('m');
+            // $month = "09";
+
+            $laporan_divisi = DB::select("SELECT divisi.nama as label, (COUNT(stok_barang_keluar.id_divisi) * 100 / (Select COUNT(*) From stok_barang_keluar WHERE year(stok_barang_keluar.tanggal) = ".$year." AND month(stok_barang_keluar.tanggal) = ".$month.")) as y FROM stok_barang_keluar, divisi WHERE year(stok_barang_keluar.tanggal) = ".$year." AND month(stok_barang_keluar.tanggal) = ".$month." AND stok_barang_keluar.id_divisi=divisi.id GROUP BY stok_barang_keluar.id_divisi");
+
+            $laporan_hybrid = DB::select("SELECT users.nama as label, (COUNT(stok_barang_keluar.id_agen) * 100 / (Select COUNT(*) From stok_barang_keluar WHERE stok_barang_keluar.id_divisi=13 AND year(stok_barang_keluar.tanggal) = ".$year." AND month(stok_barang_keluar.tanggal) = ".$month.")) as y FROM stok_barang_keluar, users WHERE stok_barang_keluar.id_divisi=13 AND year(stok_barang_keluar.tanggal) = ".$year." AND month(stok_barang_keluar.tanggal) = ".$month." AND stok_barang_keluar.id_agen=users.id GROUP BY users.nama");
+
+            $laporan_sub = DB::select("SELECT agen_kategori.nama as label, (COUNT(stok_barang_keluar.id_kategori) * 100 / (Select COUNT(*) From stok_barang_keluar WHERE stok_barang_keluar.id_divisi=23 AND year(stok_barang_keluar.tanggal) = ".$year." AND month(stok_barang_keluar.tanggal) = ".$month.")) as y FROM stok_barang_keluar, agen_kategori WHERE stok_barang_keluar.id_divisi=23 AND year(stok_barang_keluar.tanggal) = ".$year." AND month(stok_barang_keluar.tanggal) = ".$month." AND stok_barang_keluar.id_kategori=agen_kategori.id GROUP BY agen_kategori.nama");
+            // return $laporan_sub;
+
             $data = [
                 'order_pending'       => $order_pending,
                 'total_barang_masuk'  => $total_barang_masuk,
@@ -115,6 +126,9 @@ class Dashboard extends Controller
                 'barang'              => $barang,
                 'masuk'               => $return_masuk,
                 'keluar'              => $return_keluar,
+                'laporan_divisi'      => $laporan_divisi,
+                'laporan_hybrid'      => $laporan_hybrid,
+                'laporan_sub'         => $laporan_sub,
             ];
 
 	    	return view('dashboard_ga', $data);
