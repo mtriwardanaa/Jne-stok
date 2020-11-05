@@ -68,10 +68,12 @@
 	        </div>
 	        <div class="col-md-8">
 	        	<div class="block mb-20">
-                    <div class="block-content text-center">
-                        <b>Pemesanan yang dilakukan diluar jam 08:00 - 15:00 WIB akan diproses dihari berikutnya oleh TIM GA
-                        <br>
-                        Terimakasih</b>
+                    <div class="block-content">
+                        <b>	Catatan : <br>
+                        	- Pemesanan pada hari senin - jumat diatas jam 15:00 WIB akan diproses dihari berikutnya oleh TIM GA <br>
+                        	- Pemesanan pada hari sabtu diatas jam 12:00 WIB akan diproses dihari senin oleh TIM GA
+                        <br><br>
+                        	Terimakasih</b>
                         <br>
                         <br>
                     </div>
