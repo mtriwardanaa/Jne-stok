@@ -21,7 +21,7 @@
 			}
 		</style><br>
 		<center>
-			<h6>{{ strtoupper("Report Pengeluaran Divisi") }}</h6>
+			<h6>{{ strtoupper("Report Pengeluaran Divisi") }}</h6> 
 		</center>
 
 		<table>
