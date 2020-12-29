@@ -53,6 +53,11 @@ class ReportController extends Controller
     	// return $post;
 
         $title = 'SEMUA DIVISI';
+        $mode = 'VIEW';
+
+        if (isset($post['view'])) {
+            $mode = $post['view'];
+        }
 
         $tanggal_mulai = date('Y-m-d 00:00:00', strtotime($post['tanggal_mulai']));
         $tanggal_selesai = date('Y-m-d 23:59:59', strtotime($post['tanggal_selesai']));
@@ -172,7 +177,7 @@ class ReportController extends Controller
                 'proses_by'      => strtoupper($arr['user']['nama']),
                 'kode_barang'    => $arr['detail_stok'][0]['stok_barang']['kode_barang'],
                 'nama_barang'    => $arr['detail_stok'][0]['stok_barang']['nama_barang'],
-                'jumlah_barang'  => $arr['detail_stok'][0]['qty_barang']. " ".$arr['detail_stok'][0]['stok_barang']['stok_barang_satuan']['nama_satuan'],
+                'jumlah_barang'  => number_format($arr['detail_stok'][0]['qty_barang']). " ".$arr['detail_stok'][0]['stok_barang']['stok_barang_satuan']['nama_satuan'],
                 'harga_satuan'   => $arr['detail_stok'][0]['harga_barang'],
                 'harga_total'    => ($arr['detail_stok'][0]['qty_barang'] * $arr['detail_stok'][0]['harga_barang']),
             ];
@@ -242,7 +247,7 @@ class ReportController extends Controller
                                     'proses_by'      => $set_data_first['proses_by'],
                                     'kode_barang'    => $value['stok_barang']['kode_barang'],
                                     'nama_barang'    => $value['stok_barang']['nama_barang'],
-                                    'jumlah_barang'  => $value['qty_barang']. " ".$value['stok_barang']['stok_barang_satuan']['nama_satuan'],
+                                    'jumlah_barang'  => number_format($value['qty_barang']). " ".$value['stok_barang']['stok_barang_satuan']['nama_satuan'],
                                     'harga_satuan'   => $value['harga_barang'],
                                     'harga_total'    => ($value['qty_barang'] * $value['harga_barang']),
                                     'success'        => '',
@@ -258,7 +263,7 @@ class ReportController extends Controller
                                     'proses_by'      => '',
                                     'kode_barang'    => $value['stok_barang']['kode_barang'],
                                     'nama_barang'    => $value['stok_barang']['nama_barang'],
-                                    'jumlah_barang'  => $value['qty_barang']. " ".$value['stok_barang']['stok_barang_satuan']['nama_satuan'],
+                                    'jumlah_barang'  => number_format($value['qty_barang']). " ".$value['stok_barang']['stok_barang_satuan']['nama_satuan'],
                                     'harga_satuan'   => $value['harga_barang'],
                                     'harga_total'    => ($value['qty_barang'] * $value['harga_barang']),
                                     'success'        => '',
@@ -305,7 +310,7 @@ class ReportController extends Controller
             'proses_by'      => '',
             'kode_barang'    => '',
             'nama_barang'    => 'Total Barang',
-            'jumlah_barang'  => $total_pcs.' '.$pcs_item,
+            'jumlah_barang'  => number_format($total_pcs).' '.$pcs_item,
             'harga_satuan'   => 'Total Harga',
             'harga_total'    => $harga_total,
             'success'        => '',
@@ -314,6 +319,19 @@ class ReportController extends Controller
 
     	$nama = 'REPORT-'.strtoupper($title).'-'.$title_barang.'-'.date('d-m-Y', strtotime($tanggal_mulai)).'-'.date('d-m-Y', strtotime($tanggal_selesai));
     	$data = json_decode(json_encode($data_print, JSON_NUMERIC_CHECK), true);
+        // return $data;
+
+        $post['periode_mulai'] = date('d-m-Y', strtotime($post['tanggal_mulai']));
+        $post['periode_selesai'] = date('d-m-Y', strtotime($post['tanggal_selesai']));
+        $post['pcs_item'] = $pcs_item;
+        $post['title'] = $title;
+        $post['title_barang'] = $title_barang;
+        $post['total'] = count($data);
+        // return $post;
+
+        if ($mode == 'VIEW') {
+            return view('report::view', ['data' => $data, 'post' => $post]);
+        }
 
     	$heading = $this->heading();
 		return Excel::download(new ReportExport($data, $heading, $title, 0), $nama.'.xlsx');
@@ -393,13 +411,13 @@ class ReportController extends Controller
     			$total_masuk_akhir = 0;
     			$total_keluar_akhir = 0;
 
-    			$masuk_awal = BarangHarga::where('id_barang', $arr['id'])->where('tanggal_barang', '<', date('Y-m-d 00:00:00', strtotime($periode_akhir)))->whereNotNull('id_barang_masuk')->get()->toArray();
+    			$masuk_awal = BarangHarga::where('id_barang', $arr['id'])->where('tanggal_barang', '<=', date('Y-m-d 23:59:59', strtotime($periode_akhir)))->whereNotNull('id_barang_masuk')->get()->toArray();
     			if (!empty($masuk_awal)) {
     				$column = array_column($masuk_awal, 'qty_barang');
     				$total_masuk_akhir = array_sum($column);
     			}
 
-    			$keluar_awal = BarangHarga::where('id_barang', $arr['id'])->where('tanggal_barang', '<', date('Y-m-d 00:00:00', strtotime($periode_akhir)))->whereNotNull('id_barang_keluar')->get()->toArray();
+    			$keluar_awal = BarangHarga::where('id_barang', $arr['id'])->where('tanggal_barang', '<=', date('Y-m-d 23:59:59', strtotime($periode_akhir)))->whereNotNull('id_barang_keluar')->get()->toArray();
     			if (!empty($keluar_awal)) {
     				$column = array_column($keluar_awal, 'qty_barang');
     				$total_keluar_akhir = array_sum($column);
