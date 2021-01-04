@@ -20,7 +20,7 @@ use PDF;
 use App\Exports\ReportExport;
 use App\Lib\MyHelper;
 
-class ReportController extends Controller
+class BaReportController extends Controller
 {
     public function index()
     {
@@ -107,12 +107,6 @@ class ReportController extends Controller
             $barang_keluar = $barang_keluar->whereIn('id_agen', $all_id_agen);
         }
 
-        if ($post['id_barang'] != 'all') {
-            $barang_keluar = $barang_keluar->whereHas('detailStok', function ($query) use ($post) {
-                return $query->where('id_barang', '=', $post['id_barang']);
-            });
-        }
-
         $barang_keluar = $barang_keluar->get()->toArray();
         // return $barang_keluar;
         $data_print = [];
@@ -188,8 +182,6 @@ class ReportController extends Controller
                 'harga_total'    => ($arr['detail_stok'][0]['qty_barang'] * $arr['detail_stok'][0]['harga_barang']),
             ];
 
-            // return $stok_data_print;
-
             $stok_data_print['success'] = 'YA';
             $stok_data_print['alasan'] = '-';
 
@@ -217,16 +209,6 @@ class ReportController extends Controller
                         $total_barang++;
                         $data_barang[] = $arr['detail_stok'][0]['id_barang'];
                     }
-                    
-                    $set_data_first = [
-                        'order_tanggal'  => $tanggal_order,
-                        'tanggal'        => date('d-m-Y H:i', strtotime($arr['tanggal'])),
-                        'no_transaksi'   => $arr['no_barang_keluar'],
-                        'request_by'     => strtoupper($arr['nama_user_request']),
-                        'divisi'         => $title,
-                        'proses_by'      => strtoupper($arr['user']['nama']),
-                    ];
-
                 } else {
                     $data_first = true;
                     $set_data_first = [
@@ -268,43 +250,25 @@ class ReportController extends Controller
                                     'jumlah_barang'  => number_format($value['qty_barang']). " ".$value['stok_barang']['stok_barang_satuan']['nama_satuan'],
                                     'harga_satuan'   => $value['harga_barang'],
                                     'harga_total'    => ($value['qty_barang'] * $value['harga_barang']),
-                                    'success'        => $stok_data_print['success'],
+                                    'success'        => '',
                                     'alasan'         => '',
                                 ];
                              } else {
-                                if ($post['id_barang'] != 'all') {
-                                    $data_print_set = [
-                                        'order_tanggal'  => $set_data_first['order_tanggal'],
-                                        'tanggal'        => $set_data_first['tanggal'],
-                                        'no_transaksi'   => $set_data_first['no_transaksi'],
-                                        'request_by'     => $set_data_first['request_by'],
-                                        'divisi'         => $set_data_first['divisi'],
-                                        'proses_by'      => $set_data_first['proses_by'],
-                                        'kode_barang'    => $value['stok_barang']['kode_barang'],
-                                        'nama_barang'    => $value['stok_barang']['nama_barang'],
-                                        'jumlah_barang'  => number_format($value['qty_barang']). " ".$value['stok_barang']['stok_barang_satuan']['nama_satuan'],
-                                        'harga_satuan'   => $value['harga_barang'],
-                                        'harga_total'    => ($value['qty_barang'] * $value['harga_barang']),
-                                        'success'        => $stok_data_print['success'],
-                                        'alasan'         => '',
-                                    ];
-                                } else {
-                                    $data_print_set = [
-                                        'order_tanggal'  => '',
-                                        'tanggal'        => '',
-                                        'no_transaksi'   => '',
-                                        'request_by'     => '',
-                                        'divisi'         => '',
-                                        'proses_by'      => '',
-                                        'kode_barang'    => $value['stok_barang']['kode_barang'],
-                                        'nama_barang'    => $value['stok_barang']['nama_barang'],
-                                        'jumlah_barang'  => number_format($value['qty_barang']). " ".$value['stok_barang']['stok_barang_satuan']['nama_satuan'],
-                                        'harga_satuan'   => $value['harga_barang'],
-                                        'harga_total'    => ($value['qty_barang'] * $value['harga_barang']),
-                                        'success'        => '',
-                                        'alasan'         => '',
-                                    ];
-                                }
+                                $data_print_set = [
+                                    'order_tanggal'  => '',
+                                    'tanggal'        => '',
+                                    'no_transaksi'   => '',
+                                    'request_by'     => '',
+                                    'divisi'         => '',
+                                    'proses_by'      => '',
+                                    'kode_barang'    => $value['stok_barang']['kode_barang'],
+                                    'nama_barang'    => $value['stok_barang']['nama_barang'],
+                                    'jumlah_barang'  => number_format($value['qty_barang']). " ".$value['stok_barang']['stok_barang_satuan']['nama_satuan'],
+                                    'harga_satuan'   => $value['harga_barang'],
+                                    'harga_total'    => ($value['qty_barang'] * $value['harga_barang']),
+                                    'success'        => '',
+                                    'alasan'         => '',
+                                ];
                             }
                             
                             if ($post['id_barang'] != 'all') {
