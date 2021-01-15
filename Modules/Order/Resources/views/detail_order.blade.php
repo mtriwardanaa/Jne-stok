@@ -98,6 +98,14 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-md-9">
+                            <div class="form-material">
+                                <input type="text" class="form-control" value="{{ strtoupper($data['created_user']['no_hp']) }}" disabled>
+                                <label for="material-password">No HP User Request</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-9">
                         </div>
                     </div>
                 </div>
@@ -133,6 +141,27 @@
 	                    </div>
 			        </div>
 			    </div>
+			@else
+				@if (count($old) > 0)
+					<div class="block mb-20">
+	                    <div class="block-content">
+	                        <b>	<p style="color: red">PERINGATAN !!! </p>
+	                        	@if ($data['id_divisi'] == 13 || $data['id_divisi'] == 23)
+	                        		{{ strtoupper($data['created_user']['nama']) }} telah melakukan pemesanan sebanyak {{ count($old) }} kali pada bulan {{ $data['bulan'] }}
+	                        	@else
+	                        		Divisi {{ strtoupper($data['divisi']['nama']) }} telah melakukan pemesanan sebanyak {{ count($old) }} kali pada bulan {{ $data['bulan'] }}
+	                        	@endif
+	                        	<br><br>
+	                        	Tanggal pemesanan :
+	                        	<br>
+	                        	@foreach ($old as $key => $value)
+	                        		- {{ $value->all }} <a href="{{ url('order/detail', $value->id) }}" target="__blank" title="Detail pemesanan barang">(Klik disini untuk melihat detail pemesanan barang)</a>
+	                        	@endforeach
+	                        <br>
+	                        <br>
+	                    </div>
+	                </div>
+	            @endif
 		    @endif
             <div class="block">
 		        <div class="block-header block-header-default">
@@ -179,7 +208,7 @@
 		                        	<th>Jumlah Diterima</th>
                                 @else
 		                        	<th>Stok Sekarang</th>
-		                        @endif
+		                        @endif 	
 		                    </tr>
 		                </thead>
 		                <tbody>
@@ -192,7 +221,11 @@
 			                        @if (isset($data['approved_by']))
 				                        <td class="font-w600">{{ number_format($row['jumlah_approve']) }} {{ $row['stokBarang']['stokBarangSatuan']['nama_satuan'] }}</td>
 	                                @else
-				                        <td class="font-w600">{{ number_format($row['stokBarang']['qty_barang']) }} {{ $row['stokBarang']['stokBarangSatuan']['nama_satuan'] }}</td>
+	                                	@if (Auth::user()->id_divisi != 10)
+				                        	<td class="font-w600" style="font-style: italic;">NONE</td>
+				                        @else
+				                        	<td class="font-w600">{{ number_format($row['stokBarang']['qty_barang']) }} {{ $row['stokBarang']['stokBarangSatuan']['nama_satuan'] }}</td>
+				                        @endif
 			                        @endif
 			                    </tr>
 		                    @endforeach

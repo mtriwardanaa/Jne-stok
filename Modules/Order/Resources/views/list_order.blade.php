@@ -94,9 +94,10 @@
                         <th>Tanggal</th>
                         <th>Divisi</th>
                         <th>Sub / Nama</th>
-                        <th class="d-none d-sm-table-cell" style="width: 15%;">Status</th>
+                        <th class="d-none d-sm-table-cell">Status</th>
                         <th>Barang</th>
-                        <th class="text-center" style="width: 15%;">Action</th>
+                        <th style="width: 24%">Ketarangan</th>
+                        <th class="text-center">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -111,10 +112,40 @@
 	                        	@if (isset($value['approved_by']))
 	                            	<span class="badge badge-success">DITERIMA</span>
 	                            @else
-	                            	<span class="badge badge-warning">MENUNGGU</span>
+                                    @if (isset($value['rejected_by']))
+                                        <span class="badge badge-danger">DITOLAK</span>
+                                    @else
+                                        <span class="badge badge-warning">MENUNGGU</span>
+                                    @endif
 	                            @endif
 	                        </td>
                             <td class="font-w600">{{ $value['ringkasan'] }}</td>
+                            <td class="font-w600">
+                                <p style="font-weight: bold;">
+                                    @if (isset($value['created_by']))
+                                        Dibuat Oleh : {{ $value['created_user']['nama'] }}
+                                        @if ($value['created_user']['id_divisi'] == 13 || $value['created_user']['id_divisi'] == 23)
+                                            - {{ $value['created_user']['username'] }}
+                                        @endif
+                                    @endif
+
+                                    @if (isset($value['updated_by']))
+                                        <br> Diupdate Oleh : {{ $value['updated_user']['nama'] }}
+                                        @if ($value['created_user']['id_divisi'] == 13 || $value['created_user']['id_divisi'] == 23)
+                                            - {{ $value['created_user']['username'] }}
+                                        @endif
+                                    @endif
+
+                                    @if (isset($value['approved_by']))
+                                        <br> Diterima Oleh : {{ $value['approved_user']['nama'] }}
+                                    @endif
+
+                                    @if (isset($value['rejected_by']))
+                                        <br> Ditolak Oleh : {{ $value['rejected_user']['nama'] }}
+                                        <br> Keterangan : {{ strtoupper($value['rejected_text']) }}
+                                    @endif
+                                </p>
+                            </td>
                             <td class="text-center">
                                 <div class="btn-group" role="group">
                                     <button type="button" class="btn btn-primary dropdown-toggle btn-sm" id="btnGroupDrop1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
@@ -128,26 +159,52 @@
                                         @if (in_array(15, $fitur))
                                             @if (Auth::user()->id == $value['created_by'])
                                                 @if (!isset($value['approved_by']))
-                                                    <a class="dropdown-item" href="{{ url('order/edit', $value['id']) }}?status={{ $req }}">
-                                                        <i class="fa fa-fw fa-pencil mr-5"></i>Edit
-                                                    </a>
+                                                    @if (isset($value['rejected_by']))
+                                                        <a class="dropdown-item" href="#" onclick="pesan('Order telah di tolak oleh admin, tidak dapat diedit kembali')">
+                                                            <i class="fa fa-fw fa-pencil mr-5"></i>Edit
+                                                        </a>
+                                                    @else
+                                                        <a class="dropdown-item" href="{{ url('order/edit', $value['id']) }}?status={{ $req }}">
+                                                            <i class="fa fa-fw fa-pencil mr-5"></i>Edit
+                                                        </a>
+                                                    @endif
                                                 @else
                                                     <a class="dropdown-item" href="#" onclick="pesan('Order telah di terima oleh admin, tidak dapat diedit kembali')">
                                                         <i class="fa fa-fw fa-pencil mr-5"></i>Edit
                                                     </a>
                                                 @endif
                                             @else
-                                                <a class="dropdown-item" href="#" onclick="pesan('Anda tidak diperbolehkan meng-edit data order ini, silahkan hubungi {{ ucwords(strtolower($value['created_user']['nama'])) }}')">
-                                                    <i class="fa fa-fw fa-pencil mr-5"></i>Edit
-                                                </a>
+                                                @if (Auth::user()->id_divisi == 10)
+                                                    @if (!isset($value['approved_by']))
+                                                        @if (isset($value['rejected_by']))
+                                                            <a class="dropdown-item" href="#" onclick="pesan('Order telah di tolak oleh admin, tidak dapat diedit kembali')">
+                                                                <i class="fa fa-fw fa-pencil mr-5"></i>Edit
+                                                            </a>
+                                                        @else
+                                                            <a class="dropdown-item" href="{{ url('order/edit', $value['id']) }}?status={{ $req }}">
+                                                                <i class="fa fa-fw fa-pencil mr-5"></i>Edit
+                                                            </a>
+                                                        @endif
+                                                    @else
+                                                        <a class="dropdown-item" href="#" onclick="pesan('Order telah di terima oleh admin, tidak dapat diedit kembali')">
+                                                        <i class="fa fa-fw fa-pencil mr-5"></i>Edit
+                                                    </a>
+                                                    @endif
+                                                @else
+                                                    <a class="dropdown-item" href="#" onclick="pesan('Anda tidak diperbolehkan meng-edit data order ini, silahkan hubungi {{ ucwords(strtolower($value['created_user']['nama'])) }}')">
+                                                        <i class="fa fa-fw fa-pencil mr-5"></i>Edit
+                                                    </a>
+                                                @endif
                                             @endif
                                         @endif
 
                                         @if (in_array(15, $fitur))
-                                            @if (Auth::user()->id == $value['created_by'] || Auth::user()->id_divisi == 10)
-                                                <a class="dropdown-item btn-delete" data-id="{{ $value['id'] }}">
-                                                    <i class="fa fa-fw fa-trash mr-5"></i>Delete
-                                                </a>
+                                            @if (Auth::user()->id_divisi == 10)
+                                                @if (!isset($value['approved_by']) && !isset($value['rejected_by']))
+                                                    <a class="dropdown-item btn-delete" data-id="{{ $value['id'] }}">
+                                                        <i class="fa fa-fw fa-trash mr-5"></i>Tolak
+                                                    </a>
+                                                @endif
                                             @endif
                                         @endif
                                     </div>
@@ -175,20 +232,52 @@
     	$(document).on('click', '.btn-delete', function() {
 			var id = $(this).data('id');
 			Swal.fire({
-				title: 'Are you sure?',
-				text: "Order akan dihapus",
-				icon: 'warning',
-				showCancelButton: true,
-				confirmButtonColor: '#3085d6',
-				cancelButtonColor: '#d33',
-				confirmButtonText: 'Ya',
-				cancelButtonText: 'Tidak'
-			}).then((result) => {
-  				if (result.value) {
-  					var url = "{{ url('order/delete') }}/"+id;
-  					window.location.href = url;
-  				}
-			})
+                title: 'Masukkan alasan penolakan order',
+                input: 'text',
+                inputAttributes: {
+                    autocapitalize: 'off'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Tolak',
+                showLoaderOnConfirm: true,
+                preConfirm: (login) => {
+                    return fetch(`{{ url('order/tolak') }}/${id}/${login}`)
+                        .then(response => {
+                            console.log(response);
+                            if (!response.ok) {
+                                throw new Error(response.statusText)
+                            }
+                        return response.json()
+                    }).catch(error => {
+                        Swal.showValidationMessage(
+                            `Alasan tidak boleh kosong`
+                        )
+                    })
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if (result.value.status) {
+                        Swal.fire({
+                          icon: 'success',
+                          title: 'Success',
+                          text: 'Update data berhasil',
+                        }).then((result) => {
+                            var bulan = $('.select_bulan').val();
+                            var tahun = $('.select_tahun').val();
+
+                            var url = "{{ url('order') }}?bulan="+bulan+"&tahun="+tahun;
+                            window.location.href = url;
+                        })
+                    } else {
+                        Swal.fire({
+                          icon: 'error',
+                          title: 'Oops...',
+                          text: 'Update data gagal',
+                        })
+                    }
+                }
+            })
 		});
 
         $(document).on('click', '.btn-sub', function() {
