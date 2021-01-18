@@ -204,6 +204,7 @@ class BarangMasukController extends Controller
     {
         DB::beginTransaction();
         $post = $request->except('_token');
+        // return $post;
         $user = Auth::user();
 
         $data = BarangMasuk::with('details')->where('id', $id)->first();
@@ -213,8 +214,8 @@ class BarangMasukController extends Controller
 
         $data_barang_masuk = [
             'tanggal'         => date('Y-m-d H:i:s', strtotime($post['tanggal'].' '.$post['jam'])),
-            'no_barang_masuk' => 'NBM-'.date('md').'-'.$user->id.$user->id_divisi.date('His'),
-            'created_by'      => $user->id
+            'tanggal_update'  => date('Y-m-d H:i:s'),
+            'updated_by'      => $user->id
         ];
 
         $update_barang_masuk = BarangMasuk::where('id', $id)->update($data_barang_masuk);
@@ -222,6 +223,7 @@ class BarangMasukController extends Controller
             DB::rollback();
             return back()->withErrors(['Edit barang masuk gagal'])->withInput();
         }
+
 
         $barang_now = [];
         // return $data;
@@ -255,11 +257,13 @@ class BarangMasukController extends Controller
                     }
 
                     $barang_harga = BarangHarga::where('id_barang_masuk', $id)->where('id_barang', $value['id_barang'])->first();
-                    if (isset($barang_harga->min_barang)) {
+                    if ($barang_harga->min_barang > 0) {
+                        DB::rollback();
+                        return back()->withErrors(['Stok barang sudah terpakai ('.$update_jumlah_barang->nama_barang.'), tidak bisa dihapus, silahkan hubungi admin'])->withInput();
                         $check_stok = BarangHarga::where('id', '!=', $barang_harga->id)->where('id_barang', $value['id_barang'])->where('qty_barang', '>', DB::raw('min_barang'))->whereNotNull('id_barang_masuk')->orderBy('tanggal_barang', 'asc')->get()->toArray();
                         if (empty($check_stok)) {
                             DB::rollback();
-                            return back()->withErrors(['Stok barang sudah terpakai ('.$update_jumlah_barang->nama_barang.'), tidak bisa dihapus'])->withInput();
+                            return back()->withErrors(['Stok barang sudah terpakai ('.$update_jumlah_barang->nama_barang.'), tidak bisa dihapus, silahkan hubungi admin'])->withInput();
                         }
 
                         $total_pesan = $barang_harga->min_barang;
@@ -316,10 +320,99 @@ class BarangMasukController extends Controller
                         DB::rollback();
                         return back()->withErrors(['Update jumlah barang gagal']);
                     }
+
+                    $delete_barang_detail->harga_barang = $post['harga'][$key_data];
+                    $delete_barang_detail->id_supplier = $post['supplier_barang'][$key_data];
+                    $delete_barang_detail->qty_barang = $post['jumlah_barang'][$key_data];
+                    $delete_barang_detail->update();
+                    if (!$delete_barang_detail) {
+                        DB::rollback();
+                        return back()->withErrors(['Update jumlah barang gagal']);
+                    }
+
+                    $barang_harga = BarangHarga::where('id_barang_masuk', $id)->where('id_barang', $value['id_barang'])->first();
+                    if ($barang_harga->min_barang > 0) {
+                        DB::rollback();
+                        return back()->withErrors(['Stok barang sudah terpakai ('.$update_jumlah_barang->nama_barang.'), tidak bisa dihapus, silahkan hubungi admin'])->withInput();
+                    }
+
+                    $barang_harga->qty_barang = $post['jumlah_barang'][$key_data];
+                    $barang_harga->harga_barang = $post['harga'][$key_data];
+                    $barang_harga->tanggal_barang = $data_barang_masuk['tanggal'];
+                    $barang_harga->update();
+                    if (!$barang_harga) {
+                        DB::rollback();
+                        return back()->withErrors(['Update jumlah barang harga gagal']);
+                    }
                 }
             }
         }
 
+        if (isset($post['id_barang'])) {
+            $data_barang_masuk_detail = [];
+            $data_barang_harga = [];
+
+            foreach ($post['id_barang'] as $key => $value) {
+                if (!in_array($value, $barang_now)) {
+                    $data_detail = [
+                        'id_barang_masuk' => $id,
+                        'id_barang'       => $value,
+                        'qty_barang'      => $post['jumlah_barang'][$key],
+                        'harga_barang'    => $post['harga'][$key],
+                        'id_supplier'     => $post['supplier_barang'][$key],
+                        'created_at'      => date('Y-m-d H:i:s'),
+                        'updated_at'      => date('Y-m-d H:i:s'),
+                    ];
+
+                    $data_barang_masuk_detail[] = $data_detail;
+
+                    $data_stok = [
+                        'id_barang_masuk' => $id,
+                        'id_barang'       => $value,
+                        'qty_barang'      => $post['jumlah_barang'][$key],
+                        'harga_barang'    => $post['harga'][$key],
+                        'tanggal_barang'  => $data_barang_masuk['tanggal'],
+                        'created_at'      => date('Y-m-d H:i:s'),
+                        'updated_at'      => date('Y-m-d H:i:s'),
+                    ];
+
+                    $data_barang_harga[] = $data_stok;
+
+                    $check_barang = Barang::where('id', $value)->first();
+                    if (empty($check_barang)) {
+                        DB::rollback();
+                        return back()->withErrors(['Barang tidak ditemukan'])->withInput();
+                    }
+
+                    $data_stok = [];
+
+                    $check_barang->qty_barang = $check_barang->qty_barang + $post['jumlah_barang'][$key];
+                    $check_barang->update();
+                    if (!$check_barang) {
+                        DB::rollback();
+                        return back()->withErrors(['Update jumlah barang gagal'])->withInput();
+                    }
+                }
+            }
+
+            if (!empty($data_barang_masuk_detail)) {
+                $create_detail = BarangMasukDetail::insert($data_barang_masuk_detail);
+                if (!$create_detail) {
+                    DB::rollback();
+                    return back()->withErrors(['Tambah barang masuk detail gagal'])->withInput();
+                }
+            }
+
+            if (!empty($data_barang_harga)) {
+                $create_stok = BarangHarga::insert($data_barang_harga);
+                if (!$create_stok) {
+                    DB::rollback();
+                    return back()->withErrors(['Tambah barang masuk stok gagal'])->withInput();
+                }
+            }
+        }
+
+        DB::commit();
         return redirect('barangmasuk')->with(['success' => ['Barang masuk berhasil diupdate']]);
     }
 
