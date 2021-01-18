@@ -142,6 +142,41 @@
 			        </div>
 			    </div>
 			@else
+				@if (isset($data['rejected_by']))
+					<div class="block">
+				        <div class="block-header block-header-default">
+				            <h3 class="block-title">Data Penolak</small></h3>
+				        </div>
+				        <div class="block-content block-content-full">
+				            <div class="form-group row">
+		                        <div class="col-md-3">
+		                            <div class="form-material">
+		                                <input type="text" class="form-control" disabled value="{{ date('d F Y H:i', strtotime($data['tanggal_reject'])) }}">
+		                                <label for="material-text">Tanggal Ditolak</label>
+		                            </div>
+		                        </div>
+		                        <div class="col-md-3">
+		                            <div class="form-material">
+		                                <input type="text" class="form-control" disabled value="{{ $data['rejected_user']['nama'] }}">
+		                                <label for="material-text">Ditolak Oleh</label>
+		                            </div>
+		                        </div>
+		                        <div class="col-md-3">
+		                            <div class="form-material">
+		                                <input type="text" class="form-control" disabled value="{{ $data['rejected_user']['divisi']['nama'] }}">
+		                                <label for="material-text">Divisi</label>
+		                            </div>
+		                        </div>
+		                        <div class="col-md-3">
+		                            <div class="form-material">
+		                                <input type="text" class="form-control" disabled value="{{ strtoupper($data['rejected_text']) }}">
+		                                <label for="material-text">Alasan</label>
+		                            </div>
+		                        </div>
+		                    </div>
+				        </div>
+				    </div>
+				@endif
 				@if (count($old) > 0)
 					<div class="block mb-20">
 	                    <div class="block-content">
@@ -168,11 +203,13 @@
 		            <h3 class="block-title">Detail Barang <small>({{ $data['no_order'] }})</small></h3>
 	            	@if (in_array(32, $fitur))
 		            	@if (!isset($data['approved_by']))
-				            <div class="block-options">
-		                        <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modal-popin">
-		                            Terima Order
-		                        </button>
-		                    </div>
+		            		@if (!isset($data['rejected_by']))
+					            <div class="block-options">
+			                        <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modal-popin">
+			                            Terima Order
+			                        </button>
+			                    </div>
+		                    @endif
 	                    @endif
                     @endif
 

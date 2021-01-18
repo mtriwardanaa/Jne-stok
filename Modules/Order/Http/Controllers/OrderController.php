@@ -115,7 +115,7 @@ class OrderController extends Controller
         }
 
         $this->curl($get_data, 'batal', $post, $user, $alasan);
-        // DB::commit();
+        DB::commit();
         return response()->json(['status' => true]);
     }
 
@@ -280,7 +280,7 @@ class OrderController extends Controller
 
         $this->curl($data, 'selesai', $post, $user);
 
-    	// DB::commit();
+    	DB::commit();
     	return back()->with(['success' => ['Approve data sukses']]);
     }
 
@@ -336,7 +336,7 @@ class OrderController extends Controller
 
     public function detail(Request $request, $id)
     {
-    	$data = Order::with('approved_user.divisi', 'created_user', 'details.stokBarang.stokBarangSatuan', 'divisi', 'kategori')->where('id', $id)->first();
+    	$data = Order::with('approved_user.divisi', 'rejected_user.divisi', 'created_user', 'details.stokBarang.stokBarangSatuan', 'divisi', 'kategori')->where('id', $id)->first();
     	if (empty($data)) {
     		return back()->withErrors(['Data tidak ditemukan']);	
     	}
