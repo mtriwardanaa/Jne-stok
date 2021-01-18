@@ -153,9 +153,9 @@
 	                        	@endif
 	                        	<br><br>
 	                        	Tanggal pemesanan :
-	                        	<br>
+	                        	
 	                        	@foreach ($old as $key => $value)
-	                        		- {{ $value->all }} <a href="{{ url('order/detail', $value->id) }}" target="__blank" title="Detail pemesanan barang">(Klik disini untuk melihat detail pemesanan barang)</a>
+	                        		<br>- {{ $value->all }} <a href="{{ url('order/detail', $value->id) }}" target="__blank" title="Detail pemesanan barang">(Klik disini untuk melihat detail pemesanan barang)</a>
 	                        	@endforeach
 	                        <br>
 	                        <br>
