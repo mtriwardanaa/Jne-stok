@@ -69,7 +69,7 @@
             <div class="btn-group" role="group">
                 <button type="button" class="btn btn-rounded btn-dual-secondary" id="page-header-user-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="fa fa-user d-sm-none"></i>
-                    <span class="d-none d-sm-inline-block">{{ Auth::user()->nama }}</span>
+                    <span class="d-none d-sm-inline-block">{{ Auth::user()->nama }} @if (Auth::user()->id_divisi == 13 || Auth::user()->id_divisi == 23) ({{ Auth::user()->nama_lengkap }}) @endif</span>
                     <i class="fa fa-angle-down ml-5"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right min-width-200" aria-labelledby="page-header-user-dropdown">

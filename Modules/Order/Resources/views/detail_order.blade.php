@@ -72,7 +72,11 @@
                             	@if (isset($data['approved_by']))
                             		<span class="badge badge-success">DITERIMA</span>
                                 @else
-                            		<span class="badge badge-warning">MENUNGGU</span>
+                                	@if (isset($data['rejected_by']))
+                            			<span class="badge badge-danger">DITOLAK</span>
+                            		@else
+                            			<span class="badge badge-warning">MENUNGGU</span>
+                            		@endif
                                 @endif
                                 <label for="material-password">Status Order</label>
                             </div>

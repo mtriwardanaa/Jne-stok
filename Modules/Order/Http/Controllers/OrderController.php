@@ -302,7 +302,7 @@ class OrderController extends Controller
         if ($keterangan == 'batal') {
             $total = count($check['details']);
 
-            $ket = 'Pemesanan barang anda melalui website belanja-ga.id telah DITOLAK oleh admin GA\n\nDetail pemesanan\nTanggal: '.$tanggal.'\nTotal item: '.$total.'\nKeterangan: '.$alasan.'\nAdmin GA: '.$staff.'\nWA: '.$wa.'\n\nTerima Kasih\nMohon untuk tidak membalas chat ini';
+            $ket = 'Maaf, Pemesanan barang anda melalui website belanja-ga.id telah DITOLAK oleh admin GA\n\nDetail pemesanan\nTanggal: '.$tanggal.'\nTotal item: '.$total.'\nKeterangan: '.$alasan.'\nAdmin GA: '.$staff.'\nWA: '.$wa.'\n\nTerima Kasih\nMohon untuk tidak membalas chat ini';
         }
 
         curl_setopt_array($curl, array(
