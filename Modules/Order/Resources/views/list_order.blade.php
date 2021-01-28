@@ -107,7 +107,7 @@
 	                        <td class="font-w600">{{ $value['no_order'] }}</td>
 	                        <td class="font-w600">{{ date('d F Y H:i', strtotime($value['tanggal'])) }}</td>
 	                        <td class="font-w600">{{ $value['divisi']['nama'] }}</td>
-	                        <td class="font-w600">{{ $value['kategori']['nama'] ?? $value['created_user']['nama'] }}</td>
+	                        <td class="font-w600">{{ $value['created_user']['nama'] }}</td>
 	                        <td class="d-none d-sm-table-cell">
 	                        	@if (isset($value['approved_by']))
 	                            	<span class="badge badge-success">DITERIMA</span>
@@ -125,23 +125,23 @@
                                     @if (isset($value['created_by']))
                                         Dibuat Oleh : {{ $value['created_user']['nama'] }}
                                         @if ($value['created_user']['id_divisi'] == 13 || $value['created_user']['id_divisi'] == 23)
-                                            - {{ $value['created_user']['username'] }}
+                                            - {{ $value['created_user']['nama_lengkap'] }}
                                         @endif
                                     @endif
 
                                     @if (isset($value['updated_by']))
                                         <br> Diupdate Oleh : {{ $value['updated_user']['nama'] }}
                                         @if ($value['created_user']['id_divisi'] == 13 || $value['created_user']['id_divisi'] == 23)
-                                            - {{ $value['created_user']['username'] }}
+                                            - {{ $value['created_user']['nama_lengkap'] }}
                                         @endif
                                     @endif
 
                                     @if (isset($value['approved_by']))
-                                        <br> Diterima Oleh : {{ $value['approved_user']['nama'] }}
+                                        <br> Diterima Oleh : {{ $value['approved_user']['nama_lengkap'] }}
                                     @endif
 
                                     @if (isset($value['rejected_by']))
-                                        <br> Ditolak Oleh : {{ $value['rejected_user']['nama'] }}
+                                        <br> Ditolak Oleh : {{ $value['rejected_user']['nama_lengkap'] }}
                                         <br> Keterangan : {{ strtoupper($value['rejected_text']) }}
                                     @endif
                                 </p>
