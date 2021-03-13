@@ -17,11 +17,11 @@ class FeatureControl
     {
         $fitur = session()->get('fitur');
         if (empty($fitur)) {
-            return redirect('dashboard')->withErrors(['Anda tidak memiliki akses untuk fitur ini Silakan hubungi administrator.']);
+            return redirect('dashboard')->withErrors(['Anda tidak memiliki akses untuk fitur ini Silakan hubungi administrator. 1']);
         }
 
         if (!in_array($feature, $fitur)) {
-            return redirect('dashboard')->withErrors(['Anda tidak memiliki akses untuk fitur ini Silakan hubungi administrator.']);
+            return redirect('dashboard')->withErrors(['Anda tidak memiliki akses untuk fitur ini Silakan hubungi administrator. 2']);
         }
 
         return $next($request);

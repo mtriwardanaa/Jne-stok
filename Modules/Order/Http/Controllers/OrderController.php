@@ -107,6 +107,10 @@ class OrderController extends Controller
             $barang = $barang->where('subagen', 1);
         }
 
+        if ($user->id_divisi == 29) {
+            $barang = $barang->where('corporate', 1);
+        }
+
         $barang = $barang->get()->toArray();
     	if (empty($barang)) {
     		return redirect('barang/create')->withErrors(['Barang masih kosong, silahkan input barang terlebih dahulu']);
@@ -292,6 +296,10 @@ class OrderController extends Controller
 
         if ($user->id_divisi == 23) {
             $barang = $barang->where('subagen', 1);
+        }
+
+        if ($user->id_divisi == 29) {
+            $barang = $barang->where('corporate', 1);
         }
 
         $barang = $barang->get()->toArray();

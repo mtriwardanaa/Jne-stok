@@ -127,6 +127,7 @@ class BarangController extends Controller
             $check_delete->internal = 0;
             $check_delete->agen = 0;
             $check_delete->subagen = 0;
+            $check_delete->corporate = 0;
 
             if (isset($post['internal'])) {
                 $check_delete->internal = 1;
@@ -138,6 +139,10 @@ class BarangController extends Controller
 
             if (isset($post['subagen'])) {
                 $check_delete->subagen = 1;
+            }
+
+            if (isset($post['corporate'])) {
+                $check_delete->corporate = 1;
             }
 
     		$check_delete->update();
@@ -155,6 +160,7 @@ class BarangController extends Controller
                 'internal'         => 0,
                 'agen'             => 0,
                 'subagen'          => 0,
+                'corporate'          => 0,
     		];
 
             if (isset($post['internal'])) {
@@ -167,6 +173,10 @@ class BarangController extends Controller
 
             if (isset($post['subagen'])) {
                 $data_create['subagen'] = 1;
+            }
+
+            if (isset($post['corporate'])) {
+                $data_create['corporate'] = 1;
             }
 
     		$create_barang = Barang::create($data_create);
@@ -267,6 +277,7 @@ class BarangController extends Controller
         $check_barang->internal         = 0;
         $check_barang->agen             = 0;
         $check_barang->subagen          = 0;
+        $check_barang->corporate          = 0;
 
         if (isset($post['internal'])) {
             $check_barang->internal = 1;
@@ -279,6 +290,11 @@ class BarangController extends Controller
         if (isset($post['subagen'])) {
             $check_barang->subagen = 1;
         }
+
+        if (isset($post['corporate'])) {
+            $check_barang->corporate = 1;
+        }
+        
 		$check_barang->update();
 		if (!$check_barang) {
 			DB::rollback();

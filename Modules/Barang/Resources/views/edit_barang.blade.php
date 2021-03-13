@@ -101,6 +101,14 @@
                             </label>
                         </div>
                     </div>
+                    <div class="col-md-2">
+                        <div class="form-material">
+                            <label class="css-control css-control-danger css-switch">
+                                <input type="checkbox" class="css-control-input" name="corporate" @if ($barang['corporate'] == 1) checked @endif>
+                                <span class="css-control-indicator"></span> CORPORATE
+                            </label>
+                        </div>
+                    </div>
                 </div><hr>
                 <div class="form-group row">
                     <div class="col-md-9">
