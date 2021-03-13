@@ -12,6 +12,7 @@ use App\BarangKeluarDetail;
 use App\Order;
 use App\OrderDetail;
 use App\BarangHarga;
+use App\User;
 use DB;
 use Auth;
 
@@ -33,7 +34,7 @@ class OrderController extends Controller
         
     	$user = Auth::user();
 
-    	$list = Order::with('approved_user', 'created_user', 'details.stokBarang.stokBarangSatuan', 'divisi', 'kategori')->whereNull('deleted_at')->orderBy('tanggal', 'DESC')->whereMonth('tanggal', $bulan)->whereYear('tanggal', $tahun);
+    	$list = Order::with('approved_user', 'created_user', 'updated_user', 'rejected_user', 'details.stokBarang.stokBarangSatuan', 'divisi', 'kategori')->whereNull('deleted_at')->orderBy('tanggal', 'DESC')->whereMonth('tanggal', $bulan)->whereYear('tanggal', $tahun);
 
     	$fitur = session()->get('fitur');
 
@@ -89,8 +90,33 @@ class OrderController extends Controller
             $input['ringkasan'] = $ringkasan;
             return $arr + $input;
         }, $list);
-
+        // return $data_list;
         return view('order::list_order', ['list' => $data_list, 'req' => $req, 'bulan' => $bulan, 'tahun' => $tahun]);
+    }
+
+    public function tolak($id, $alasan)
+    {
+        DB::beginTransaction();
+        $post = [];
+        $get_data = Order::with('details')->where('id', $id)->first();
+        if (empty($get_data)) {
+            return response()->json(['status' => false, 'messages' => 'Data tidak ditemukan']);
+        }
+
+        $user = Auth::user();
+
+        $get_data->tanggal_reject = date('Y-m-d H:i:s');
+        $get_data->rejected_by = $user->id;
+        $get_data->rejected_text = $alasan;
+        $get_data->update();
+        if (!$get_data) {
+            DB::rollback();
+            return response()->json(['status' => false, 'messages' => 'Data gagal diupdate']);
+        }
+
+        $this->curl($get_data, 'batal', $post, $user, $alasan);
+        DB::commit();
+        return response()->json(['status' => true]);
     }
 
     public function create(Request $request)
@@ -256,23 +282,98 @@ class OrderController extends Controller
 			return back()->withErrors(['Approve data gagal']);
     	}
 
+        $this->curl($data, 'selesai', $post, $user);
+
     	DB::commit();
     	return back()->with(['success' => ['Approve data sukses']]);
     }
 
+    public function curl($check, $keterangan, $post, $user, $alasan=null)
+    {
+        $curl = curl_init();
+
+        $ket = 'Terima Kasih';
+        $tanggal = $check->all;
+        
+        $staff = $user->nama;
+        $wa = $user->wa;
+
+        if ($keterangan == 'selesai') {
+            $total = count($post['id_detail_order']);
+            $ket = 'Pemesanan barang anda melalui website belanja-ga.id telah DITERIMA oleh admin GA\n\nDetail pemesanan\nTanggal: '.$tanggal.'\nTotal item: '.$total.'\nAdmin GA: '.$staff.'\nWA: '.$wa.'\n\nTerima Kasih\nMohon untuk tidak membalas chat ini';
+        }
+
+        if ($keterangan == 'batal') {
+            $total = count($check['details']);
+
+            $ket = 'Maaf, Pemesanan barang anda melalui website belanja-ga.id telah DITOLAK oleh admin GA\n\nDetail pemesanan\nTanggal: '.$tanggal.'\nTotal item: '.$total.'\nKeterangan: '.$alasan.'\nAdmin GA: '.$staff.'\nWA: '.$wa.'\n\nTerima Kasih\nMohon untuk tidak membalas chat ini';
+        }
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => 'http://waping.es/api/send',
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => '',
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => 'POST',
+          CURLOPT_POSTFIELDS =>'{
+              "token":"b43ed5e6373b9dbb1f0957bfee0d10ba",
+              "source":6282148745792,
+              "destination":'.$check->created_user->send.',
+              "type":"text",
+              "body":{
+                  "text":"'.$ket.'"
+              }
+            }',
+          CURLOPT_HTTPHEADER => array(
+            'Content-Type: application/json'
+          ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        return response()->json($response);
+    }
+
     public function detail(Request $request, $id)
     {
-    	$data = Order::with('approved_user.divisi', 'created_user', 'details.stokBarang.stokBarangSatuan', 'divisi', 'kategori')->where('id', $id)->first();
+    	$data = Order::with('approved_user.divisi', 'rejected_user.divisi', 'created_user', 'details.stokBarang.stokBarangSatuan', 'divisi', 'kategori')->where('id', $id)->first();
     	if (empty($data)) {
     		return back()->withErrors(['Data tidak ditemukan']);	
     	}
+
+        $user = Auth()->user();
+        $user_create = User::where('id', $data->created_by)->first();
+        if (empty($user_create)) {
+            return back()->withErrors(['User tidak ditemukan']);
+        }
+
+        $old = [];
+
+        if ($user->id_divisi == 10) {
+            $old = Order::with('approved_user.divisi', 'created_user', 'details.stokBarang.stokBarangSatuan', 'divisi', 'kategori')->whereMonth('tanggal', date('m', strtotime($data->tanggal)))->where('id_divisi', $data->id_divisi);
+
+            if ($data->id_divisi == 13 || $data->id_divisi == 23) {
+                $old = $old->whereHas('created_user', function ($query) use ($user_create) {
+                    return $query->whereRaw("lower(REPLACE(nama, ' ', '')) = ?", [strtolower(str_replace(' ', '', $user_create->nama))]);
+                });
+            }
+
+            $old = $old->where('id', '!=', $data->id)->get();
+
+            // return $old;
+        }
+
     	// return $data;
     	$req = null;
     	if ($request->has('status')) {
     		$req = $request->get('status');
     	}
 
-    	return view('order::detail_order', ['data' => $data, 'req' => $req]);
+    	return view('order::detail_order', ['data' => $data, 'req' => $req, 'old' => $old]);
     }
 
     public function edit(Request $request, $id)
@@ -281,7 +382,15 @@ class OrderController extends Controller
         if (empty($data)) {
             return back()->withErrors(['Data tidak ditemukan']);    
         }
-        // return $data;
+
+        if (isset($data->approved_by)) {
+            return back()->withErrors(['Order telah di terima oleh admin, tidak dapat diedit kembali']);
+        }
+
+        if (isset($data->rejected_by)) {
+            return back()->withErrors(['Order telah di tolak oleh admin, tidak dapat diedit kembali']);
+        }
+        
         $req = null;
         if ($request->has('status')) {
             $req = $request->get('status');
@@ -312,77 +421,77 @@ class OrderController extends Controller
         return view('order::edit_order', ['data' => $data, 'req' => $req, 'barang' => $barang]);
     }
 
-    public function updateApprove(Request $request, $id)
-    {
-    	DB::beginTransaction();
-    	$post = $request->except('_token');
-    	// return $post;
-    	$user = Auth::user();
-    	if (empty($user)) {
-    		DB::rollback();
-    		return back()->withErrors(['User tidak ditemukan']);
-    	}
+   //  public function updateApprove(Request $request, $id)
+   //  {
+   //  	DB::beginTransaction();
+   //  	$post = $request->except('_token');
+   //  	// return $post;
+   //  	$user = Auth::user();
+   //  	if (empty($user)) {
+   //  		DB::rollback();
+   //  		return back()->withErrors(['User tidak ditemukan']);
+   //  	}
 
-    	$data = Order::with('approved_user', 'created_user', 'details.stokBarang.stokBarangSatuan', 'divisi', 'kategori')->where('id', $id)->first();
-    	if (empty($data)) {
-    		DB::rollback();
-    		return back()->withErrors(['Data tidak ditemukan']);	
-    	}
+   //  	$data = Order::with('approved_user', 'created_user', 'details.stokBarang.stokBarangSatuan', 'divisi', 'kategori')->where('id', $id)->first();
+   //  	if (empty($data)) {
+   //  		DB::rollback();
+   //  		return back()->withErrors(['Data tidak ditemukan']);	
+   //  	}
 
-    	$data_barang_keluar = [
-			'tanggal'     => date('Y-m-d H:i:s'),
-			'id_divisi'   => $data['id_divisi'],
-			'id_kategori' => $data['id_kategori'],
-			'created_by'  => $user->id,
-			'id_order'    => $data->id,
-    	];
+   //  	$data_barang_keluar = [
+			// 'tanggal'     => date('Y-m-d H:i:s'),
+			// 'id_divisi'   => $data['id_divisi'],
+			// 'id_kategori' => $data['id_kategori'],
+			// 'created_by'  => $user->id,
+			// 'id_order'    => $data->id,
+   //  	];
 
-    	$create_barang_keluar = BarangKeluar::create($data_barang_keluar);
-    	if (!$create_barang_keluar) {
-    		DB::rollback();
-    		return back()->withErrors(['Tambah barang keluar gagal'])->withInput();
-    	}
+   //  	$create_barang_keluar = BarangKeluar::create($data_barang_keluar);
+   //  	if (!$create_barang_keluar) {
+   //  		DB::rollback();
+   //  		return back()->withErrors(['Tambah barang keluar gagal'])->withInput();
+   //  	}
 
-    	if (isset($post['id_details'])) {
-    		foreach ($post['id_details'] as $key => $value) {
-    			$check_detail = OrderDetail::where('id', $value)->first();
-    			if (empty($check_detail)) {
-    				DB::rollback();
-    				return back()->withErrors(['Data details order tidak ditemukan']);
-    			}
+   //  	if (isset($post['id_details'])) {
+   //  		foreach ($post['id_details'] as $key => $value) {
+   //  			$check_detail = OrderDetail::where('id', $value)->first();
+   //  			if (empty($check_detail)) {
+   //  				DB::rollback();
+   //  				return back()->withErrors(['Data details order tidak ditemukan']);
+   //  			}
 
-    			$check_detail->jumlah_approve = $post['jumlah_approve'][$key];
-    			$check_detail->update();
-    			if (!$check_detail) {
-    				DB::rollback();
-    				return back()->withErrors(['Update data gagal']);
-    			}
+   //  			$check_detail->jumlah_approve = $post['jumlah_approve'][$key];
+   //  			$check_detail->update();
+   //  			if (!$check_detail) {
+   //  				DB::rollback();
+   //  				return back()->withErrors(['Update data gagal']);
+   //  			}
 
-    			$data_detail = [
-					'id_barang_keluar' => $create_barang_keluar['id'],
-					'id_barang'       => $check_detail->id_barang,
-					'qty_barang'      => $post['jumlah_approve'][$key],
-    			];
+   //  			$data_detail = [
+			// 		'id_barang_keluar' => $create_barang_keluar['id'],
+			// 		'id_barang'       => $check_detail->id_barang,
+			// 		'qty_barang'      => $post['jumlah_approve'][$key],
+   //  			];
 
-    			$create_detail = BarangKeluarDetail::create($data_detail);
-    			if (!$create_detail) {
-    				DB::rollback();
-    				return back()->withErrors(['Tambah barang keluar detail gagal'])->withInput();
-    			}
-    		}
-    	}
+   //  			$create_detail = BarangKeluarDetail::create($data_detail);
+   //  			if (!$create_detail) {
+   //  				DB::rollback();
+   //  				return back()->withErrors(['Tambah barang keluar detail gagal'])->withInput();
+   //  			}
+   //  		}
+   //  	}
     		
-    	$data->tanggal_approve = date('Y-m-d H:i:s');
-    	$data->approved_by = $user->id;
-    	$data->update();
-    	if (!$data) {
-    		DB::rollback();
-			return back()->withErrors(['Approve data gagal']);
-    	}
+   //  	$data->tanggal_approve = date('Y-m-d H:i:s');
+   //  	$data->approved_by = $user->id;
+   //  	$data->update();
+   //  	if (!$data) {
+   //  		DB::rollback();
+			// return back()->withErrors(['Approve data gagal']);
+   //  	}
 
-    	DB::commit();
-    	return redirect('order')->with(['success' => ['Approve data sukses']]);
-    }
+   //  	DB::commit();
+   //  	return redirect('order')->with(['success' => ['Approve data sukses']]);
+   //  }
 
     public function store(Request $request)
     {
@@ -396,6 +505,7 @@ class OrderController extends Controller
 			'id_kategori'       => $user->id_agen_kategori ?? null,
 			'created_by'        => $user->id,
 			'nama_user_request' => $post['nama_user'],
+            'hp_user_request'   => $post['no_user'],
     	];
 
     	$create_barang_order = Order::create($data_barang_order);
@@ -435,7 +545,7 @@ class OrderController extends Controller
     {
         DB::beginTransaction();
         $post = $request->except('_token');
-
+        // return $post;
         $check_detail = Order::with('details')->where('id', $id)->first();
 
         if (empty($check_detail)) {
@@ -443,10 +553,16 @@ class OrderController extends Controller
             return back()->withErrors(['Data tidak ditemukan']);
         }
 
+        if (isset($check_detail->approved_by)) {
+            DB::rollback();
+            return back()->withErrors(['Order telah di terima oleh admin, tidak dapat diedit kembali']);
+        }
+
         $user = Auth::user();
-        $check_detail->tanggal = date('Y-m-d H:i:s');
+        $check_detail->tanggal_update = date('Y-m-d H:i:s');
         $check_detail->no_order = 'TRX-'.date('md').'-'.$user->id.$user->id_divisi.date('His');
         $check_detail->nama_user_request = $post['nama_user'];
+        $check_detail->updated_by = $user->id;
         $check_detail->update();
         if (!$check_detail) {
             DB::rollback();

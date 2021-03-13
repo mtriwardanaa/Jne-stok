@@ -21,7 +21,7 @@ class CheckData
      */
     public function handle($request, Closure $next)
     {
-    	$get_order = Order::whereNull('approved_by')->count();
+    	$get_order = Order::whereNull('approved_by')->whereNull('rejected_by')->count();
         $get_distribusi = BarangKeluar::whereNull('tanggal_distribusi')->where('distribusi_sales', 1)->count();
     	$barang = Barang::where('qty_barang', '<', DB::raw('warning_stok'))->whereNull('deleted_at')->count();
 

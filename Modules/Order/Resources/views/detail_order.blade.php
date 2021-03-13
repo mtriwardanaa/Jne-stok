@@ -72,7 +72,11 @@
                             	@if (isset($data['approved_by']))
                             		<span class="badge badge-success">DITERIMA</span>
                                 @else
-                            		<span class="badge badge-warning">MENUNGGU</span>
+                                	@if (isset($data['rejected_by']))
+                            			<span class="badge badge-danger">DITOLAK</span>
+                            		@else
+                            			<span class="badge badge-warning">MENUNGGU</span>
+                            		@endif
                                 @endif
                                 <label for="material-password">Status Order</label>
                             </div>
@@ -93,6 +97,14 @@
                             <div class="form-material">
                                 <input type="text" class="form-control" value="{{ strtoupper($data['nama_user_request']) }}" disabled>
                                 <label for="material-password">Nama User Request</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-9">
+                            <div class="form-material">
+                                <input type="text" class="form-control" value="{{ strtoupper($data['created_user']['no_hp']) }}" disabled>
+                                <label for="material-password">No HP User Request</label>
                             </div>
                         </div>
                     </div>
@@ -133,17 +145,81 @@
 	                    </div>
 			        </div>
 			    </div>
+			@else
+				@if (isset($data['rejected_by']))
+					<div class="block">
+				        <div class="block-header block-header-default">
+				            <h3 class="block-title">Data Penolak</small></h3>
+				        </div>
+				        <div class="block-content block-content-full">
+				            <div class="form-group row">
+		                        <div class="col-md-3">
+		                            <div class="form-material">
+		                                <input type="text" class="form-control" disabled value="{{ date('d F Y H:i', strtotime($data['tanggal_reject'])) }}">
+		                                <label for="material-text">Tanggal Ditolak</label>
+		                            </div>
+		                        </div>
+		                        <div class="col-md-3">
+		                            <div class="form-material">
+		                                <input type="text" class="form-control" disabled value="{{ $data['rejected_user']['nama'] }}">
+		                                <label for="material-text">Ditolak Oleh</label>
+		                            </div>
+		                        </div>
+		                        <div class="col-md-3">
+		                            <div class="form-material">
+		                                <input type="text" class="form-control" disabled value="{{ $data['rejected_user']['divisi']['nama'] }}">
+		                                <label for="material-text">Divisi</label>
+		                            </div>
+		                        </div>
+		                        <div class="col-md-3">
+		                            <div class="form-material">
+		                                <input type="text" class="form-control" disabled value="{{ strtoupper($data['rejected_text']) }}">
+		                                <label for="material-text">Alasan</label>
+		                            </div>
+		                        </div>
+		                    </div>
+				        </div>
+				    </div>
+				@else
+					@if (count($old) > 0)
+						<div class="block mb-20">
+		                    <div class="block-content">
+		                        <b>	<p style="color: red">PERINGATAN !!! </p>
+		                        	@if ($data['id_divisi'] == 13 || $data['id_divisi'] == 23)
+		                        		{{ strtoupper($data['created_user']['nama']) }} telah melakukan pemesanan sebanyak {{ count($old) }} kali pada bulan {{ $data['bulan'] }}
+		                        	@else
+		                        		Divisi {{ strtoupper($data['divisi']['nama']) }} telah melakukan pemesanan sebanyak {{ count($old) }} kali pada bulan {{ $data['bulan'] }}
+		                        	@endif
+		                        	<br><br>
+		                        	Tanggal pemesanan :
+		                        	
+		                        	@foreach ($old as $key => $value)
+		                        		<br>- {{ $value->all }} <a href="{{ url('order/detail', $value->id) }}" target="__blank" title="Detail pemesanan barang">(Klik disini untuk melihat detail pemesanan barang)</a>
+		                        	@endforeach
+		                        <br>
+		                        <br>
+		                    </div>
+		                </div>
+		            @endif
+	            @endif
 		    @endif
             <div class="block">
 		        <div class="block-header block-header-default">
 		            <h3 class="block-title">Detail Barang <small>({{ $data['no_order'] }})</small></h3>
 	            	@if (in_array(32, $fitur))
 		            	@if (!isset($data['approved_by']))
-				            <div class="block-options">
-		                        <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modal-popin">
-		                            Terima Order
-		                        </button>
-		                    </div>
+		            		@if (!isset($data['rejected_by']))
+					            <div class="block-options">
+			                        <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modal-popin">
+			                            Terima Order
+			                        </button>
+			                    </div>
+			                    <div class="block-options">
+			                        <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="{{ $data['id'] }}">
+			                            Tolak Order
+			                        </button>
+			                    </div>
+		                    @endif
 	                    @endif
                     @endif
 
@@ -179,7 +255,7 @@
 		                        	<th>Jumlah Diterima</th>
                                 @else
 		                        	<th>Stok Sekarang</th>
-		                        @endif
+		                        @endif 	
 		                    </tr>
 		                </thead>
 		                <tbody>
@@ -192,7 +268,11 @@
 			                        @if (isset($data['approved_by']))
 				                        <td class="font-w600">{{ number_format($row['jumlah_approve']) }} {{ $row['stokBarang']['stokBarangSatuan']['nama_satuan'] }}</td>
 	                                @else
-				                        <td class="font-w600">{{ number_format($row['stokBarang']['qty_barang']) }} {{ $row['stokBarang']['stokBarangSatuan']['nama_satuan'] }}</td>
+	                                	@if (Auth::user()->id_divisi != 10)
+				                        	<td class="font-w600" style="font-style: italic;">NONE</td>
+				                        @else
+				                        	<td class="font-w600">{{ number_format($row['stokBarang']['qty_barang']) }} {{ $row['stokBarang']['stokBarangSatuan']['nama_satuan'] }}</td>
+				                        @endif
 			                        @endif
 			                    </tr>
 		                    @endforeach
@@ -322,5 +402,56 @@
 				return;
     		}
     	});
+
+    	$(document).on('click', '.btn-delete', function() {
+			var id = $(this).data('id');
+			Swal.fire({
+                title: 'Masukkan alasan penolakan order',
+                input: 'text',
+                inputAttributes: {
+                    autocapitalize: 'off'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Tolak',
+                showLoaderOnConfirm: true,
+                preConfirm: (login) => {
+                    return fetch(`{{ url('order/tolak') }}/${id}/${login}`)
+                        .then(response => {
+                            console.log(response);
+                            if (!response.ok) {
+                                throw new Error(response.statusText)
+                            }
+                        return response.json()
+                    }).catch(error => {
+                        Swal.showValidationMessage(
+                            `Alasan tidak boleh kosong`
+                        )
+                    })
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if (result.value.status) {
+                        Swal.fire({
+                          icon: 'success',
+                          title: 'Success',
+                          text: 'Update data berhasil',
+                        }).then((result) => {
+                            var bulan = $('.select_bulan').val();
+                            var tahun = $('.select_tahun').val();
+
+                            var url = "{{ url('order/detail') }}/"+id;
+                            window.location.href = url;
+                        })
+                    } else {
+                        Swal.fire({
+                          icon: 'error',
+                          title: 'Oops...',
+                          text: 'Update data gagal',
+                        })
+                    }
+                }
+            })
+		});
     </script>
 @endsection

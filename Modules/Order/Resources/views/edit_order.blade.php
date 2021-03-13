@@ -60,6 +60,15 @@
 	                    </div>
 	                    <div class="form-group row">
 	                        <div class="col-md-9">
+	                            <div class="form-material">
+                                	<input type="text" name="no_user" class="form-control" value="{{ $data['hp_user_request'] }}" placeholder="No HP user yang request" required>
+                                	<div class="form-text text-muted">Anda dapat mengganti no HP jika nomor yang tertera salah</div>
+	                                <label for="id_divisi">No HP (Whatsapp)</label>
+	                            </div>
+	                        </div>
+	                    </div>
+	                    <div class="form-group row">
+	                        <div class="col-md-9">
 	                        </div>
 	                    </div>
 	                </div>

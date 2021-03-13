@@ -4,6 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+use App\Lib\MyHelper;
+
 /**
  * @property integer $id
  * @property integer $id_divisi
@@ -35,17 +37,40 @@ class Order extends Model
      */
     protected $keyType = 'integer';
 
+    protected $appends = ['bulan', 'all'];
+
     /**
      * @var array
      */
-    protected $fillable = ['id_divisi', 'no_order', 'tanggal_approve', 'id_kategori', 'created_by', 'approved_by', 'nama_user_request', 'tanggal', 'created_at', 'updated_at', 'deleted_at'];
+    protected $fillable = ['id_divisi', 'no_order', 'tanggal_update', 'tanggal_approve', 'tanggal_reject', 'id_kategori', 'created_by', 'updated_by', 'approved_by', 'rejected_by', 'rejected_text', 'nama_user_request', 'hp_user_request', 'tanggal', 'created_at', 'updated_at', 'deleted_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
+
+    public function getBulanAttribute()
+    {
+        return MyHelper::indonesian_date($this->tanggal, 'F');
+    }
+
+    public function getAllAttribute()
+    {
+        return MyHelper::indonesian_date($this->tanggal);
+    }
+
     public function approved_user()
     {
         return $this->belongsTo('App\User', 'approved_by');
+    }
+
+    public function updated_user()
+    {
+        return $this->belongsTo('App\User', 'updated_by');
+    }
+
+    public function rejected_user()
+    {
+        return $this->belongsTo('App\User', 'rejected_by');
     }
 
     /**

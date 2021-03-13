@@ -33,7 +33,7 @@ class Dashboard extends Controller
         $fitur = session()->get('fitur');
 
         if (in_array(31, $fitur)) {
-            $order_pending       = Order::whereNull('approved_by')->count();
+            $order_pending       = Order::whereNull('approved_by')->whereNull('rejected_by')->count();
             $total_barang_masuk  = BarangMasuk::count();
             $total_barang_keluar = BarangKeluar::count();
             $barang              = Barang::where('qty_barang', '<', DB::raw('warning_stok'))->count();

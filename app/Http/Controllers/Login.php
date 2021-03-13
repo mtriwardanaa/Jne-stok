@@ -40,6 +40,11 @@ class Login extends Controller
 		if (Auth::attempt($data_login)) {
             $user = Auth::user();
 
+            if ($user->active != 1) {
+                Auth::logout();
+                return redirect('login')->withErrors(['Status user anda tidak aktif. silahkan hubungi admin']);
+            }
+
             $control = UserControl::where('id_user', $user->id)->get()->toArray();
 
             if (empty($control)) {

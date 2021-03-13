@@ -16,7 +16,7 @@ class User extends Authenticatable
      * @var array
      */
 
-    protected $appends = ['wa'];
+    protected $appends = ['wa', 'send'];
     protected $fillable = [
         'nama', 'no_hp', 'password', 'level', 'id_divisi', 'username', 'id_agen_kategori'
     ];
@@ -52,6 +52,21 @@ class User extends Authenticatable
     	}
 
     	return $new_phone;
+    }
+
+    public function getSendAttribute()
+    {
+        $new_phone = null;
+        $phone = $this->no_hp;
+        if (isset($phone)) {
+            $first = $phone[0];
+            if ($first == 0) {
+                $trim = ltrim($phone, $phone[0]);
+                $new_phone = '62'.$trim;
+            }
+        }
+
+        return $new_phone;
     }
 
     public function devices()

@@ -31,7 +31,7 @@ class BarangMasuk extends Model
     /**
      * @var array
      */
-    protected $fillable = ['no_barang_masuk', 'created_by', 'updated_by', 'tanggal', 'created_at', 'updated_at', 'deleted_at'];
+    protected $fillable = ['no_barang_masuk', 'created_by', 'updated_by', 'tanggal', 'tanggal_update', 'created_at', 'updated_at', 'deleted_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
