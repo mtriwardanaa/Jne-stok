@@ -120,8 +120,9 @@ class BarangKeluarController extends Controller
     	}
 
     	$user = User::where('id_divisi', 13)->get()->toArray();
+        $corporate = User::where('id_divisi', 29)->get()->toArray();
 
-    	return view('barangkeluar::create_barang_keluar', ['barang' => $barang, 'user' => $user, 'divisi' => $divisi, 'kategori' => $kategori]);
+    	return view('barangkeluar::create_barang_keluar', ['barang' => $barang, 'user' => $user, 'corporate' => $corporate, 'divisi' => $divisi, 'kategori' => $kategori]);
     }
 
     public function store(Request $request)
@@ -129,6 +130,9 @@ class BarangKeluarController extends Controller
     	DB::beginTransaction();
     	$post = $request->except('_token');
     	$user = Auth::user();
+        if ($post['id_divisi'] == 29) {
+            $post['id_agen'] = $post['id_corporate'];
+        }
     	$data_barang_keluar = [
 			'tanggal'           => date('Y-m-d H:i:s', strtotime($post['tanggal'].' '.$post['jam'])),
 			'no_barang_keluar'  => 'NBK-'.date('md').'-'.$user->id.$user->id_divisi.date('His'),

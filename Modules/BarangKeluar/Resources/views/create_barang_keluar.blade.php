@@ -78,17 +78,30 @@
 	                                <select class="js-select2 form-control" id="example2-select22" name="id_agen" style="width: 100%;" data-placeholder="Pilih agen" required>
 	                                    <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
 	                                    @foreach ($user as $value)
-	                                    	<option value="{{ $value['id'] }}">{{ $value['nama'] }}({{ $value['username'] }})</option>
+	                                    	<option value="{{ $value['id'] }}" data-lengkap="{{ $value['nama_lengkap'] }}">{{ $value['nama'] }}({{ $value['nama_lengkap'] ?? $value['username'] }})</option>
 	                                    @endforeach
 	                                </select>
 	                                <label for="id_divisi">Nama Agen</label>
 	                            </div>
 	                        </div>
 	                    </div>
+	                    <div class="form-group row div_nama_corporate">
+	                        <div class="col-md-9">
+	                            <div class="form-material">
+	                                <select class="js-select2 form-control" id="example2-select222" name="id_corporate" style="width: 100%;" data-placeholder="Pilih corporate" required>
+	                                    <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
+	                                    @foreach ($corporate as $value)
+	                                    	<option value="{{ $value['id'] }}" data-lengkap="{{ $value['nama_lengkap'] }}">{{ $value['nama'] }}({{ $value['nama_lengkap'] ?? $value['username'] }})</option>
+	                                    @endforeach
+	                                </select>
+	                                <label for="id_divisi">Nama Corporate</label>
+	                            </div>
+	                        </div>
+	                    </div>
 	                    <div class="form-group row">
 	                        <div class="col-md-9">
 	                            <div class="form-material">
-	                                <input type="text" name="nama_user" class="form-control" placeholder="Nama user yang request" required>
+	                                <input type="text" name="nama_user" class="form-control user-request" placeholder="Nama user yang request" required>
 	                                <label for="id_divisi">Nama user request</label>
 	                            </div>
 	                        </div>
@@ -204,6 +217,20 @@
     		$(this).parent().parent().remove();
     	});
 
+    	$(document).on('change', '#example2-select22', function() {
+    		var lengkap = $(this).find(':selected').data('lengkap');
+    		console.log(lengkap);
+
+    		$('.user-request').val(lengkap);
+    	});
+
+    	$(document).on('change', '#example2-select222', function() {
+    		var lengkap = $(this).find(':selected').data('lengkap');
+    		console.log(lengkap);
+
+    		$('.user-request').val(lengkap);
+    	});
+
     	$(document).on('change', '.select_barang', function() {
     		var qty = $(this).children('option:selected').data('qty');
     		var id = $(this).children('option:selected').data('id');
@@ -224,21 +251,52 @@
 				if (val == 13) {
 					$('.div_nama_agen').show();
 					$('#example2-select22').attr('required', true);
-					$('.distribusi_ya').attr('checked', true);
-					$('.distribusi_tidak').attr('checked', false);
+
+					$('.div_nama_corporate').hide();
+					$('#example2-select222').attr('required', false);
+					$('#example2-select222').val('');
+
+					$('.distribusi_ya').prop('checked', true);
+					$('.distribusi_tidak').prop('checked', false);
+				} else if (val == 29) {
+					$('.div_nama_agen').hide();
+					$('#example2-select22').attr('required', false);
+					$('#example2-select22').val('');
+
+					$('.div_nama_corporate').show();
+					$('#example2-select222').attr('required', true);
+
+					$('.distribusi_ya').prop('checked', true);
+					$('.distribusi_tidak').prop('checked', false);
 				} else {
 					$('.div_nama_agen').hide();
 					$('#example2-select22').attr('required', false);
 					$('#example2-select22').val('');
-					$('.distribusi_ya').attr('checked', false);
-					$('.distribusi_tidak').attr('checked', true);
+
+					$('.div_nama_corporate').hide();
+					$('#example2-select222').attr('required', false);
+					$('#example2-select222').val('');
+
+					$('.distribusi_ya').prop('checked', false);
+					$('.distribusi_tidak').prop('checked', true);
+
+					$('.user-request').val('');
 				}
 			} else {
 				console.log('23');
 				$('.div_agen_kategori').show();
 				$('#example2-select21').attr('required', true);
-				$('.distribusi_ya').attr('checked', false);
-				$('.distribusi_tidak').attr('checked', true);
+
+				$('.div_nama_agen').hide();
+				$('#example2-select22').attr('required', false);
+				$('#example2-select22').val('');
+
+				$('.div_nama_corporate').hide();
+				$('#example2-select222').attr('required', false);
+				$('#example2-select222').val('');
+
+				$('.distribusi_ya').prop('checked', false);
+				$('.distribusi_tidak').prop('checked', true);
 			}
 		});
 
