@@ -464,6 +464,8 @@ class ReportController extends Controller
             }, $barang);
         }
 
+        // return $report;
+
         $pelaksana = ucwords(strtolower(Auth::user()->nama));
         $koordinator = ucwords(strtolower($post['koordinator']));
         $audit = ucwords(strtolower($post['audit']));

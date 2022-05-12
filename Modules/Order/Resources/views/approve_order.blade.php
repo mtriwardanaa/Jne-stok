@@ -15,7 +15,7 @@
 
 @section('content')
 	@include('partial.notification')
-	<form action="{{ url('order/approve/update', $data['id']) }}" method="post">
+	<form action="{{ url('order/approve/update', $data['id']) }}" method="post" id="formWithPrice">
 	@csrf
 		<div class="row">
 	        <div class="col-md-3">
@@ -144,7 +144,7 @@
 	                    <div class="form-tambah"></div>
 	                    <div class="form-group row">
 	                        <div class="col-md-9">
-	                            <button type="submit" class="btn btn-alt-primary">Submit</button>
+	                            <button type="submit" id="submit" class="btn btn-alt-primary">Submit</button>
 	                        </div>
 	                    </div>
 	                </div>

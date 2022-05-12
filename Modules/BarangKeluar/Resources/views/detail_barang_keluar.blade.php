@@ -253,7 +253,7 @@
 	                    </div>
 	                </div>
 	                <div class="modal-footer">
-	                    <button type="submit" class="btn btn-alt-success">
+	                    <button type="submit" id="submit" class="btn btn-alt-success">
 	                        <i class="fa fa-check"></i> Generate Invoice
 	                    </button>
 	                </div>

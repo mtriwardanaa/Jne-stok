@@ -192,6 +192,7 @@ class BarangKeluarController extends Controller
 						'id_barang'        => $value,
 						'qty_barang'       => $total_minta,
 						'harga_barang'     => $stok['harga_barang'],
+                        'id_ref_min_barang'     => $stok['id'],
 						'tanggal_barang'   => date('Y-m-d H:i:s'),
 						'created_at'       => date('Y-m-d H:i:s'),
 						'updated_at'       => date('Y-m-d H:i:s'),
@@ -266,7 +267,8 @@ class BarangKeluarController extends Controller
     public function delete(Request $request, $id)
     {
     	Db::beginTransaction();
-    	$check = BarangKeluar::with('details')->where('id', $id)->first();
+    	$check = BarangKeluar::with('details', 'detailStok')->where('id', $id)->first();
+        // return $check;
     	if (empty($check)) {
     		DB::rollback();
 			return back()->withErrors(['Data tidak ditemukan'])->withInput();
@@ -289,12 +291,41 @@ class BarangKeluarController extends Controller
     		}
     	}
 
-    	$check->deleted_at = date('Y-m-d H:i:s');
-    	$check->update();
-    	if (!$check) {
-    		DB::rollback();
-			return back()->withErrors(['Hapus barang keluar gagal'])->withInput();
-    	}
+        if (isset($check->detailStok)) {
+            foreach ($check->detailStok as $key => $value) {
+                if (!isset($value['id_ref_min_barang'])) {
+                    DB::rollback();
+                    return back()->withErrors(['Barang keluar tidak bisa di hapus karena melewati fase 1'])->withInput();
+                }
+
+                if (isset($value['id_ref_min_barang'])) {
+                    // return $value;
+                    $check_ref = BarangHarga::where('id', $value['id_ref_min_barang'])->first();
+                    // return $check_ref;
+                    if(!empty($check_ref)) {
+                        $check_ref->min_barang = $check_ref->min_barang - $value['qty_barang'];
+                        $check_ref->update();
+                        if (!$check) {
+                            DB::rollback();
+                            return back()->withErrors(['Reverse barang keluar gagal'])->withInput();
+                        }
+                    }
+                }
+            }
+        }
+
+   //  	$check->deleted_at = date('Y-m-d H:i:s');
+   //  	$check->update();
+   //  	if (!$check) {
+   //  		DB::rollback();
+			// return back()->withErrors(['Hapus barang keluar gagal'])->withInput();
+   //  	}
+
+        $delete = BarangKeluar::where('id', $id)->delete();
+        if (!$delete) {
+            DB::rollback();
+            return back()->withErrors(['Hapus barang keluar gagal'])->withInput();
+         }
 
     	DB::commit();
     	return back()->with(['success' => ['Hapus barang keluar berhasil']]);

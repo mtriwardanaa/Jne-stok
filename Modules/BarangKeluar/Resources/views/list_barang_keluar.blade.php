@@ -91,13 +91,23 @@
 	                        <td class="font-w600">{{ $value['user']['nama'] }}</td>
                             <td class="font-w600">{{ $value['ringkasan'] }}</td>
 	                        <td class="text-center">
-                                @if (in_array(11, $fitur))
-	                        	<a href="{{ url('barangkeluar/detail', $value['id']) }}">
-	                        		<button type="button" class="btn btn-sm btn-primary" data-toggle="tooltip" title="Detail Barang Keluar">
-		                                Detail
-		                            </button>
-	                        	</a>
-                                @endif
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-primary dropdown-toggle btn-sm" id="btnGroupDrop1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
+                                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                        @if (in_array(11, $fitur))
+                                        <a class="dropdown-item" href="{{ url('barangkeluar/detail', $value['id']) }}">
+                                            <i class="fa fa-fw fa-bell mr-5"></i>Detail
+                                        </a>
+                                        @endif
+
+                                        @if (in_array(10, $fitur))
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item btn-delete" data-id="{{ $value['id'] }}" href="javascript:void(0)">
+                                            <i class="fa fa-fw fa-trash mr-5"></i>Hapus
+                                        </a>
+                                        @endif
+                                    </div>
+                                </div>
 	                        </td>
 	                    </tr>
                     @endforeach
@@ -122,16 +132,16 @@
 			var id = $(this).data('id');
 			Swal.fire({
 				title: 'Are you sure?',
-				text: "Barang masuk akan dihapus",
+				text: "Barang keluar akan dihapus",
 				icon: 'warning',
 				showCancelButton: true,
 				confirmButtonColor: '#3085d6',
 				cancelButtonColor: '#d33',
-				confirmButtonText: 'Ya',
+				confirmButtonText: 'Ya, hapus data',
 				cancelButtonText: 'Tidak'
 			}).then((result) => {
   				if (result.value) {
-  					var url = "{{ url('barangmasuk/delete') }}/"+id;
+  					var url = "{{ url('barangkeluar/delete') }}/"+id;
   					window.location.href = url;
   				}
 			})

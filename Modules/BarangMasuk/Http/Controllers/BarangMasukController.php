@@ -419,7 +419,8 @@ class BarangMasukController extends Controller
     public function delete(Request $request, $id)
     {
     	Db::beginTransaction();
-    	$check = BarangMasuk::with('details')->where('id', $id)->first();
+    	$check = BarangMasuk::with('details', 'detailStok')->where('id', $id)->first();
+        // return $check;
     	if (empty($check)) {
     		DB::rollback();
 			return back()->withErrors(['Data tidak ditemukan'])->withInput();
@@ -442,12 +443,33 @@ class BarangMasukController extends Controller
     		}
     	}
 
-    	$check->deleted_at = date('Y-m-d H:i:s');
-    	$check->update();
-    	if (!$check) {
-    		DB::rollback();
-			return back()->withErrors(['Hapus barang masuk gagal'])->withInput();
-    	}
+        if (isset($check->detailStok)) {
+            foreach ($check->detailStok as $key => $value) {
+                $check_ref = BarangHarga::where('id', $value['id'])->first();
+                if (empty($check_barang)) {
+                    DB::rollback();
+                    return back()->withErrors(['Barang tidak ditemukan'])->withInput();
+                }
+
+                if ($check_ref->min_barang > 0) {
+                    DB::rollback();
+                    return back()->withErrors(['Barang barang sudah terpakai, tidak bisa dihapus'])->withInput();
+                }
+            }
+        }
+
+   //  	$check->deleted_at = date('Y-m-d H:i:s');
+   //  	$check->update();
+   //  	if (!$check) {
+   //  		DB::rollback();
+			// return back()->withErrors(['Hapus barang masuk gagal'])->withInput();
+   //  	}
+
+        $delete = BarangMasuk::where('id', $id)->delete();
+        if (!$delete) {
+            DB::rollback();
+            return back()->withErrors(['Hapus barang masuk gagal'])->withInput();
+         }
 
     	DB::commit();
     	return back()->with(['success' => ['Hapus barang masuk berhasil']]);

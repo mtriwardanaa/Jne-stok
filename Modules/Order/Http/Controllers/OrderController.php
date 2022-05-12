@@ -225,6 +225,7 @@ class OrderController extends Controller
                             'id_barang'        => $check_detail_order->id_barang,
                             'qty_barang'       => $total_minta,
                             'harga_barang'     => $stok['harga_barang'],
+                            'id_ref_min_barang'     => $stok['id'],
                             'tanggal_barang'   => date('Y-m-d H:i:s'),
                             'created_at'       => date('Y-m-d H:i:s'),
                             'updated_at'       => date('Y-m-d H:i:s'),

@@ -50,4 +50,9 @@ class BarangMasuk extends Model
     {
         return $this->hasMany('App\BarangMasukDetail', 'id_barang_masuk');
     }
+
+    public function detailStok()
+    {
+        return $this->hasMany('App\BarangHarga', 'id_barang_masuk');
+    }
 }

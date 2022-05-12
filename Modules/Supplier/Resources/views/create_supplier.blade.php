@@ -35,7 +35,7 @@
                 </div>
                 <div class="form-group row">
                     <div class="col-md-9">
-                        <button type="submit" class="btn btn-alt-primary">Simpan Supplier</button>
+                        <button type="submit" id="submit" class="btn btn-alt-primary">Simpan Supplier</button>
                     </div>
                 </div>
             </form>

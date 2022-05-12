@@ -1,7 +1,7 @@
 <script src="{{ url('assets/js/codebase.core.min.js') }}"></script>
 <script src="{{ url('assets/js/codebase.app.min.js') }}"></script>
 <script src="{{ url('assets/js/plugins/chartjs/Chart.bundle.min.js') }}"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script type="text/javascript">
 	window.onload = function() {
