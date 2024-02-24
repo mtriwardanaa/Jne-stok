@@ -80,12 +80,16 @@ class ReportController extends Controller
             }
 
             if (isset($post['id_agen'])) {
-                $check_agen = User::where('id', $post['id_agen'])->first();
-                if (empty($check_agen)) {
-                    return back()->withErrors(['Sub Agen tidak ditemukan']);
-                }
+                if ($post['id_agen'] != 'pontianak' && $post['id_agen'] != 'non-pontianak') {
+                    $check_agen = User::where('id', $post['id_agen'])->first();
+                    if (empty($check_agen)) {
+                        return back()->withErrors(['Sub Agen tidak ditemukan']);
+                    }
 
-                $title = str_replace(array('\'', '"', ',', ';', '<', '>', '/'), ' ', $check_agen->nama);
+                    $title = str_replace(array('\'', '"', ',', ';', '<', '>', '/'), ' ', $check_agen->nama);
+                } else {
+                    $title = 'SEMUA AGEN ' . strtoupper(str_replace('-', ' ', $post['id_agen']));
+                }
             }
 
             $barang_keluar = BarangKeluar::with('detailStok.stokBarang.stokBarangSatuan', 'user', 'order')->where('id_divisi', $post['id_divisi'])->where('tanggal', '>=', $tanggal_mulai)->where('tanggal', '<=', $tanggal_selesai);
@@ -99,7 +103,19 @@ class ReportController extends Controller
 
         if (isset($post['id_agen'])) {
             $all_id_agen = [];
-            $get_all_agen = User::where('nama', $check_agen->nama)->get()->toArray();
+
+            if ($post['id_agen'] != 'pontianak' && $post['id_agen'] != 'non-pontianak') {
+                $get_all_agen = User::where('nama', $check_agen->nama)->get()->toArray();
+            } else {
+                if ($post['id_agen'] == 'pontianak') {
+                    $get_all_agen = User::where('id_divisi', 13)->where(function ($query) {
+                        $query->whereNull('id_agen_kategori')->orWhere('id_agen_kategori', 17);
+                    })->get()->toArray();
+                } else {
+                    $get_all_agen = User::where('id_divisi', 13)->whereNotNull('id_agen_kategori')->where('id_agen_kategori', '!=', 17)->get()->toArray();
+                }
+            }
+
             if (!empty($get_all_agen)) {
                 $all_id_agen = array_column($get_all_agen, 'id');
             }
@@ -136,7 +152,7 @@ class ReportController extends Controller
         }
 
         $data_report = array_map(function ($arr) use (&$data_print, &$harga_total, &$total_pcs, &$total_barang, &$total_stok, &$data_barang, $title, $post) {
-            if ($title == 'SEMUA DIVISI') {
+            if ($title == 'SEMUA DIVISI' || $title == 'SEMUA AGEN PONTIANAK' || $title == 'SEMUA AGEN NON PONTIANAK') {
                 $check_divisi = Divisi::where('id', $arr['id_divisi'])->first();
                 if (empty($check_divisi)) {
                     return back()->withErrors(['Divisi tidak ditemukan']);
@@ -269,7 +285,7 @@ class ReportController extends Controller
                                     'harga_satuan'  => $value['harga_barang'],
                                     'harga_total'   => ($value['qty_barang'] * $value['harga_barang']),
                                     'success'       => $stok_data_print['success'],
-                                    'alasan'        => '',
+                                    'alasan'        => $stok_data_print['alasan'],
                                 ];
                             } else {
                                 if ($post['id_barang'] != 'all') {
@@ -286,23 +302,23 @@ class ReportController extends Controller
                                         'harga_satuan'  => $value['harga_barang'],
                                         'harga_total'   => ($value['qty_barang'] * $value['harga_barang']),
                                         'success'       => $stok_data_print['success'],
-                                        'alasan'        => '',
+                                        'alasan'        => $stok_data_print['alasan'],
                                     ];
                                 } else {
                                     $data_print_set = [
-                                        'order_tanggal' => '',
-                                        'tanggal'       => '',
-                                        'no_transaksi'  => '',
-                                        'request_by'    => '',
-                                        'divisi'        => '',
-                                        'proses_by'     => '',
+                                        'order_tanggal' => $stok_data_print['order_tanggal'],
+                                        'tanggal'       => $stok_data_print['tanggal'],
+                                        'no_transaksi'  => $stok_data_print['no_transaksi'],
+                                        'request_by'    => $stok_data_print['request_by'],
+                                        'divisi'        => $stok_data_print['divisi'],
+                                        'proses_by'     => $stok_data_print['proses_by'],
                                         'kode_barang'   => $value['stok_barang']['kode_barang'],
                                         'nama_barang'   => $value['stok_barang']['nama_barang'],
                                         'jumlah_barang' => number_format($value['qty_barang']) . " " . $value['stok_barang']['stok_barang_satuan']['nama_satuan'],
                                         'harga_satuan'  => $value['harga_barang'],
                                         'harga_total'   => ($value['qty_barang'] * $value['harga_barang']),
-                                        'success'       => '',
-                                        'alasan'        => '',
+                                        'success'       => $stok_data_print['success'],
+                                        'alasan'        => $stok_data_print['alasan'],
                                     ];
                                 }
                             }
