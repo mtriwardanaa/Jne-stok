@@ -1,6 +1,6 @@
 <?php
 
-Route::middleware(['auth_user'])->prefix('barang')->group(function() {
+Route::middleware(['auth_user'])->prefix('barang')->group(function () {
     Route::get('/', 'BarangController@list')->middleware('feature:21');
     Route::get('/create', 'BarangController@create')->middleware('feature:22');
     Route::get('/import', 'BarangController@import')->middleware('feature:25');

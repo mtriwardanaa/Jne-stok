@@ -68,7 +68,7 @@ class ReportController extends Controller
                 return back()->withErrors(['Divisi tidak ditemukan']);
             }
 
-            $title = str_replace( array( '\'', '"', ',' , ';', '<', '>' , '/'), ' ', $check_divisi->nama);
+            $title = str_replace(array('\'', '"', ',', ';', '<', '>', '/'), ' ', $check_divisi->nama);
 
             if (isset($post['id_kategori'])) {
                 $check_kategori = AgenKategori::where('id', $post['id_kategori'])->first();
@@ -76,7 +76,7 @@ class ReportController extends Controller
                     return back()->withErrors(['Sub Agen tidak ditemukan']);
                 }
 
-                $title = str_replace( array( '\'', '"', ',' , ';', '<', '>' , '/'), ' ', $check_divisi->nama.' ('.$check_kategori->nama.')');
+                $title = str_replace(array('\'', '"', ',', ';', '<', '>', '/'), ' ', $check_divisi->nama . ' (' . $check_kategori->nama . ')');
             }
 
             if (isset($post['id_agen'])) {
@@ -85,13 +85,13 @@ class ReportController extends Controller
                     return back()->withErrors(['Sub Agen tidak ditemukan']);
                 }
 
-                $title = str_replace( array( '\'', '"', ',' , ';', '<', '>' , '/'), ' ', $check_agen->nama);
+                $title = str_replace(array('\'', '"', ',', ';', '<', '>', '/'), ' ', $check_agen->nama);
             }
 
             $barang_keluar = BarangKeluar::with('detailStok.stokBarang.stokBarangSatuan', 'user', 'order')->where('id_divisi', $post['id_divisi'])->where('tanggal', '>=', $tanggal_mulai)->where('tanggal', '<=', $tanggal_selesai);
         } else {
             $barang_keluar = BarangKeluar::with('detailStok.stokBarang.stokBarangSatuan', 'user', 'order')->where('tanggal', '>=', $tanggal_mulai)->where('tanggal', '<=', $tanggal_selesai);
-        }       
+        }
 
         if (isset($post['id_kategori'])) {
             $barang_keluar = $barang_keluar->where('id_kategori', $post['id_kategori']);
@@ -116,10 +116,10 @@ class ReportController extends Controller
         $barang_keluar = $barang_keluar->get()->toArray();
         // return $barang_keluar;
         $data_print = [];
-        $harga_total  = 0;
-        $total_pcs  = 0;
+        $harga_total = 0;
+        $total_pcs = 0;
         $total_barang = 0;
-        $total_stok   = 0;
+        $total_stok = 0;
         $data_barang = [];
 
         $title_barang = 'SEMUA BARANG';
@@ -132,17 +132,17 @@ class ReportController extends Controller
             }
 
             $pcs_item = $barang->stokBarangSatuan->nama_satuan;
-            $title_barang = strtoupper(str_replace( array( '\'', '"', ',' , ';', '<', '>' , '/'), ' ', $barang->nama_barang));
+            $title_barang = strtoupper(str_replace(array('\'', '"', ',', ';', '<', '>', '/'), ' ', $barang->nama_barang));
         }
 
-        $data_report = array_map(function($arr) use (&$data_print, &$harga_total, &$total_pcs, &$total_barang, &$total_stok, &$data_barang, $title, $post) {
+        $data_report = array_map(function ($arr) use (&$data_print, &$harga_total, &$total_pcs, &$total_barang, &$total_stok, &$data_barang, $title, $post) {
             if ($title == 'SEMUA DIVISI') {
                 $check_divisi = Divisi::where('id', $arr['id_divisi'])->first();
                 if (empty($check_divisi)) {
                     return back()->withErrors(['Divisi tidak ditemukan']);
                 }
 
-                $title = str_replace( array( '\'', '"', ',' , ';', '<', '>' , '/'), ' ', $check_divisi->nama);
+                $title = str_replace(array('\'', '"', ',', ';', '<', '>', '/'), ' ', $check_divisi->nama);
 
                 if (isset($arr['id_kategori'])) {
                     $check_kategori = AgenKategori::where('id', $arr['id_kategori'])->first();
@@ -150,7 +150,7 @@ class ReportController extends Controller
                         return back()->withErrors(['Sub Agen tidak ditemukan']);
                     }
 
-                    $title = str_replace( array( '\'', '"', ',' , ';', '<', '>' , '/'), ' ', $check_divisi->nama.' ('.$check_kategori->nama.')');
+                    $title = str_replace(array('\'', '"', ',', ';', '<', '>', '/'), ' ', $check_divisi->nama . ' (' . $check_kategori->nama . ')');
                 }
 
                 if (isset($arr['id_agen'])) {
@@ -159,11 +159,11 @@ class ReportController extends Controller
                         return back()->withErrors(['Sub Agen tidak ditemukan']);
                     }
 
-                    $title = str_replace( array( '\'', '"', ',' , ';', '<', '>' , '/'), ' ', $check_agen->nama);
+                    $title = str_replace(array('\'', '"', ',', ';', '<', '>', '/'), ' ', $check_agen->nama);
                 }
             }
 
-            $tanggal_order    = '-';
+            $tanggal_order = '-';
             $tanggal_diterima = '-';
 
             if (isset($arr['order']['tanggal_approve'])) {
@@ -175,17 +175,17 @@ class ReportController extends Controller
             }
 
             $stok_data_print = [
-                'order_tanggal'  => $tanggal_order,
-                'tanggal'        => date('d-m-Y H:i', strtotime($arr['tanggal'])),
-                'no_transaksi'   => $arr['no_barang_keluar'],
-                'request_by'     => strtoupper($arr['nama_user_request']),
-                'divisi'         => $title,
-                'proses_by'      => strtoupper($arr['user']['nama']),
-                'kode_barang'    => $arr['detail_stok'][0]['stok_barang']['kode_barang'],
-                'nama_barang'    => $arr['detail_stok'][0]['stok_barang']['nama_barang'],
-                'jumlah_barang'  => number_format($arr['detail_stok'][0]['qty_barang']). " ".$arr['detail_stok'][0]['stok_barang']['stok_barang_satuan']['nama_satuan'],
-                'harga_satuan'   => $arr['detail_stok'][0]['harga_barang'],
-                'harga_total'    => ($arr['detail_stok'][0]['qty_barang'] * $arr['detail_stok'][0]['harga_barang']),
+                'order_tanggal' => $tanggal_order,
+                'tanggal'       => date('d-m-Y H:i', strtotime($arr['tanggal'])),
+                'no_transaksi'  => $arr['no_barang_keluar'],
+                'request_by'    => strtoupper($arr['nama_user_request']),
+                'divisi'        => $title,
+                'proses_by'     => strtoupper($arr['user']['nama']),
+                'kode_barang'   => $arr['detail_stok'][0]['stok_barang']['kode_barang'],
+                'nama_barang'   => $arr['detail_stok'][0]['stok_barang']['nama_barang'],
+                'jumlah_barang' => number_format($arr['detail_stok'][0]['qty_barang']) . " " . $arr['detail_stok'][0]['stok_barang']['stok_barang_satuan']['nama_satuan'],
+                'harga_satuan'  => $arr['detail_stok'][0]['harga_barang'],
+                'harga_total'   => ($arr['detail_stok'][0]['qty_barang'] * $arr['detail_stok'][0]['harga_barang']),
             ];
 
             // return $stok_data_print;
@@ -209,41 +209,41 @@ class ReportController extends Controller
                 if ($post['id_barang'] == $arr['detail_stok'][0]['id_barang']) {
                     $data_print[] = $stok_data_print;
 
-                    $total_pcs    = $total_pcs + ($arr['detail_stok'][0]['qty_barang']);
-                    $harga_total  = $harga_total + ($arr['detail_stok'][0]['qty_barang'] * $arr['detail_stok'][0]['harga_barang']);
-                    $total_stok   = $total_stok + $arr['detail_stok'][0]['qty_barang'];
+                    $total_pcs = $total_pcs + ($arr['detail_stok'][0]['qty_barang']);
+                    $harga_total = $harga_total + ($arr['detail_stok'][0]['qty_barang'] * $arr['detail_stok'][0]['harga_barang']);
+                    $total_stok = $total_stok + $arr['detail_stok'][0]['qty_barang'];
 
                     if (!in_array($arr['detail_stok'][0]['id_barang'], $data_barang)) {
                         $total_barang++;
                         $data_barang[] = $arr['detail_stok'][0]['id_barang'];
                     }
-                    
+
                     $set_data_first = [
-                        'order_tanggal'  => $tanggal_order,
-                        'tanggal'        => date('d-m-Y H:i', strtotime($arr['tanggal'])),
-                        'no_transaksi'   => $arr['no_barang_keluar'],
-                        'request_by'     => strtoupper($arr['nama_user_request']),
-                        'divisi'         => $title,
-                        'proses_by'      => strtoupper($arr['user']['nama']),
+                        'order_tanggal' => $tanggal_order,
+                        'tanggal'       => date('d-m-Y H:i', strtotime($arr['tanggal'])),
+                        'no_transaksi'  => $arr['no_barang_keluar'],
+                        'request_by'    => strtoupper($arr['nama_user_request']),
+                        'divisi'        => $title,
+                        'proses_by'     => strtoupper($arr['user']['nama']),
                     ];
 
                 } else {
                     $data_first = true;
                     $set_data_first = [
-                        'order_tanggal'  => $tanggal_order,
-                        'tanggal'        => date('d-m-Y H:i', strtotime($arr['tanggal'])),
-                        'no_transaksi'   => $arr['no_barang_keluar'],
-                        'request_by'     => strtoupper($arr['nama_user_request']),
-                        'divisi'         => $title,
-                        'proses_by'      => strtoupper($arr['user']['nama']),
+                        'order_tanggal' => $tanggal_order,
+                        'tanggal'       => date('d-m-Y H:i', strtotime($arr['tanggal'])),
+                        'no_transaksi'  => $arr['no_barang_keluar'],
+                        'request_by'    => strtoupper($arr['nama_user_request']),
+                        'divisi'        => $title,
+                        'proses_by'     => strtoupper($arr['user']['nama']),
                     ];
                 }
             } else {
                 $data_print[] = $stok_data_print;
 
-                $total_pcs  = $total_pcs + ($arr['detail_stok'][0]['qty_barang']);
-                $harga_total  = $harga_total + ($arr['detail_stok'][0]['qty_barang'] * $arr['detail_stok'][0]['harga_barang']);
-                $total_stok   = $total_stok + $arr['detail_stok'][0]['qty_barang'];
+                $total_pcs = $total_pcs + ($arr['detail_stok'][0]['qty_barang']);
+                $harga_total = $harga_total + ($arr['detail_stok'][0]['qty_barang'] * $arr['detail_stok'][0]['harga_barang']);
+                $total_stok = $total_stok + $arr['detail_stok'][0]['qty_barang'];
 
                 if (!in_array($arr['detail_stok'][0]['id_barang'], $data_barang)) {
                     $total_barang++;
@@ -257,62 +257,62 @@ class ReportController extends Controller
                         if ($key > 0) {
                             if ($data_first) {
                                 $data_print_set = [
-                                    'order_tanggal'  => $set_data_first['order_tanggal'],
-                                    'tanggal'        => $set_data_first['tanggal'],
-                                    'no_transaksi'   => $set_data_first['no_transaksi'],
-                                    'request_by'     => $set_data_first['request_by'],
-                                    'divisi'         => $set_data_first['divisi'],
-                                    'proses_by'      => $set_data_first['proses_by'],
-                                    'kode_barang'    => $value['stok_barang']['kode_barang'],
-                                    'nama_barang'    => $value['stok_barang']['nama_barang'],
-                                    'jumlah_barang'  => number_format($value['qty_barang']). " ".$value['stok_barang']['stok_barang_satuan']['nama_satuan'],
-                                    'harga_satuan'   => $value['harga_barang'],
-                                    'harga_total'    => ($value['qty_barang'] * $value['harga_barang']),
-                                    'success'        => $stok_data_print['success'],
-                                    'alasan'         => '',
+                                    'order_tanggal' => $set_data_first['order_tanggal'],
+                                    'tanggal'       => $set_data_first['tanggal'],
+                                    'no_transaksi'  => $set_data_first['no_transaksi'],
+                                    'request_by'    => $set_data_first['request_by'],
+                                    'divisi'        => $set_data_first['divisi'],
+                                    'proses_by'     => $set_data_first['proses_by'],
+                                    'kode_barang'   => $value['stok_barang']['kode_barang'],
+                                    'nama_barang'   => $value['stok_barang']['nama_barang'],
+                                    'jumlah_barang' => number_format($value['qty_barang']) . " " . $value['stok_barang']['stok_barang_satuan']['nama_satuan'],
+                                    'harga_satuan'  => $value['harga_barang'],
+                                    'harga_total'   => ($value['qty_barang'] * $value['harga_barang']),
+                                    'success'       => $stok_data_print['success'],
+                                    'alasan'        => '',
                                 ];
-                             } else {
+                            } else {
                                 if ($post['id_barang'] != 'all') {
                                     $data_print_set = [
-                                        'order_tanggal'  => $set_data_first['order_tanggal'],
-                                        'tanggal'        => $set_data_first['tanggal'],
-                                        'no_transaksi'   => $set_data_first['no_transaksi'],
-                                        'request_by'     => $set_data_first['request_by'],
-                                        'divisi'         => $set_data_first['divisi'],
-                                        'proses_by'      => $set_data_first['proses_by'],
-                                        'kode_barang'    => $value['stok_barang']['kode_barang'],
-                                        'nama_barang'    => $value['stok_barang']['nama_barang'],
-                                        'jumlah_barang'  => number_format($value['qty_barang']). " ".$value['stok_barang']['stok_barang_satuan']['nama_satuan'],
-                                        'harga_satuan'   => $value['harga_barang'],
-                                        'harga_total'    => ($value['qty_barang'] * $value['harga_barang']),
-                                        'success'        => $stok_data_print['success'],
-                                        'alasan'         => '',
+                                        'order_tanggal' => $set_data_first['order_tanggal'],
+                                        'tanggal'       => $set_data_first['tanggal'],
+                                        'no_transaksi'  => $set_data_first['no_transaksi'],
+                                        'request_by'    => $set_data_first['request_by'],
+                                        'divisi'        => $set_data_first['divisi'],
+                                        'proses_by'     => $set_data_first['proses_by'],
+                                        'kode_barang'   => $value['stok_barang']['kode_barang'],
+                                        'nama_barang'   => $value['stok_barang']['nama_barang'],
+                                        'jumlah_barang' => number_format($value['qty_barang']) . " " . $value['stok_barang']['stok_barang_satuan']['nama_satuan'],
+                                        'harga_satuan'  => $value['harga_barang'],
+                                        'harga_total'   => ($value['qty_barang'] * $value['harga_barang']),
+                                        'success'       => $stok_data_print['success'],
+                                        'alasan'        => '',
                                     ];
                                 } else {
                                     $data_print_set = [
-                                        'order_tanggal'  => '',
-                                        'tanggal'        => '',
-                                        'no_transaksi'   => '',
-                                        'request_by'     => '',
-                                        'divisi'         => '',
-                                        'proses_by'      => '',
-                                        'kode_barang'    => $value['stok_barang']['kode_barang'],
-                                        'nama_barang'    => $value['stok_barang']['nama_barang'],
-                                        'jumlah_barang'  => number_format($value['qty_barang']). " ".$value['stok_barang']['stok_barang_satuan']['nama_satuan'],
-                                        'harga_satuan'   => $value['harga_barang'],
-                                        'harga_total'    => ($value['qty_barang'] * $value['harga_barang']),
-                                        'success'        => '',
-                                        'alasan'         => '',
+                                        'order_tanggal' => '',
+                                        'tanggal'       => '',
+                                        'no_transaksi'  => '',
+                                        'request_by'    => '',
+                                        'divisi'        => '',
+                                        'proses_by'     => '',
+                                        'kode_barang'   => $value['stok_barang']['kode_barang'],
+                                        'nama_barang'   => $value['stok_barang']['nama_barang'],
+                                        'jumlah_barang' => number_format($value['qty_barang']) . " " . $value['stok_barang']['stok_barang_satuan']['nama_satuan'],
+                                        'harga_satuan'  => $value['harga_barang'],
+                                        'harga_total'   => ($value['qty_barang'] * $value['harga_barang']),
+                                        'success'       => '',
+                                        'alasan'        => '',
                                     ];
                                 }
                             }
-                            
+
                             if ($post['id_barang'] != 'all') {
                                 if ($post['id_barang'] == $value['id_barang']) {
                                     $data_print[] = $data_print_set;
-                                    $total_pcs  = $total_pcs + ($value['qty_barang']);
-                                    $harga_total  = $harga_total + ($value['qty_barang'] * $value['harga_barang']);
-                                    $total_stok   = $total_stok + $value['qty_barang'];
+                                    $total_pcs = $total_pcs + ($value['qty_barang']);
+                                    $harga_total = $harga_total + ($value['qty_barang'] * $value['harga_barang']);
+                                    $total_stok = $total_stok + $value['qty_barang'];
 
                                     if (!in_array($value['id_barang'], $data_barang)) {
                                         $total_barang++;
@@ -321,9 +321,9 @@ class ReportController extends Controller
                                 }
                             } else {
                                 $data_print[] = $data_print_set;
-                                $total_pcs  = $total_pcs + ($value['qty_barang']);
-                                $harga_total  = $harga_total + ($value['qty_barang'] * $value['harga_barang']);
-                                $total_stok   = $total_stok + $value['qty_barang'];
+                                $total_pcs = $total_pcs + ($value['qty_barang']);
+                                $harga_total = $harga_total + ($value['qty_barang'] * $value['harga_barang']);
+                                $total_stok = $total_stok + $value['qty_barang'];
 
                                 if (!in_array($value['id_barang'], $data_barang)) {
                                     $total_barang++;
@@ -338,22 +338,22 @@ class ReportController extends Controller
         }, $barang_keluar);
 
         $data_print[] = [
-            'order_tanggal'  => '',
-            'tanggal'        => '',
-            'no_transaksi'   => '',
-            'request_by'     => '',
-            'divisi'         => '',
-            'proses_by'      => '',
-            'kode_barang'    => '',
-            'nama_barang'    => 'Total Barang',
-            'jumlah_barang'  => number_format($total_pcs).' '.$pcs_item,
-            'harga_satuan'   => 'Total Harga',
-            'harga_total'    => $harga_total,
-            'success'        => '',
-            'alasan'         => '',
+            'order_tanggal' => '',
+            'tanggal'       => '',
+            'no_transaksi'  => '',
+            'request_by'    => '',
+            'divisi'        => '',
+            'proses_by'     => '',
+            'kode_barang'   => '',
+            'nama_barang'   => 'Total Barang',
+            'jumlah_barang' => number_format($total_pcs) . ' ' . $pcs_item,
+            'harga_satuan'  => 'Total Harga',
+            'harga_total'   => $harga_total,
+            'success'       => '',
+            'alasan'        => '',
         ];
 
-        $nama = 'REPORT-'.strtoupper($title).'-'.$title_barang.'-'.date('d-m-Y', strtotime($tanggal_mulai)).'-'.date('d-m-Y', strtotime($tanggal_selesai));
+        $nama = 'REPORT-' . strtoupper($title) . '-' . $title_barang . '-' . date('d-m-Y', strtotime($tanggal_mulai)) . '-' . date('d-m-Y', strtotime($tanggal_selesai));
         $data = json_decode(json_encode($data_print, JSON_NUMERIC_CHECK), true);
         // return $data;
 
@@ -370,7 +370,7 @@ class ReportController extends Controller
         }
 
         $heading = $this->heading();
-        return Excel::download(new ReportExport($data, $heading, $title, 0), $nama.'.xlsx');
+        return Excel::download(new ReportExport($data, $heading, $title, 0), $nama . '.xlsx');
     }
 
     public function printAll(Request $request)
@@ -402,12 +402,12 @@ class ReportController extends Controller
     {
         $post = $request->except('_token');
 
-        $stock_no = $post['bulan'].'/SO/V/'.$post['tahun'];
+        $stock_no = $post['bulan'] . '/SO/V/' . $post['tahun'];
         $group = 'ALL';
-        $periode_mulai = date($post['tahun'].'-'.$post['bulan'].'-01');
+        $periode_mulai = date($post['tahun'] . '-' . $post['bulan'] . '-01');
         $periode_mulai = date('Y-m-d', strtotime($periode_mulai));
         $periode_akhir = date('Y-m-t', strtotime($periode_mulai));
-        $opname_no = 'F/PMD/'.date('m-d', strtotime($periode_mulai)).'/00';
+        $opname_no = 'F/PMD/' . date('m-d', strtotime($periode_mulai)) . '/00';
 
         $text_periode_awal = MyHelper::indonesian_date($periode_mulai, 'd F Y');
         $text_periode_akhir = MyHelper::indonesian_date($periode_akhir, 'd F Y');
@@ -419,7 +419,7 @@ class ReportController extends Controller
 
             array_multisort($sort, SORT_ASC, $barang);
 
-            $report = array_map(function($arr) use ($periode_mulai, $periode_akhir) {
+            $report = array_map(function ($arr) use ($periode_mulai, $periode_akhir) {
                 $data = [
                     'kode_barang' => $arr['kode_barang'],
                     'nama_barang' => $arr['nama_barang'],
