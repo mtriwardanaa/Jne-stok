@@ -8,7 +8,7 @@
 @section('head-sub-title', 'List')
 
 @section('css')
-    <link rel="stylesheet" href="{{ url('assets/js/plugins/datatables/dataTables.bootstrap4.css') }}">
+	<link rel="stylesheet" href="{{ url('assets/js/plugins/datatables/dataTables.bootstrap4.css') }}">
     <link rel="stylesheet" href="{{ url('assets/js/plugins/select2/css/select2.min.css') }}">
 @endsection
 
@@ -16,33 +16,32 @@
     @php
         $fitur = session()->get('fitur');
     @endphp
-    @include('partial.notification')
+	@include('partial.notification')
     <div class="block">
         <div class="block-header block-header-default">
             <h3 class="block-title">Barang <small>Filter</small></h3>
         </div>
         <div class="block-content block-content-full">
-            <div class="form-group row">
-                <div class="col-md-3">
-                    <div class="form-material">
-                        <select class="js-select2 form-control" id="example2-select20" name="id_divisi"
-                            data-placeholder="Pilih divisi" required>
-                            <option value="all" @if ($status == 'all') selected @endif>Semua</option>
-                            <option value="aman" @if ($status == 'aman') selected @endif>Aman</option>
-                            <option value="warning" @if ($status == 'warning') selected @endif>Warning</option>
-                        </select>
-                        <label for="material-text">Status</label>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <div class="form-material">
+                            <select class="js-select2 form-control" id="example2-select20" name="id_divisi" data-placeholder="Pilih divisi" required>
+                                <option value="all" @if ($status == 'all') selected @endif>Semua</option>
+                                <option value="aman" @if ($status == 'aman') selected @endif>Aman</option>
+                                <option value="warning" @if ($status == 'warning') selected @endif>Warning</option>
+                            </select>
+                            <label for="material-text">Status</label>
+                        </div>
+                    </div>
+                </div><br>
+                <div class="form-group row">
+                    <div class="col-md-9">
+                        <button type="button" class="btn btn-alt-primary btn-filter">Submit Filter</button>
                     </div>
                 </div>
-            </div><br>
-            <div class="form-group row">
-                <div class="col-md-9">
-                    <button type="button" class="btn btn-alt-primary btn-filter">Submit Filter</button>
-                </div>
-            </div>
         </div>
     </div>
-    <div class="block">
+	<div class="block">
         <div class="block-header block-header-default">
             <h3 class="block-title">Barang <small>List</small></h3>
             <div class="block-options">
@@ -69,40 +68,48 @@
                 </thead>
                 <tbody>
                     @if (!empty($list))
-                        @foreach ($list as $key => $value)
-                            </tr>
-                            <td>{{ $key + 1 }}</td>
-                            <td><a href="{{ url('barang/history', $value['id']) }}" data-toggle="click-ripple"
-                                    title="History"> {{ $value['kode_barang'] }}</a></td>
-                            <td>{{ $value['nama_barang'] }}</td>
-                            <td>{{ $value['qty_barang'] }}</td>
-                            <td>Rp. {{ number_format($value['harga_barang']) ?? '0' }}</td>
-                            <td>{{ $value['warning_stok'] }}</td>
-                            <td>{{ $value['stok_barang_satuan']['nama_satuan'] }}</td>
-                            @if ($value['qty_barang'] < $value['warning_stok'])
-                                <td class="font-w600"><span class="badge badge-warning">Warning</span></td>
-                            @else
-                                <td class="font-w600"><span class="badge badge-success">Aman</span></td>
-                            @endif
-                            <td class="text-center">
-                                @if (in_array(23, $fitur))
-                                    <div class="btn-group">
-                                        <a href="{{ url('barang/edit', $value['id']) }}" class="btn btn-sm btn-info"
-                                            data-toggle="click-ripple" title="Edit"><i class="fa fa-pencil"></i> Edit</a>
-                                    </div>
+                    	@foreach($list as $key => $value)
+	                    	</tr>
+	                    		<td>{{ $key+1 }}</td>
+	                    		<td><a href="{{ url('barang/history', $value['id']) }}" data-toggle="click-ripple" title="History"> {{ $value['kode_barang'] }}</a></td>
+	                    		<td>{{ $value['nama_barang'] }}</td>
+	                    		<td>{{ $value['qty_barang'] + $value['stok_awal'] }}</td>
+	                    		<td>Rp. {{ number_format($value['harga_barang']) ?? "0" }}</td>
+                                <td>{{ $value['warning_stok'] }}</td>
+	                    		<td>{{ $value['stok_barang_satuan']['nama_satuan'] }}</td>
+                                @if ($value['qty_barang'] < $value['warning_stok'])
+                                    <td class="font-w600"><span class="badge badge-warning">Warning</span></td>
+                                @else
+                                    <td class="font-w600"><span class="badge badge-success">Aman</span></td>
                                 @endif
+	                    		<td class="text-center">
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-primary dropdown-toggle btn-sm" id="btnGroupDrop1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
+                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                            @if (in_array(23, $fitur))
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item btn-stok" data-id="{{ $value['id'] }}" href="javascript:void(0)">
+                                                <i class="fa fa-fw fa-trash mr-5"></i>Ubah Stok
+                                            </a>
+                                            @endif
 
-                                @if (in_array(24, $fitur))
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-sm btn-danger btn-delete"
-                                            data-id="{{ $value['id'] }}" data-toggle="click-ripple" title="Delete">
-                                            <i class="fa fa-times"></i> Hapus
-                                        </button>
+                                            @if (in_array(23, $fitur))
+                                            <a class="dropdown-item" href="{{ url('barang/edit', $value['id']) }}">
+                                                <i class="fa fa-fw fa-pencil mr-5"></i>Edit
+                                            </a>
+                                            @endif
+
+                                            @if (in_array(24, $fitur))
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item btn-delete" data-id="{{ $value['id'] }}" href="javascript:void(0)">
+                                                <i class="fa fa-fw fa-trash mr-5"></i>Hapus
+                                            </a>
+                                            @endif
+                                        </div>
                                     </div>
-                                @endif
-                            </td>
+	                            </td>
                             </tr>
-                        @endforeach
+                    	@endforeach
                     @endif
                 </tbody>
             </table>
@@ -111,32 +118,49 @@
 @endsection
 
 @section('script')
-    <script src="{{ url('assets/js/plugins/datatables/jquery.dataTables.min.js') }}"></script>
+	<script src="{{ url('assets/js/plugins/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ url('assets/js/plugins/datatables/dataTables.bootstrap4.min.js') }}"></script>
     <script src="{{ url('assets/js/plugins/select2/js/select2.full.min.js') }}"></script>
-    <script>
-        jQuery(function() {
-            Codebase.helpers(['flatpickr', 'datepicker', 'select2']);
-        });
-    </script>
+    <script>jQuery(function(){ Codebase.helpers(['flatpickr', 'datepicker', 'select2']); });</script>
 
     <script src="{{ url('assets/js/pages/be_tables_datatables.min.js') }}"></script>
 
     <script type="text/javascript">
-        $(document).on('click', '.btn-delete', function() {
+    	$(document).on('click', '.btn-delete', function() {
+			var id = $(this).data('id');
+			Swal.fire({
+				title: 'Are you sure?',
+				text: "Barang akan dihapus",
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Ya',
+				cancelButtonText: 'Tidak'
+			}).then((result) => {
+  				if (result.value) {
+  					var url = "{{ url('barang/delete') }}/"+id;
+  					window.location.href = url;
+  				}
+			})
+		});
+
+        $(document).on('click', '.btn-stok', function() {
             var id = $(this).data('id');
             Swal.fire({
-                title: 'Are you sure?',
-                text: "Laporan akan dihapus",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya',
-                cancelButtonText: 'Tidak'
+              title: 'Masukkan jumlah stok sekarang',
+              input: 'number',
+              inputAttributes: {
+                autocapitalize: 'off'
+              },
+              showCancelButton: true,
+              confirmButtonText: 'Look up',
+              showLoaderOnConfirm: true,
+              allowOutsideClick: () => !Swal.isLoading()
             }).then((result) => {
-                if (result.value) {
-                    var url = "{{ url('barang/delete') }}/" + id;
+                console.log(result);
+                if (result.isConfirmed) {
+                    var url = "{{ url('barang/stok') }}/"+id+"/"+result.value;
                     window.location.href = url;
                 }
             })
@@ -146,7 +170,7 @@
             var status = $('#example2-select20').val();
             console.log(status);
 
-            var url = "{{ url('barang') }}?status=" + status;
+            var url = "{{ url('barang') }}?status="+status;
             window.location.href = url;
         });
     </script>

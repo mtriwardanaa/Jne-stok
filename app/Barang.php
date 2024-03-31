@@ -17,18 +17,18 @@ use OwenIt\Auditing\Contracts\Auditable;
  */
 class Barang extends Model implements Auditable
 {
-    use \OwenIt\Auditing\Auditable;
+	use \OwenIt\Auditing\Auditable;
 
     /**
      * The table associated with the model.
-     *
+     * 
      * @var string
      */
     protected $table = 'stok_barang';
 
     /**
      * The "type" of the auto-incrementing ID.
-     *
+     * 
      * @var string
      */
     protected $keyType = 'integer';
@@ -36,7 +36,7 @@ class Barang extends Model implements Auditable
     /**
      * @var array
      */
-    protected $fillable = ['id_barang_satuan', 'internal', 'agen', 'subagen', 'corporate', 'harga_barang', 'warning_stok', 'kode_barang', 'nama_barang', 'qty_barang', 'created_at', 'updated_at', 'deleted_at'];
+    protected $fillable = ['id_barang_satuan', 'internal', 'agen', 'subagen', 'corporate', 'harga_barang', 'warning_stok', 'stok_awal','kode_barang', 'nama_barang', 'qty_barang', 'created_at', 'updated_at', 'deleted_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
